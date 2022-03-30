@@ -1,9 +1,33 @@
 package tokenizer;
 
 import org.agrona.AsciiSequenceView;
+import org.agrona.DirectBuffer;
+import org.agrona.concurrent.UnsafeBuffer;
+import org.apache.commons.collections4.trie.AsciiTrie;
 
 public class IncrementParser {
+    private static final AsciiTrie<Field> TRIE = new AsciiTrie<>();
+
+    static {
+        TRIE.put(string2view("E"), Field.EVENT_TIME);
+        TRIE.put(string2view("b"), Field.BID);
+        TRIE.put(string2view("a"), Field.ASK);
+    }
+
+    public static AsciiSequenceView string2view(final String string) {
+        final DirectBuffer buffer = new UnsafeBuffer();
+        final byte[] bytes = string.getBytes();
+        buffer.wrap(bytes);
+        final AsciiSequenceView result = new AsciiSequenceView();
+        result.wrap(buffer, 0, bytes.length);
+        return result;
+    }
+
     static Field getKey(AsciiSequenceView string) {
+        return TRIE.getOrDefault(string, Field.IGNORE);
+    }
+
+    static Field getKey1(AsciiSequenceView string) {
         assert string.length() == 1 : string;
         switch (string.charAt(0)) {
             case 'E':
