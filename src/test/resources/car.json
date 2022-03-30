@@ -1,0 +1,10 @@
+{
+  "engine": {
+    "cylinders": 4,
+    "horse power": 123.4
+  },
+  "is electric": false,
+  "is petrol": true,
+  "min temperature": -30,
+  "max temperature": 50
+}

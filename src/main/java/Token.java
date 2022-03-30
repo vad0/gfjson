@@ -6,6 +6,6 @@ public enum Token {
     STRING,
     BOOLEAN,
     LONG,
-    DECIMAL_FLOAT,
+    FLOAT,
     END
 }
