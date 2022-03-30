@@ -2,22 +2,21 @@ import lombok.Getter;
 import org.agrona.AsciiSequenceView;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
+import uk.co.real_logic.artio.fields.DecimalFloat;
 
 import java.nio.ByteBuffer;
 
 public class Tokenizer {
     private static final char[] SKIP = new char[]{' ', '\n', ':', ','};
     private final DirectBuffer buffer = new UnsafeBuffer();
+    @Getter
     private final AsciiSequenceView string = new AsciiSequenceView();
+    @Getter
+    private final DecimalFloat decimalFloat = new DecimalFloat();
     /**
      * Offset of the next token to read
      */
     private int offset;
-    private int stringStart;
-    @Getter
-    private long mantissa;
-    @Getter
-    private int exponent;
     private boolean bool;
 
     public void wrap(ByteBuffer byteBuffer) {
@@ -93,7 +92,7 @@ public class Tokenizer {
     }
 
     private void parseString() {
-        stringStart = offset;
+        int stringStart = offset;
         while (offset < buffer.capacity() - 1) {
             char next = (char) buffer.getByte(offset++);
             if (next == '"') {
@@ -106,6 +105,7 @@ public class Tokenizer {
 
     private Token parseNumber(char first) {
         int sign;
+        long mantissa;
         if (first == '-') {
             sign = -1;
             mantissa = 0;
@@ -123,6 +123,7 @@ public class Tokenizer {
             if (shouldSkip(next)) {
                 // this is not a float, so just return long
                 mantissa *= sign;
+                decimalFloat.set(mantissa, 0);
                 return Token.LONG;
             }
             if (next != '.') {
@@ -131,7 +132,7 @@ public class Tokenizer {
             break;
         }
         // after dot
-        exponent = 0;
+        int exponent = 0;
         while (offset < buffer.capacity() - 1) {
             char next = (char) buffer.getByte(offset++);
             if (isDigit(next)) {
@@ -141,6 +142,7 @@ public class Tokenizer {
             }
             if (shouldSkip(next)) {
                 mantissa *= sign;
+                decimalFloat.set(mantissa, exponent);
                 return Token.FLOAT;
             }
             break;
@@ -165,15 +167,20 @@ public class Tokenizer {
         return c - '0';
     }
 
-    public AsciiSequenceView getString() {
-        return string.wrap(buffer, stringStart, offset - stringStart - 1);
-    }
-
     public long getLong() {
-        return mantissa;
+        return decimalFloat.value();
     }
 
     public boolean getBoolean() {
         return bool;
+    }
+
+    public DecimalFloat decimalFloatFromString() {
+        return decimalFloat.fromString(string);
+    }
+
+    public double doubleFromString() {
+        final DecimalFloat decimalFloat = decimalFloatFromString();
+        return decimalFloat.toDouble();
     }
 }

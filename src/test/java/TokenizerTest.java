@@ -1,5 +1,6 @@
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
+import uk.co.real_logic.artio.fields.DecimalFloat;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -89,7 +90,7 @@ class TokenizerTest {
     }
 
     @SneakyThrows
-    private static String readFile(final String fileName) {
+    static String readFile(final String fileName) {
         return Files.readString(Paths.get("src", "test", "resources", fileName));
     }
 
@@ -105,8 +106,9 @@ class TokenizerTest {
 
     private static void checkFloat(Tokenizer tokenizer, final long expectedMantissa, final int expectedExponent) {
         assertEquals(Token.FLOAT, tokenizer.next());
-        assertEquals(expectedMantissa, tokenizer.getMantissa());
-        assertEquals(expectedExponent, tokenizer.getExponent());
+        final DecimalFloat decimalFloat = tokenizer.getDecimalFloat();
+        assertEquals(expectedMantissa, decimalFloat.value());
+        assertEquals(expectedExponent, decimalFloat.scale());
     }
 
     private static void checkString(Tokenizer tokenizer, final String expected) {
