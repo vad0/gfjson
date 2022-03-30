@@ -1,3 +1,5 @@
+package tokenizer;
+
 import lombok.Getter;
 
 import java.util.Objects;

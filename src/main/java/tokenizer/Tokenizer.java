@@ -1,3 +1,5 @@
+package tokenizer;
+
 import lombok.Getter;
 import org.agrona.AsciiSequenceView;
 import org.agrona.DirectBuffer;
@@ -137,7 +139,7 @@ public class Tokenizer {
             char next = (char) buffer.getByte(offset++);
             if (isDigit(next)) {
                 mantissa = mantissa * 10 + getLongFromChar(next);
-                exponent--;
+                exponent++;
                 continue;
             }
             if (shouldSkip(next)) {

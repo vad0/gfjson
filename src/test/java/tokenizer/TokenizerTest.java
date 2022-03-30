@@ -1,8 +1,11 @@
+package tokenizer;
+
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import uk.co.real_logic.artio.fields.DecimalFloat;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -55,7 +58,7 @@ class TokenizerTest {
         checkString(tokenizer, "cylinders");
         checkLong(tokenizer, 4);
         checkString(tokenizer, "horse power");
-        checkFloat(tokenizer, 1234, -1);
+        checkFloat(tokenizer, 1234, 1);
         checkEndObject(tokenizer);
         checkString(tokenizer, "is electric");
         checkBoolean(tokenizer, false);
@@ -91,7 +94,9 @@ class TokenizerTest {
 
     @SneakyThrows
     static String readFile(final String fileName) {
-        return Files.readString(Paths.get("src", "test", "resources", fileName));
+        final Path relative = Paths.get("src", "test", "resources", fileName);
+        final Path absolute = relative.toAbsolutePath();
+        return Files.readString(absolute);
     }
 
     private static void checkLong(Tokenizer tokenizer, final int expected) {

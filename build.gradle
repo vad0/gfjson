@@ -1,5 +1,7 @@
 plugins {
     id "java"
+    // don't upgrade it to 0.5.1!!!
+    id "me.champeau.gradle.jmh" version "0.5.0"
 }
 
 group "org.example"
@@ -23,3 +25,17 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+jmh {
+//    jvmArgs = []
+//    includes = ["Snapshot*"]
+    fork = 1
+    warmupIterations = 3
+    iterations = 5
+    benchmarkMode = ["avgt"]
+//    benchmarkMode = ["all"]
+    timeUnit = 'ns'
+    failOnError = true
+}
+
+jmhJar { duplicatesStrategy(DuplicatesStrategy.INCLUDE) }

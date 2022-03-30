@@ -1,3 +1,5 @@
+package tokenizer;
+
 import java.util.Objects;
 
 public class L2Update {

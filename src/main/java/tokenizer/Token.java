@@ -1,3 +1,5 @@
+package tokenizer;
+
 public enum Token {
     START_OBJECT,
     END_OBJECT,
@@ -7,5 +9,9 @@ public enum Token {
     BOOLEAN,
     LONG,
     FLOAT,
-    END
+    END;
+
+    public void checkToken(Token token) {
+        assert token == this : token;
+    }
 }
