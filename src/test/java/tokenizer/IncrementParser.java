@@ -8,7 +8,7 @@ public class IncrementParser {
             "E", BinanceParser::parseEventTime,
             "b", BinanceParser::parseBid,
             "a", BinanceParser::parseAsk),
-            (t, u) -> t.next());
+            Tokenizer.skipOne());
 
     public static void parseIncrement(Tokenizer tokenizer, L2Update increment) {
         BinanceParser.parseUpdate(tokenizer, increment, ACTIONS);

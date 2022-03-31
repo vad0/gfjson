@@ -55,6 +55,10 @@ public class Tokenizer {
         }
     }
 
+    public static <T> BiConsumer<Tokenizer, T> skipOne() {
+        return (t, u) -> t.next();
+    }
+
     public void wrap(ByteBuffer byteBuffer) {
         buffer.wrap(byteBuffer);
         offset = 0;
