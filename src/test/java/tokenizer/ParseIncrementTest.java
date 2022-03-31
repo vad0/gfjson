@@ -28,20 +28,30 @@ public class ParseIncrementTest {
     @Disabled
     @Test
     public void parseBigIncrement() {
-        String str = TokenizerTest.readFile("big_increment.json");
+        measureParseIncrement("big_increment.json");
+    }
+
+    @SneakyThrows
+    @Disabled
+    @Test
+    public void parseSmallIncrement() {
+        measureParseIncrement("increment.json");
+    }
+
+    @SneakyThrows
+    public void measureParseIncrement(final String fileName) {
+        String str = TokenizerTest.readFile(fileName);
         var tokenizer = new Tokenizer();
 
         final L2Update update = new L2Update();
-        for (int i = 0; i < 1000_000; i++) {
+        for (int i = 0; i < 1000_000_000; i++) {
             final long start = System.nanoTime();
             tokenizer.wrap(str);
             IncrementParser.parseIncrement(tokenizer, update);
             final long end = System.nanoTime();
-            if (i % 100 == 0) {
+            if (i % 100_000 == 0) {
                 System.out.println(end - start);
-                if (i % 1_000 == 0) {
-                    Thread.sleep(1);
-                }
+                Thread.sleep(1);
             }
         }
     }
