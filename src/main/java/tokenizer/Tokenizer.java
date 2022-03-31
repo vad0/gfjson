@@ -12,6 +12,7 @@ import java.util.function.BiConsumer;
 public class Tokenizer {
     public static final boolean APPLY_CHECKS = true;
     private static final char[] SKIP = new char[]{' ', '\n', ':', ','};
+    private static final BiConsumer<Tokenizer, ?> SKIP_LAMBDA = (t, u) -> t.skipValue();
     private final DirectBuffer buffer = new UnsafeBuffer();
     @Getter
     private final AsciiSequenceView string = new AsciiSequenceView();
@@ -55,8 +56,35 @@ public class Tokenizer {
         }
     }
 
-    public static <T> BiConsumer<Tokenizer, T> skipOne() {
-        return (t, u) -> t.next();
+    public static <T> BiConsumer<Tokenizer, T> skip() {
+        return (BiConsumer<Tokenizer, T>) SKIP_LAMBDA;
+    }
+
+    /**
+     * This method skips structure of any complexity
+     */
+    public void skipValue() {
+        int startArrayCount = 0;
+        int endArrayCount = 0;
+        int startObjectCount = 0;
+        int endObjectCount = 0;
+        do {
+            final Token token = next();
+            switch (token) {
+                case START_ARRAY:
+                    startArrayCount++;
+                    break;
+                case END_ARRAY:
+                    endArrayCount++;
+                    break;
+                case START_OBJECT:
+                    startObjectCount++;
+                    break;
+                case END_OBJECT:
+                    endObjectCount++;
+                    break;
+            }
+        } while (startArrayCount > endArrayCount || startObjectCount > endObjectCount);
     }
 
     public void wrap(ByteBuffer byteBuffer) {
@@ -260,7 +288,6 @@ public class Tokenizer {
     }
 
     public DecimalFloat decimalFloatFromString() {
-//        return decimalFloat.fromString(string);
         parseNumber(string, decimalFloat);
         return decimalFloat;
     }

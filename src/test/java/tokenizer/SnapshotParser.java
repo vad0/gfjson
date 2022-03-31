@@ -8,7 +8,7 @@ public class SnapshotParser {
             "lastUpdateId", BinanceParser::parseEventTime,
             "bids", BinanceParser::parseBid,
             "asks", BinanceParser::parseAsk),
-            Tokenizer.skipOne());
+            Tokenizer.skip());
 
     public static void parseSnapshot(Tokenizer tokenizer, L2Update snapshot) {
         BinanceParser.parseUpdate(tokenizer, snapshot, ACTIONS);

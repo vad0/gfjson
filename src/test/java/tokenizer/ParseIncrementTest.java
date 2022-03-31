@@ -9,7 +9,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ParseIncrementTest {
     @Test
     public void parseIncrement() {
-        String str = TokenizerTest.readFile("increment.json");
+        parseIncrement("increment.json");
+    }
+
+    @Test
+    public void parseIncrementUnused() {
+        parseIncrement("increment_unused.json");
+    }
+
+    private static void parseIncrement(String fileName) {
+        String str = TokenizerTest.readFile(fileName);
         var tokenizer = new Tokenizer();
         tokenizer.wrap(str);
 
