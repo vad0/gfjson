@@ -5,13 +5,13 @@ import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
 import org.apache.commons.collections4.trie.AsciiTrie;
 
-public class IncrementParser {
+public class SnapshotParser {
     private static final AsciiTrie<Field> TRIE = new AsciiTrie<>();
 
     static {
-        TRIE.put(string2view("E"), Field.EVENT_TIME);
-        TRIE.put(string2view("b"), Field.BID);
-        TRIE.put(string2view("a"), Field.ASK);
+        TRIE.put(string2view("lastUpdateId"), Field.EVENT_TIME);
+        TRIE.put(string2view("bids"), Field.BID);
+        TRIE.put(string2view("asks"), Field.ASK);
     }
 
     public static AsciiSequenceView string2view(final String string) {
@@ -56,7 +56,7 @@ public class IncrementParser {
         return tokenizer.next();
     }
 
-    public static void parseIncrement(Tokenizer tokenizer, L2Update increment) {
+    public static void parseSnapshot(Tokenizer tokenizer, L2Update increment) {
         increment.clear();
         Token token = tokenizer.next();
         Token.START_OBJECT.checkToken(token);

@@ -11,9 +11,10 @@ public class L2Side {
         addQuote(quote.price, quote.size);
     }
 
-    public void addQuote(final double price, final double size) {
+    public L2Side addQuote(final double price, final double size) {
         list.addLong(Double.doubleToLongBits(price));
         list.addLong(Double.doubleToLongBits(size));
+        return this;
     }
 
     public void clear(){

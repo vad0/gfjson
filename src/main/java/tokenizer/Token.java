@@ -12,6 +12,8 @@ public enum Token {
     END;
 
     public void checkToken(Token token) {
-        assert token == this : token;
+        if (Tokenizer.APPLY_CHECKS) {
+            assert token == this : token;
+        }
     }
 }

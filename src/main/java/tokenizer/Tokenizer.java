@@ -9,6 +9,7 @@ import uk.co.real_logic.artio.fields.DecimalFloat;
 import java.nio.ByteBuffer;
 
 public class Tokenizer {
+    public static final boolean APPLY_CHECKS = false;
     private static final char[] SKIP = new char[]{' ', '\n', ':', ','};
     private final DirectBuffer buffer = new UnsafeBuffer();
     @Getter
@@ -152,6 +153,50 @@ public class Tokenizer {
         throw new RuntimeException();
     }
 
+    private static void parseNumber(AsciiSequenceView view, DecimalFloat number) {
+        // universal and simple way of doing it is calling 'decimalFloat.fromString(string)', but we want to do it faster
+        var buffer = view.buffer();
+        int offset = view.offset();
+        int end = offset + view.length();
+        char first = (char) buffer.getByte(offset++);
+
+        int sign;
+        long mantissa;
+        if (first == '-') {
+            sign = -1;
+            mantissa = 0;
+        } else {
+            sign = 1;
+            mantissa = getLongFromChar(first);
+        }
+        // before dot
+        while (offset < end) {
+            char next = (char) buffer.getByte(offset++);
+            if (isDigit(next)) {
+                mantissa = mantissa * 10 + getLongFromChar(next);
+                continue;
+            }
+            if (next == '.') {
+                break;
+            }
+            throw new RuntimeException();
+        }
+        // after dot
+        int exponent = 0;
+        for (int i = offset; i < end; i++) {
+            char next = (char) buffer.getByte(i);
+            if (isDigit(next)) {
+                mantissa = mantissa * 10 + getLongFromChar(next);
+                exponent++;
+            } else {
+                throw new RuntimeException();
+            }
+        }
+        // It is recommended to call number.set(sign * mantissa, exponent), but we want to do it faster
+        number.value(sign * mantissa);
+        number.scale(exponent);
+    }
+
     private static boolean shouldSkip(char next) {
         for (char c : SKIP) {
             if (c == next) {
@@ -178,7 +223,9 @@ public class Tokenizer {
     }
 
     public DecimalFloat decimalFloatFromString() {
-        return decimalFloat.fromString(string);
+//        return decimalFloat.fromString(string);
+        parseNumber(string, decimalFloat);
+        return decimalFloat;
     }
 
     public double doubleFromString() {
