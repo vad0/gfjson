@@ -24,6 +24,20 @@ public class Tokenizer {
     private boolean bool;
 
     /**
+     * Parse array of uniform values, e.g. quotes. This method is not suitable if e.g. first element of array is price
+     * and second is size.
+     */
+    public <T> void parseArray(T structure, final ParseArrayElement<T> parseArrayElement) {
+        Token token = next();
+        Token.START_ARRAY.checkToken(token);
+        token = next();
+        while (token != Token.END_ARRAY) {
+            parseArrayElement.parseElement(this, structure, token);
+            token = next();
+        }
+    }
+
+    /**
      * @param actions   map of actions which should be taken when certain keys are encountered
      * @param structure to fill
      */

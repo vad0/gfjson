@@ -3,7 +3,7 @@ package tokenizer;
 import java.util.function.BiConsumer;
 
 public class BinanceParser {
-    static final ParseArray<L2Side> PARSE_QUOTE = BinanceParser::parseQuote;
+    static final ParseArrayElement<L2Side> PARSE_QUOTE = BinanceParser::parseQuote;
 
     public static void parseQuote(Tokenizer tokenizer, L2Side side, Token startToken) {
         Token.START_ARRAY.checkToken(startToken);
@@ -34,10 +34,10 @@ public class BinanceParser {
     }
 
     static void parseBid(Tokenizer t, L2Update u) {
-       PARSE_QUOTE.parseArray(t, u.sides.getBid());
-   }
+        t.parseArray(u.sides.getBid(), PARSE_QUOTE);
+    }
 
     public static void parseAsk(Tokenizer t, L2Update u) {
-        PARSE_QUOTE.parseArray(t, u.sides.getAsk());
+        t.parseArray(u.sides.getAsk(), PARSE_QUOTE);
     }
 }
