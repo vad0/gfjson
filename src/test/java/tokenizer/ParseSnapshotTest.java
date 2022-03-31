@@ -51,7 +51,7 @@ public class ParseSnapshotTest {
             tokenizer.wrap(str);
             SnapshotParser.parseSnapshot(tokenizer, update);
             final long end = System.nanoTime();
-            if (i % 1000_000 == 0) {
+            if (i % 10_000 == 0) {
                 System.out.println(end - start);
                 Thread.sleep(1);
             }

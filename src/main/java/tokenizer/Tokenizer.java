@@ -7,9 +7,10 @@ import org.agrona.concurrent.UnsafeBuffer;
 import uk.co.real_logic.artio.fields.DecimalFloat;
 
 import java.nio.ByteBuffer;
+import java.util.function.BiConsumer;
 
 public class Tokenizer {
-    public static final boolean APPLY_CHECKS = false;
+    public static final boolean APPLY_CHECKS = true;
     private static final char[] SKIP = new char[]{' ', '\n', ':', ','};
     private final DirectBuffer buffer = new UnsafeBuffer();
     @Getter
@@ -21,6 +22,24 @@ public class Tokenizer {
      */
     private int offset;
     private boolean bool;
+
+    /**
+     * @param actions   map of actions which should be taken when certain keys are encountered
+     * @param structure to fill
+     */
+    public <T> void parseStruct(KeyMap<BiConsumer<Tokenizer, T>> actions, T structure) {
+        Token token = next();
+        Token.START_OBJECT.checkToken(token);
+        while (true) {
+            token = next();
+            if (token == Token.END_OBJECT) {
+                break;
+            }
+            Token.STRING.checkToken(token);
+            var key = actions.getKey(getString());
+            key.accept(this, structure);
+        }
+    }
 
     public void wrap(ByteBuffer byteBuffer) {
         buffer.wrap(byteBuffer);
