@@ -10,7 +10,8 @@ import java.nio.ByteBuffer;
 import java.util.function.BiConsumer;
 
 public class Tokenizer {
-    public static final boolean APPLY_CHECKS = true;
+    // By default checks are applied, but they can be switched of by providing a system property
+    public static final boolean APPLY_CHECKS = !Boolean.getBoolean("omit_checks");
     private static final char[] SKIP = new char[]{' ', '\n', ':', ','};
     private static final BiConsumer<Tokenizer, ?> SKIP_LAMBDA = (t, u) -> t.skipValue();
     private final DirectBuffer buffer = new UnsafeBuffer();
