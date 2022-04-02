@@ -51,8 +51,8 @@ public class AsciiKeyAnalyser
     {
         boolean allNull = true;
 
-        if (offsetInBits % LENGTH != 0 || otherOffsetInBits % LENGTH != 0
-            || lengthInBits % LENGTH != 0 || otherLengthInBits % LENGTH != 0)
+        if (offsetInBits % LENGTH != 0 || otherOffsetInBits % LENGTH != 0 ||
+            lengthInBits % LENGTH != 0 || otherLengthInBits % LENGTH != 0)
         {
             throw new IllegalArgumentException("The offsets and lengths must be at Character boundaries");
         }

@@ -9,26 +9,30 @@ import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 @State(Scope.Benchmark)
-public class Bench {
+public class Bench
+{
     private final Tokenizer tokenizer = new Tokenizer();
     private final L2Update update = new L2Update();
     private String message;
 
     @Setup
-    public void setup() throws IOException {
+    public void setup() throws IOException
+    {
         message = readFile("big_increment.json");
     }
 
-    static String readFile(final String fileName) throws IOException {
+    static String readFile(final String fileName) throws IOException
+    {
         final Path path = Paths.get("/home/vadim/IdeaProjects/gfjson/src/test/resources")
-                .resolve(fileName);
+            .resolve(fileName);
         return Files.readString(path);
     }
 
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    public void parseIncrement() {
+    public void parseIncrement()
+    {
         tokenizer.wrap(message);
         IncrementParser.parseIncrement(tokenizer, update);
     }

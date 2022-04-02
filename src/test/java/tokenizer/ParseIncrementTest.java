@@ -6,20 +6,24 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ParseIncrementTest {
+public class ParseIncrementTest
+{
     @Test
-    public void parseIncrement() {
+    public void parseIncrement()
+    {
         parseIncrement("increment.json");
     }
 
     @Test
-    public void parseIncrementUnused() {
+    public void parseIncrementUnused()
+    {
         parseIncrement("increment_unused.json");
     }
 
-    private static void parseIncrement(String fileName) {
-        String str = TokenizerTest.readFile(fileName);
-        var tokenizer = new Tokenizer();
+    private static void parseIncrement(final String fileName)
+    {
+        final String str = TokenizerTest.readFile(fileName);
+        final var tokenizer = new Tokenizer();
         tokenizer.wrap(str);
 
         final L2Update expected = new L2Update();
@@ -36,29 +40,34 @@ public class ParseIncrementTest {
     @SneakyThrows
     @Disabled
     @Test
-    public void parseBigIncrement() {
+    public void parseBigIncrement()
+    {
         measureParseIncrement("big_increment.json");
     }
 
     @SneakyThrows
     @Disabled
     @Test
-    public void parseSmallIncrement() {
+    public void parseSmallIncrement()
+    {
         measureParseIncrement("increment.json");
     }
 
     @SneakyThrows
-    public void measureParseIncrement(final String fileName) {
-        String str = TokenizerTest.readFile(fileName);
-        var tokenizer = new Tokenizer();
+    public static void measureParseIncrement(final String fileName)
+    {
+        final String str = TokenizerTest.readFile(fileName);
+        final var tokenizer = new Tokenizer();
 
         final L2Update update = new L2Update();
-        for (int i = 0; i < 1000_000_000; i++) {
+        for (int i = 0; i < 1000_000_000; i++)
+        {
             final long start = System.nanoTime();
             tokenizer.wrap(str);
             IncrementParser.parseIncrement(tokenizer, update);
             final long end = System.nanoTime();
-            if (i % 100_000 == 0) {
+            if (i % 100_000 == 0)
+            {
                 System.out.println(end - start);
                 Thread.sleep(1);
             }

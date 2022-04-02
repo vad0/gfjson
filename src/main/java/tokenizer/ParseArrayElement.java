@@ -1,6 +1,7 @@
 package tokenizer;
 
-interface ParseArrayElement<T> {
+interface ParseArrayElement<T>
+{
     /**
      * @param structure  to fill
      * @param firstToken is parsed outside
