@@ -10,11 +10,13 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class TokenizerTest {
+class TokenizerTest
+{
     @Test
-    public void parseIncrement() {
-        String str = readFile("increment.json");
-        var tokenizer = new Tokenizer();
+    public void parseIncrement()
+    {
+        final String str = readFile("increment.json");
+        final var tokenizer = new Tokenizer();
         tokenizer.wrap(str);
 
         checkStartObject(tokenizer);
@@ -47,9 +49,10 @@ class TokenizerTest {
     }
 
     @Test
-    public void parseCar() {
-        String str = readFile("car.json");
-        var tokenizer = new Tokenizer();
+    public void parseCar()
+    {
+        final String str = readFile("car.json");
+        final var tokenizer = new Tokenizer();
         tokenizer.wrap(str);
 
         checkStartObject(tokenizer);
@@ -72,51 +75,61 @@ class TokenizerTest {
         checkEnd(tokenizer);
     }
 
-    private static void checkStartArray(Tokenizer tokenizer) {
+    private static void checkStartArray(final Tokenizer tokenizer)
+    {
         assertEquals(Token.START_ARRAY, tokenizer.next());
     }
 
-    private static void checkEnd(Tokenizer tokenizer) {
+    private static void checkEnd(final Tokenizer tokenizer)
+    {
         assertEquals(Token.END, tokenizer.next());
     }
 
-    private static void checkEndObject(Tokenizer tokenizer) {
+    private static void checkEndObject(final Tokenizer tokenizer)
+    {
         assertEquals(Token.END_OBJECT, tokenizer.next());
     }
 
-    private static void checkEndArray(Tokenizer tokenizer) {
+    private static void checkEndArray(final Tokenizer tokenizer)
+    {
         assertEquals(Token.END_ARRAY, tokenizer.next());
     }
 
-    private static void checkStartObject(Tokenizer tokenizer) {
+    private static void checkStartObject(final Tokenizer tokenizer)
+    {
         assertEquals(Token.START_OBJECT, tokenizer.next());
     }
 
     @SneakyThrows
-    static String readFile(final String fileName) {
+    static String readFile(final String fileName)
+    {
         final Path relative = Paths.get("src", "test", "resources", fileName);
         final Path absolute = relative.toAbsolutePath();
         return Files.readString(absolute);
     }
 
-    private static void checkLong(Tokenizer tokenizer, final int expected) {
+    private static void checkLong(final Tokenizer tokenizer, final int expected)
+    {
         assertEquals(Token.LONG, tokenizer.next());
         assertEquals(expected, tokenizer.getLong());
     }
 
-    private static void checkBoolean(Tokenizer tokenizer, final boolean expected) {
+    private static void checkBoolean(final Tokenizer tokenizer, final boolean expected)
+    {
         assertEquals(Token.BOOLEAN, tokenizer.next());
         assertEquals(expected, tokenizer.getBoolean());
     }
 
-    private static void checkFloat(Tokenizer tokenizer, final long expectedMantissa, final int expectedExponent) {
+    private static void checkFloat(final Tokenizer tokenizer, final long expectedMantissa, final int expectedExponent)
+    {
         assertEquals(Token.FLOAT, tokenizer.next());
         final DecimalFloat decimalFloat = tokenizer.getDecimalFloat();
         assertEquals(expectedMantissa, decimalFloat.value());
         assertEquals(expectedExponent, decimalFloat.scale());
     }
 
-    private static void checkString(Tokenizer tokenizer, final String expected) {
+    private static void checkString(final Tokenizer tokenizer, String expected)
+    {
         assertEquals(Token.STRING, tokenizer.next());
         assertEquals(expected, tokenizer.getString().toString());
     }

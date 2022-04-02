@@ -1,6 +1,7 @@
 package tokenizer;
 
-public class Quote {
+public class Quote
+{
     double price;
     double size;
 }

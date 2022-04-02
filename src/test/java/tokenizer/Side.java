@@ -1,6 +1,7 @@
 package tokenizer;
 
-public enum Side {
+public enum Side
+{
     BID,
     ASK
 }

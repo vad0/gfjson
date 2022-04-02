@@ -1,6 +1,7 @@
 package tokenizer;
 
-public enum Token {
+public enum Token
+{
     START_OBJECT,
     END_OBJECT,
     START_ARRAY,
@@ -11,8 +12,10 @@ public enum Token {
     FLOAT,
     END;
 
-    public void checkToken(Token token) {
-        if (Tokenizer.APPLY_CHECKS) {
+    public void checkToken(final Token token)
+    {
+        if (Tokenizer.APPLY_CHECKS)
+        {
             assert token == this : token;
         }
     }

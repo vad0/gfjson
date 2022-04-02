@@ -1,8 +1,10 @@
 plugins {
     id "java"
-    // don"t upgrade it to 0.5.1!!!
+    id 'checkstyle'
     id "me.champeau.gradle.jmh" version "0.5.0"
 }
+
+apply plugin: 'checkstyle'
 
 group "org.example"
 version "1.0-SNAPSHOT"
