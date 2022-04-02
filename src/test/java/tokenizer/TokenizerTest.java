@@ -128,7 +128,7 @@ class TokenizerTest
         assertEquals(expectedExponent, decimalFloat.scale());
     }
 
-    private static void checkString(final Tokenizer tokenizer, String expected)
+    private static void checkString(final Tokenizer tokenizer, final String expected)
     {
         assertEquals(Token.STRING, tokenizer.next());
         assertEquals(expected, tokenizer.getString().toString());
