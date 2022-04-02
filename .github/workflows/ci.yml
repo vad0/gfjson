@@ -31,6 +31,3 @@ jobs:
 
       - name: Checkstyle
         run: gradle check
-
-      - name: Execute Gradle build
-        run: gradle test
