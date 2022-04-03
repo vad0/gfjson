@@ -1,6 +1,6 @@
 # gfjson
 
-Every API should be as simple as possible. But not simpler.
+Every API should be as simple as possible. But not simpler. (c) Otto von Bismarck
 
 This is a garbage free JSON parser. It is not even a proper parser, it is a de. It is based on real logic tools.
 API may not look familiar and friendly, but it is really fast. It is similar to using JsonParser from Jackson, but
