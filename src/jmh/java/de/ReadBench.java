@@ -1,4 +1,4 @@
-package tokenizer;
+package de;
 
 import org.openjdk.jmh.annotations.*;
 
@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 @State(Scope.Benchmark)
-public class Bench
+public class ReadBench
 {
     private final Tokenizer tokenizer = new Tokenizer();
     private final L2Update update = new L2Update();

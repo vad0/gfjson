@@ -1,4 +1,4 @@
-package tokenizer;
+package de;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Disabled;
