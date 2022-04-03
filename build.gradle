@@ -15,7 +15,7 @@ repositories {
 
 String lombok = "org.projectlombok:lombok:1.18.22"
 dependencies {
-    implementation "org.agrona:agrona:1.14.0"
+    implementation "org.agrona:agrona:1.15.0"
     implementation "uk.co.real-logic:artio-codecs:0.124"
     implementation group: "org.apache.commons", name: "commons-collections4", version: "4.4"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
