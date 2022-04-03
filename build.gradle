@@ -20,6 +20,8 @@ dependencies {
     implementation group: "org.apache.commons", name: "commons-collections4", version: "4.4"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    testImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2.2'
     implementation lombok
     annotationProcessor lombok
     testImplementation lombok
@@ -35,7 +37,7 @@ test {
 
 jmh {
 //    jvmArgs = []
-//    includes = ["Snapshot*"]
+//    includes = ["Write*"]
     fork = 1
     warmupIterations = 3
     iterations = 5
@@ -43,6 +45,7 @@ jmh {
 //    benchmarkMode = ["all"]
     timeUnit = "ns"
     failOnError = true
+    duplicateClassesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 jmhJar { duplicatesStrategy(DuplicatesStrategy.INCLUDE) }

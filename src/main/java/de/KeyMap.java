@@ -1,4 +1,4 @@
-package tokenizer;
+package de;
 
 import org.agrona.AsciiSequenceView;
 import org.agrona.DirectBuffer;

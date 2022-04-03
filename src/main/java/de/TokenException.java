@@ -1,4 +1,4 @@
-package tokenizer;
+package de;
 
 public class TokenException extends RuntimeException
 {

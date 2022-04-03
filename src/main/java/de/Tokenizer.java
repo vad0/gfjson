@@ -1,4 +1,4 @@
-package tokenizer;
+package de;
 
 import lombok.Getter;
 import org.agrona.AsciiSequenceView;

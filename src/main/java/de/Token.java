@@ -1,4 +1,4 @@
-package tokenizer;
+package de;
 
 public enum Token
 {
