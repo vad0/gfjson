@@ -13,7 +13,7 @@ repositories {
     mavenCentral()
 }
 
-String lombok = "org.projectlombok:lombok:1.18.20"
+String lombok = "org.projectlombok:lombok:1.18.22"
 dependencies {
     implementation "org.agrona:agrona:1.14.0"
     implementation "uk.co.real-logic:artio-codecs:0.124"
