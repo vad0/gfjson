@@ -23,7 +23,7 @@ public class IncrementParser
         return new KeyMap<>(actions, JsonDecoder.skip());
     }
 
-    public static void parseIncrement(final JsonDecoder jsonDecoder, final L2Update increment)
+    public static void parseIncrementGfJson(final JsonDecoder jsonDecoder, final L2Update increment)
     {
         BinanceParser.parseUpdate(jsonDecoder, increment, ACTIONS);
     }
