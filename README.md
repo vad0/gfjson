@@ -25,4 +25,4 @@ ser.WriteDummy.jackson                avgt    5    571.487 ±   17.395  ns/op
 ```
 
 We see that parsing is approximately 2 times faster than 'readTree' approach of jackson and about 40% faster than
-token-by-token parsing by jackson parser. Writing jsons to wire is about 4 timex faster than via jackson.
+token-by-token parsing by jackson parser. Writing jsons to wire is about 4 times faster than via jackson.
