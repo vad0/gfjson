@@ -2,6 +2,8 @@ package de;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import lombok.SneakyThrows;
 
 import java.util.Map;
@@ -72,5 +74,26 @@ public class JacksonIncrementParser
     {
         update.clear();
         JacksonUtils.parseStruct(jsonDecoder, actions, update);
+    }
+
+    @SneakyThrows
+    public static void parseIncrementTree(final ObjectMapper mapper, final String string, final L2Update update)
+    {
+        final var tree = mapper.readTree(string);
+        update.clear();
+        update.timestamp = tree.get(EVENT_TIME).longValue();
+        fillSide((ArrayNode)tree.get(BIDS), update.sides.getBid());
+        fillSide((ArrayNode)tree.get(ASKS), update.sides.getAsk());
+    }
+
+    private static void fillSide(final ArrayNode quotes, final L2Side side)
+    {
+        for (final var quote : quotes)
+        {
+            final ArrayNode quoteArray = (ArrayNode)quote;
+            final double price = quoteArray.get(0).asDouble();
+            final double size = quoteArray.get(1).asDouble();
+            side.addQuote(price, size);
+        }
     }
 }
