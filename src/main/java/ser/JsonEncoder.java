@@ -11,6 +11,8 @@ import java.util.function.BiConsumer;
 
 public class JsonEncoder
 {
+    private static final String TRUE = "true";
+    private static final String FALSE = "false";
     private final MutableAsciiBuffer buffer = new MutableAsciiBuffer();
     private final DecimalFloat decimalFloat = new DecimalFloat();
     @Getter
@@ -132,6 +134,7 @@ public class JsonEncoder
      */
     private void putRawString(final String str)
     {
+        // We can't use buffer.putStringAscii(offset, str) since it adds length prefix
         final int length = str.length();
         for (int i = 0; i < length; i++)
         {
@@ -141,38 +144,8 @@ public class JsonEncoder
 
     public void putLong(final long value)
     {
-        if (value == 0)
-        {
-            putChar('0');
-            return;
-        }
-
-        // Handle zero
-        long v = value;
-        if (v < 0)
-        {
-            putChar('-');
-            v = -v;
-        }
-
-        // We don't know how many digits will we have to write. So we write them one by one in the reverse order.
-        final int startOffset = offset;
-        while (v > 0)
-        {
-            putChar((char)('0' + v % 10));
-            v /= 10;
-        }
-        // We have to reverse the order of the written digits
-        final int n = (offset - startOffset) / 2;
-        for (int i = 0; i < n; i++)
-        {
-            final int so = startOffset + i;
-            final int eo = offset - 1 - i;
-            final byte start = buffer.getByte(so);
-            final byte end = buffer.getByte(eo);
-            buffer.putByte(so, end);
-            buffer.putByte(eo, start);
-        }
+        final int encodedLength = buffer.putLongAscii(offset, value);
+        offset += encodedLength;
     }
 
     public void putDouble(final double value)
@@ -191,11 +164,11 @@ public class JsonEncoder
     {
         if (value)
         {
-            putRawString("true");
+            putRawString(TRUE);
         }
         else
         {
-            putRawString("false");
+            putRawString(FALSE);
         }
     }
 
