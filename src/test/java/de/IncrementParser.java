@@ -5,19 +5,26 @@ import java.util.function.BiConsumer;
 
 public class IncrementParser
 {
-    private static final KeyMap<BiConsumer<Tokenizer, L2Update>> ACTIONS = initKeyMap();
+    public static final String EVENT_TYPE = "e";
+    public static final String SYMBOL = "s";
+    public static final String EVENT_TIME = "E";
+    public static final String FIRST_UPDATE_ID = "U";
+    public static final String LAST_UPDATE_ID = "u";
+    public static final String BIDS = "b";
+    public static final String ASKS = "a";
+    private static final KeyMap<BiConsumer<JsonDecoder, L2Update>> ACTIONS = initKeyMap();
 
-    private static KeyMap<BiConsumer<Tokenizer, L2Update>> initKeyMap()
+    private static KeyMap<BiConsumer<JsonDecoder, L2Update>> initKeyMap()
     {
-        final Map<String, BiConsumer<Tokenizer, L2Update>> actions = Map.of(
-            "E", BinanceParser::parseEventTime,
-            "b", BinanceParser::parseBid,
-            "a", BinanceParser::parseAsk);
-        return new KeyMap<>(actions, Tokenizer.skip());
+        final Map<String, BiConsumer<JsonDecoder, L2Update>> actions = Map.of(
+            EVENT_TIME, BinanceParser::parseEventTime,
+            BIDS, BinanceParser::parseBid,
+            ASKS, BinanceParser::parseAsk);
+        return new KeyMap<>(actions, JsonDecoder.skip());
     }
 
-    public static void parseIncrement(final Tokenizer tokenizer, final L2Update increment)
+    public static void parseIncrement(final JsonDecoder jsonDecoder, final L2Update increment)
     {
-        BinanceParser.parseUpdate(tokenizer, increment, ACTIONS);
+        BinanceParser.parseUpdate(jsonDecoder, increment, ACTIONS);
     }
 }

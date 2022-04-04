@@ -1,22 +1,18 @@
 package de;
 
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import uk.co.real_logic.artio.fields.DecimalFloat;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import utils.Utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class TokenizerTest
+class JsonDecoderTest
 {
     @Test
     public void parseIncrement()
     {
-        final String str = readFile("increment.json");
-        final var tokenizer = new Tokenizer();
+        final String str = Utils.readFile("increment.json");
+        final var tokenizer = new JsonDecoder();
         tokenizer.wrap(str);
 
         checkStartObject(tokenizer);
@@ -51,8 +47,8 @@ class TokenizerTest
     @Test
     public void parseCar()
     {
-        final String str = readFile("car.json");
-        final var tokenizer = new Tokenizer();
+        final String str = Utils.readFile("car.json");
+        final var tokenizer = new JsonDecoder();
         tokenizer.wrap(str);
 
         checkStartObject(tokenizer);
@@ -75,62 +71,57 @@ class TokenizerTest
         checkEnd(tokenizer);
     }
 
-    private static void checkStartArray(final Tokenizer tokenizer)
+    private static void checkStartArray(final JsonDecoder jsonDecoder)
     {
-        assertEquals(Token.START_ARRAY, tokenizer.next());
+        assertEquals(Token.START_ARRAY, jsonDecoder.next());
     }
 
-    private static void checkEnd(final Tokenizer tokenizer)
+    private static void checkEnd(final JsonDecoder jsonDecoder)
     {
-        assertEquals(Token.END, tokenizer.next());
+        assertEquals(Token.END, jsonDecoder.next());
     }
 
-    private static void checkEndObject(final Tokenizer tokenizer)
+    private static void checkEndObject(final JsonDecoder jsonDecoder)
     {
-        assertEquals(Token.END_OBJECT, tokenizer.next());
+        assertEquals(Token.END_OBJECT, jsonDecoder.next());
     }
 
-    private static void checkEndArray(final Tokenizer tokenizer)
+    private static void checkEndArray(final JsonDecoder jsonDecoder)
     {
-        assertEquals(Token.END_ARRAY, tokenizer.next());
+        assertEquals(Token.END_ARRAY, jsonDecoder.next());
     }
 
-    private static void checkStartObject(final Tokenizer tokenizer)
+    private static void checkStartObject(final JsonDecoder jsonDecoder)
     {
-        assertEquals(Token.START_OBJECT, tokenizer.next());
+        assertEquals(Token.START_OBJECT, jsonDecoder.next());
     }
 
-    @SneakyThrows
-    static String readFile(final String fileName)
+    private static void checkLong(final JsonDecoder jsonDecoder, final int expected)
     {
-        final Path relative = Paths.get("src", "test", "resources", fileName);
-        final Path absolute = relative.toAbsolutePath();
-        return Files.readString(absolute);
+        assertEquals(Token.LONG, jsonDecoder.next());
+        assertEquals(expected, jsonDecoder.getLong());
     }
 
-    private static void checkLong(final Tokenizer tokenizer, final int expected)
+    private static void checkBoolean(final JsonDecoder jsonDecoder, final boolean expected)
     {
-        assertEquals(Token.LONG, tokenizer.next());
-        assertEquals(expected, tokenizer.getLong());
+        assertEquals(Token.BOOLEAN, jsonDecoder.next());
+        assertEquals(expected, jsonDecoder.getBoolean());
     }
 
-    private static void checkBoolean(final Tokenizer tokenizer, final boolean expected)
+    private static void checkFloat(
+        final JsonDecoder jsonDecoder,
+        final long expectedMantissa,
+        final int expectedExponent)
     {
-        assertEquals(Token.BOOLEAN, tokenizer.next());
-        assertEquals(expected, tokenizer.getBoolean());
-    }
-
-    private static void checkFloat(final Tokenizer tokenizer, final long expectedMantissa, final int expectedExponent)
-    {
-        assertEquals(Token.FLOAT, tokenizer.next());
-        final DecimalFloat decimalFloat = tokenizer.getDecimalFloat();
+        assertEquals(Token.FLOAT, jsonDecoder.next());
+        final DecimalFloat decimalFloat = jsonDecoder.getDecimalFloat();
         assertEquals(expectedMantissa, decimalFloat.value());
         assertEquals(expectedExponent, decimalFloat.scale());
     }
 
-    private static void checkString(final Tokenizer tokenizer, final String expected)
+    private static void checkString(final JsonDecoder jsonDecoder, final String expected)
     {
-        assertEquals(Token.STRING, tokenizer.next());
-        assertEquals(expected, tokenizer.getString().toString());
+        assertEquals(Token.STRING, jsonDecoder.next());
+        assertEquals(expected, jsonDecoder.getString().toString());
     }
 }

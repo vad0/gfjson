@@ -9,27 +9,62 @@ import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class GfEncoder
+public class JsonEncoder
 {
+    private static final String TRUE = "true";
+    private static final String FALSE = "false";
     private final MutableAsciiBuffer buffer = new MutableAsciiBuffer();
     private final DecimalFloat decimalFloat = new DecimalFloat();
     @Getter
     private int offset = 0;
 
+    public void putDoubleAsString(final double value)
+    {
+        putQuote();
+        putDouble(value);
+        putQuote();
+    }
+
+    public <E, A> void encodeArray(
+        final A array,
+        final int arraySize,
+        final E element,
+        final FillElement<A, E> fillElement,
+        final BiConsumer<JsonEncoder, E> encodeElement)
+    {
+        startArray();
+        if (arraySize == 0)
+        {
+            endArray();
+            return;
+        }
+        fillElement.fillElement(array, 0, element);
+        encodeElement.accept(this, element);
+        for (int i = 1; i < arraySize; i++)
+        {
+            putComma();
+            fillElement.fillElement(array, i, element);
+            encodeElement.accept(this, element);
+        }
+        endArray();
+    }
+
     public <T> void encodeArray(
-        final BiConsumer<GfEncoder, T> encodeElement,
+        final BiConsumer<JsonEncoder, T> encodeElement,
         final List<T> array)
     {
         startArray();
         final int size = array.size();
-        if (size > 0)
+        if (size == 0)
         {
-            encodeElement.accept(this, array.get(0));
-            for (int i = 1; i < size; i++)
-            {
-                putComma();
-                encodeElement.accept(this, array.get(i));
-            }
+            endArray();
+            return;
+        }
+        encodeElement.accept(this, array.get(0));
+        for (int i = 1; i < size; i++)
+        {
+            putComma();
+            encodeElement.accept(this, array.get(i));
         }
         endArray();
     }
@@ -82,7 +117,7 @@ public class GfEncoder
         putChar(',');
     }
 
-    private void putQuote()
+    public void putQuote()
     {
         putChar('"');
     }
@@ -99,6 +134,7 @@ public class GfEncoder
      */
     private void putRawString(final String str)
     {
+        // We can't use buffer.putStringAscii(offset, str) since it adds length prefix
         final int length = str.length();
         for (int i = 0; i < length; i++)
         {
@@ -108,38 +144,8 @@ public class GfEncoder
 
     public void putLong(final long value)
     {
-        if (value == 0)
-        {
-            putChar('0');
-            return;
-        }
-
-        // Handle zero
-        long v = value;
-        if (v < 0)
-        {
-            putChar('-');
-            v = -v;
-        }
-
-        // We don't know how many digits will we have to write. So we write them one by one in the reverse order.
-        final int startOffset = offset;
-        while (v > 0)
-        {
-            putChar((char)('0' + v % 10));
-            v /= 10;
-        }
-        // We have to reverse the order of the written digits
-        final int n = (offset - startOffset) / 2;
-        for (int i = 0; i < n; i++)
-        {
-            final int so = startOffset + i;
-            final int eo = offset - 1 - i;
-            final byte start = buffer.getByte(so);
-            final byte end = buffer.getByte(eo);
-            buffer.putByte(so, end);
-            buffer.putByte(eo, start);
-        }
+        final int encodedLength = buffer.putLongAscii(offset, value);
+        offset += encodedLength;
     }
 
     public void putDouble(final double value)
@@ -158,11 +164,11 @@ public class GfEncoder
     {
         if (value)
         {
-            putRawString("true");
+            putRawString(TRUE);
         }
         else
         {
-            putRawString("false");
+            putRawString(FALSE);
         }
     }
 

@@ -9,12 +9,12 @@ import uk.co.real_logic.artio.fields.DecimalFloat;
 import java.nio.ByteBuffer;
 import java.util.function.BiConsumer;
 
-public class Tokenizer
+public class JsonDecoder
 {
     // By default checks are applied, but they can be switched of by providing a system property
     public static final boolean APPLY_CHECKS = !Boolean.getBoolean("omit_checks");
     private static final char[] SKIP = new char[]{' ', '\n', ':', ','};
-    private static final BiConsumer<Tokenizer, ?> SKIP_LAMBDA = (t, u) -> t.skipValue();
+    private static final BiConsumer<JsonDecoder, ?> SKIP_LAMBDA = (t, u) -> t.skipValue();
     private final DirectBuffer buffer = new UnsafeBuffer();
     @Getter
     private final AsciiSequenceView string = new AsciiSequenceView();
@@ -46,7 +46,7 @@ public class Tokenizer
      * @param actions   map of actions which should be taken when certain keys are encountered
      * @param structure to fill
      */
-    public <T> void parseStruct(final KeyMap<BiConsumer<Tokenizer, T>> actions, final T structure)
+    public <T> void parseStruct(final KeyMap<BiConsumer<JsonDecoder, T>> actions, final T structure)
     {
         Token token = next();
         Token.START_OBJECT.checkToken(token);
@@ -63,9 +63,9 @@ public class Tokenizer
         }
     }
 
-    public static <T> BiConsumer<Tokenizer, T> skip()
+    public static <T> BiConsumer<JsonDecoder, T> skip()
     {
-        return (BiConsumer<Tokenizer, T>)SKIP_LAMBDA;
+        return (BiConsumer<JsonDecoder, T>)SKIP_LAMBDA;
     }
 
     /**
