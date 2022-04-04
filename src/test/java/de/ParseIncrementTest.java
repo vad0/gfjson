@@ -3,6 +3,7 @@ package de;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import utils.Utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -22,8 +23,8 @@ public class ParseIncrementTest
 
     private static void parseIncrement(final String fileName)
     {
-        final String str = TokenizerTest.readFile(fileName);
-        final var tokenizer = new Tokenizer();
+        final String str = Utils.readFile(fileName);
+        final var tokenizer = new JsonDecoder();
         tokenizer.wrap(str);
 
         final L2Update expected = new L2Update();
@@ -56,8 +57,8 @@ public class ParseIncrementTest
     @SneakyThrows
     public static void measureParseIncrement(final String fileName)
     {
-        final String str = TokenizerTest.readFile(fileName);
-        final var tokenizer = new Tokenizer();
+        final String str = Utils.readFile(fileName);
+        final var tokenizer = new JsonDecoder();
 
         final L2Update update = new L2Update();
         for (int i = 0; i < 1000_000_000; i++)

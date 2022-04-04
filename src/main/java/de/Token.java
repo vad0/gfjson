@@ -14,7 +14,7 @@ public enum Token
 
     public void checkToken(final Token token)
     {
-        if (Tokenizer.APPLY_CHECKS)
+        if (JsonDecoder.APPLY_CHECKS)
         {
             assert token == this : token;
         }

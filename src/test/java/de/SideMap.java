@@ -50,4 +50,10 @@ public class SideMap<T>
     {
         return Objects.hash(bid, ask);
     }
+
+    @Override
+    public String toString()
+    {
+        return Side.BID + ": " + bid + ", " + Side.ASK + ": " + ask;
+    }
 }

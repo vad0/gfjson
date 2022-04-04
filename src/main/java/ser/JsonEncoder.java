@@ -9,27 +9,60 @@ import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class GfEncoder
+public class JsonEncoder
 {
     private final MutableAsciiBuffer buffer = new MutableAsciiBuffer();
     private final DecimalFloat decimalFloat = new DecimalFloat();
     @Getter
     private int offset = 0;
 
+    public void putDoubleAsString(final double value)
+    {
+        putQuote();
+        putDouble(value);
+        putQuote();
+    }
+
+    public <E, A> void encodeArray(
+        final A array,
+        final int arraySize,
+        final E element,
+        final FillElement<A, E> fillElement,
+        final BiConsumer<JsonEncoder, E> encodeElement)
+    {
+        startArray();
+        if (arraySize == 0)
+        {
+            endArray();
+            return;
+        }
+        fillElement.fillElement(array, 0, element);
+        encodeElement.accept(this, element);
+        for (int i = 1; i < arraySize; i++)
+        {
+            putComma();
+            fillElement.fillElement(array, i, element);
+            encodeElement.accept(this, element);
+        }
+        endArray();
+    }
+
     public <T> void encodeArray(
-        final BiConsumer<GfEncoder, T> encodeElement,
+        final BiConsumer<JsonEncoder, T> encodeElement,
         final List<T> array)
     {
         startArray();
         final int size = array.size();
-        if (size > 0)
+        if (size == 0)
         {
-            encodeElement.accept(this, array.get(0));
-            for (int i = 1; i < size; i++)
-            {
-                putComma();
-                encodeElement.accept(this, array.get(i));
-            }
+            endArray();
+            return;
+        }
+        encodeElement.accept(this, array.get(0));
+        for (int i = 1; i < size; i++)
+        {
+            putComma();
+            encodeElement.accept(this, array.get(i));
         }
         endArray();
     }
@@ -82,7 +115,7 @@ public class GfEncoder
         putChar(',');
     }
 
-    private void putQuote()
+    public void putQuote()
     {
         putChar('"');
     }

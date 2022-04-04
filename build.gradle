@@ -36,7 +36,7 @@ test {
 }
 
 jmh {
-//    jvmArgs = []
+    jvmArgs = ["-Djmh.ignoreLock=true"]
 //    includes = ["Write*"]
     fork = 1
     warmupIterations = 3

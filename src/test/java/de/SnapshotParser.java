@@ -5,19 +5,19 @@ import java.util.function.BiConsumer;
 
 public class SnapshotParser
 {
-    private static final KeyMap<BiConsumer<Tokenizer, L2Update>> ACTIONS = initKeyMap();
+    private static final KeyMap<BiConsumer<JsonDecoder, L2Update>> ACTIONS = initKeyMap();
 
-    private static KeyMap<BiConsumer<Tokenizer, L2Update>> initKeyMap()
+    private static KeyMap<BiConsumer<JsonDecoder, L2Update>> initKeyMap()
     {
-        final Map<String, BiConsumer<Tokenizer, L2Update>> actions = Map.of(
+        final Map<String, BiConsumer<JsonDecoder, L2Update>> actions = Map.of(
             "lastUpdateId", BinanceParser::parseEventTime,
             "bids", BinanceParser::parseBid,
             "asks", BinanceParser::parseAsk);
-        return new KeyMap<>(actions, Tokenizer.skip());
+        return new KeyMap<>(actions, JsonDecoder.skip());
     }
 
-    public static void parseSnapshot(final Tokenizer tokenizer, final L2Update snapshot)
+    public static void parseSnapshot(final JsonDecoder jsonDecoder, final L2Update snapshot)
     {
-        BinanceParser.parseUpdate(tokenizer, snapshot, ACTIONS);
+        BinanceParser.parseUpdate(jsonDecoder, snapshot, ACTIONS);
     }
 }

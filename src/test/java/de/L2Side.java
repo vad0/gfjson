@@ -3,6 +3,7 @@ package de;
 import org.agrona.collections.LongArrayList;
 
 import java.util.Objects;
+import java.util.StringJoiner;
 
 public class L2Side
 {
@@ -44,5 +45,34 @@ public class L2Side
     public int hashCode()
     {
         return Objects.hash(list);
+    }
+
+    public void getQuote(final Quote quote, final int index)
+    {
+        quote.price = Double.longBitsToDouble(list.getLong(index * 2));
+        quote.size = Double.longBitsToDouble(list.getLong(index * 2 + 1));
+    }
+
+    public boolean isEmpty()
+    {
+        return list.isEmpty();
+    }
+
+    public int size()
+    {
+        return list.size() / 2;
+    }
+
+    @Override
+    public String toString()
+    {
+        final StringJoiner joiner = new StringJoiner(", ");
+        final Quote quote = new Quote();
+        for (int i = 0; i < size(); i++)
+        {
+            getQuote(quote, i);
+            joiner.add("[" + quote.toString() + "]");
+        }
+        return "[" + joiner.toString() + "]";
     }
 }
