@@ -18,6 +18,6 @@ public class ReadBench
     public void parseIncrement()
     {
         jsonDecoder.wrap(message);
-        IncrementParser.parseIncrement(jsonDecoder, update);
+        IncrementParser.parseIncrementGfJson(jsonDecoder, update);
     }
 }

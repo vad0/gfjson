@@ -100,7 +100,7 @@ public class JsonEncoderTest
         final JsonDecoder jsonDecoder = new JsonDecoder();
         final L2Update update = new L2Update();
         jsonDecoder.wrap(increment);
-        IncrementParser.parseIncrement(jsonDecoder, update);
+        IncrementParser.parseIncrementGfJson(jsonDecoder, update);
         return update;
     }
 

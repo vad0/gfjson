@@ -1,5 +1,9 @@
 package de;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import lombok.SneakyThrows;
+
 import java.util.function.BiConsumer;
 
 public class BinanceParser
@@ -38,6 +42,14 @@ public class BinanceParser
         final Token token = jsonDecoder.next();
         Token.LONG.checkToken(token);
         update.timestamp = jsonDecoder.getLong();
+    }
+
+    @SneakyThrows
+    public static void parseEventTimeJackson(final JsonParser parser, final L2Update update)
+    {
+        final var token = parser.nextToken();
+        JacksonUtils.checkToken(JsonToken.VALUE_NUMBER_INT, token);
+        update.timestamp = parser.getLongValue();
     }
 
     static void parseBid(final JsonDecoder t, final L2Update u)

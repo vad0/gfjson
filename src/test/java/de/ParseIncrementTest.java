@@ -1,5 +1,7 @@
 package de;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -33,7 +35,37 @@ public class ParseIncrementTest
         expected.timestamp = 123456789;
 
         final L2Update update = new L2Update();
-        IncrementParser.parseIncrement(tokenizer, update);
+        IncrementParser.parseIncrementGfJson(tokenizer, update);
+
+        assertEquals(expected, update);
+    }
+
+    @Test
+    public void parseIncrementJackson()
+    {
+        parseIncrementJackson("increment.json");
+    }
+
+    @Test
+    public void parseIncrementUnusedJackson()
+    {
+        parseIncrementJackson("increment_unused.json");
+    }
+
+    @SneakyThrows
+    private static void parseIncrementJackson(final String fileName)
+    {
+        final String str = Utils.readFile(fileName);
+
+        final L2Update update = new L2Update();
+        final JsonFactory jsonFactory = new JsonFactory();
+        final JsonParser parser = jsonFactory.createParser(str);
+        JacksonIncrementParser.parseIncrement(parser, update);
+
+        final L2Update expected = new L2Update();
+        expected.sides.getBid().addQuote(0.0024, 10);
+        expected.sides.getAsk().addQuote(0.0026, 100);
+        expected.timestamp = 123456789;
 
         assertEquals(expected, update);
     }
@@ -65,7 +97,7 @@ public class ParseIncrementTest
         {
             final long start = System.nanoTime();
             tokenizer.wrap(str);
-            IncrementParser.parseIncrement(tokenizer, update);
+            IncrementParser.parseIncrementGfJson(tokenizer, update);
             final long end = System.nanoTime();
             if (i % 100_000 == 0)
             {
