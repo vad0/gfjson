@@ -52,27 +52,42 @@ jmh {
 
 jmhJar { duplicatesStrategy(DuplicatesStrategy.INCLUDE) }
 
-jacocoTestReport {
+jacoco {
+    toolVersion '0.8.0'
+}
+
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
+}
+
+tasks.create(name: "testCoverage", type: JacocoReport, dependsOn: "test") {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports for the test build."
+
     reports {
-        xml.required.set(false)
-        csv.required.set(false)
-        html.required.set(true)
-        html.destination file("output/jacoco/jacocoHtml")
+        html.enabled = true
+        xml.enabled = true
     }
-}
 
-jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-//            includes = [""]
-//            excludes = [""]
-            element = "CLASS"
-            limit {
-                counter = "LINE"
-                minimum = 1.00
-            }
-        }
-    }
-}
+    def excludes = [
+            '**/*Test*.*',
+            '**/actions/*.*',
+            '**/core/*.*',
+            '**/markers/*.*',
+            '**/services/**/*.*',
+            '**/toolwindow/*.*',
+            '**/utils/*.*'
+    ]
 
-check.dependsOn(jacocoTestCoverageVerification)
+    def javaClasses = fileTree(dir: "${buildDir}/classes/java/main", excludes: excludes)
+    def kotlinClasses = fileTree(dir: "${buildDir}/classes/kotlin/main", excludes: excludes)
+    classDirectories.from = files([javaClasses, kotlinClasses])
+
+    sourceDirectories.from = files([
+            "$project.projectDir/src/main/java",
+            "$project.projectDir/src/main/kotlin",
+            "$buildDir/generated/source/kapt/test"
+    ])
+
+    executionData.from = files("${project.buildDir}/jacoco/test.exec")
+}
