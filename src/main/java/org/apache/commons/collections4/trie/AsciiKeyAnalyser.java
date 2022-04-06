@@ -15,11 +15,6 @@ public class AsciiKeyAnalyser
         return LENGTH;
     }
 
-    private static int mask(final int bit)
-    {
-        return MSB >>> bit;
-    }
-
     @Override
     public int lengthInBits(final AsciiSequenceView key)
     {
@@ -37,7 +32,7 @@ public class AsciiKeyAnalyser
         final int index = bitIndex / LENGTH;
         final int bit = bitIndex % LENGTH;
 
-        return (key.charAt(index) & mask(bit)) != 0;
+        return (key.charAt(index) & (MSB >>> bit)) != 0;
     }
 
     @Override

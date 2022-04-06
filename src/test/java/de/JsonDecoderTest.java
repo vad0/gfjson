@@ -2,7 +2,7 @@ package de;
 
 import org.junit.jupiter.api.Test;
 import uk.co.real_logic.artio.fields.DecimalFloat;
-import utils.Utils;
+import utils.TestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -11,7 +11,7 @@ class JsonDecoderTest
     @Test
     public void parseIncrement()
     {
-        final String str = Utils.readFile("increment.json");
+        final String str = TestUtils.readFile("increment.json");
         final var tokenizer = new JsonDecoder();
         tokenizer.wrap(str);
 
@@ -47,7 +47,7 @@ class JsonDecoderTest
     @Test
     public void parseCar()
     {
-        final String str = Utils.readFile("car.json");
+        final String str = TestUtils.readFile("car.json");
         final var tokenizer = new JsonDecoder();
         tokenizer.wrap(str);
 

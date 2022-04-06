@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import utils.Utils;
+import utils.TestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -26,7 +26,7 @@ public class ParseIncrementTest
 
     private static void parseIncrement(final String fileName)
     {
-        final String str = Utils.readFile(fileName);
+        final String str = TestUtils.readFile(fileName);
         final var tokenizer = new JsonDecoder();
         tokenizer.wrap(str);
 
@@ -56,7 +56,7 @@ public class ParseIncrementTest
     @SneakyThrows
     private static void parseIncrementJackson(final String fileName)
     {
-        final String str = Utils.readFile(fileName);
+        final String str = TestUtils.readFile(fileName);
 
         final L2Update update = new L2Update();
         final JsonFactory jsonFactory = new JsonFactory();
@@ -85,7 +85,7 @@ public class ParseIncrementTest
 
     private static void parseIncrementTree(final String fileName)
     {
-        final String str = Utils.readFile(fileName);
+        final String str = TestUtils.readFile(fileName);
 
         final L2Update update = new L2Update();
         JacksonIncrementParser.parseIncrementTree(new ObjectMapper(), str, update);
@@ -117,7 +117,7 @@ public class ParseIncrementTest
     @SneakyThrows
     public static void measureParseIncrement(final String fileName)
     {
-        final String str = Utils.readFile(fileName);
+        final String str = TestUtils.readFile(fileName);
         final var tokenizer = new JsonDecoder();
 
         final L2Update update = new L2Update();
