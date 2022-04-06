@@ -24,6 +24,7 @@ public class JsonDecoder
      * Offset of the next token to read
      */
     private int offset;
+    private int capacity;
     private boolean bool;
 
     /**
@@ -103,19 +104,21 @@ public class JsonDecoder
     {
         buffer.wrap(byteBuffer);
         offset = 0;
+        capacity = buffer.capacity();
     }
 
     public void wrap(final String string)
     {
         buffer.wrap(string.getBytes());
         offset = 0;
+        capacity = buffer.capacity();
     }
 
     public Token next()
     {
-        while (offset < buffer.capacity())
+        while (offset < capacity)
         {
-            final char next = (char)buffer.getByte(offset++);
+            final char next = nextChar();
             if (next == '"')
             {
                 parseString();
@@ -160,13 +163,13 @@ public class JsonDecoder
 
     private void checkTrue()
     {
-        if (offset + 3 > buffer.capacity())
+        if (offset + 3 > capacity)
         {
             throw new TokenException("Not enough capacity to fit 'true'");
         }
-        if ((char)buffer.getByte(offset++) != 'r' ||
-            (char)buffer.getByte(offset++) != 'u' ||
-            (char)buffer.getByte(offset++) != 'e')
+        if (nextChar() != 'r' ||
+            nextChar() != 'u' ||
+            nextChar() != 'e')
         {
             throw new TokenException("Can't parse 'true'");
         }
@@ -174,25 +177,30 @@ public class JsonDecoder
 
     private void checkFalse()
     {
-        if (offset + 4 > buffer.capacity())
+        if (offset + 4 > capacity)
         {
             throw new TokenException("Not enough capacity to fit 'false'");
         }
-        if ((char)buffer.getByte(offset++) != 'a' ||
-            (char)buffer.getByte(offset++) != 'l' ||
-            (char)buffer.getByte(offset++) != 's' ||
-            (char)buffer.getByte(offset++) != 'e')
+        if (nextChar() != 'a' ||
+            nextChar() != 'l' ||
+            nextChar() != 's' ||
+            nextChar() != 'e')
         {
             throw new TokenException("Can't parse 'false'");
         }
     }
 
+    private char nextChar()
+    {
+        return (char)buffer.getByte(offset++);
+    }
+
     private void parseString()
     {
         final int stringStart = offset;
-        while (offset < buffer.capacity() - 1)
+        while (offset < capacity)
         {
-            final char next = (char)buffer.getByte(offset++);
+            final char next = nextChar();
             if (next == '"')
             {
                 string.wrap(buffer, stringStart, offset - stringStart - 1);
@@ -217,9 +225,9 @@ public class JsonDecoder
             mantissa = getLongFromChar(first);
         }
         // before dot
-        while (offset < buffer.capacity() - 1)
+        while (offset < capacity)
         {
-            final char next = (char)buffer.getByte(offset++);
+            final char next = nextChar();
             if (isDigit(next))
             {
                 mantissa = mantissa * 10 + getLongFromChar(next);
@@ -232,17 +240,22 @@ public class JsonDecoder
                 decimalFloat.set(mantissa, 0);
                 return Token.LONG;
             }
-            if (next != '.')
+            if (next == '.')
             {
-                throw new RuntimeException();
+                break;
             }
-            break;
+            if (isEndOfStructure(next))
+            {
+                offset--;
+                break;
+            }
+            throw new RuntimeException();
         }
         // after dot
         int exponent = 0;
-        while (offset < buffer.capacity() - 1)
+        while (offset < capacity)
         {
-            final char next = (char)buffer.getByte(offset++);
+            final char next = nextChar();
             if (isDigit(next))
             {
                 mantissa = mantissa * 10 + getLongFromChar(next);
@@ -255,9 +268,21 @@ public class JsonDecoder
                 decimalFloat.set(mantissa, exponent);
                 return Token.FLOAT;
             }
+            if (isEndOfStructure(next))
+            {
+                offset--;
+                mantissa *= sign;
+                decimalFloat.set(mantissa, exponent);
+                return Token.FLOAT;
+            }
             break;
         }
         throw new RuntimeException();
+    }
+
+    private static boolean isEndOfStructure(final char ch)
+    {
+        return ch == ']' || ch == '}';
     }
 
     private static void parseNumber(final AsciiSequenceView view, final DecimalFloat number)
