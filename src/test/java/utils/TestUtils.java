@@ -5,9 +5,19 @@ import lombok.SneakyThrows;
 import java.net.URI;
 import java.nio.file.*;
 import java.util.Collections;
+import java.util.function.BiConsumer;
 
-public class Utils
+public class TestUtils
 {
+    private static final BiConsumer DO_NOTHING = (a, b) ->
+    {
+    };
+
+    public static <A, B> BiConsumer<A, B> doNothing()
+    {
+        return DO_NOTHING;
+    }
+
     @SneakyThrows
     public static Path getResourcePath(final String dir)
     {

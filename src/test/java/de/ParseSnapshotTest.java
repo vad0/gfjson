@@ -3,7 +3,7 @@ package de;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import utils.Utils;
+import utils.TestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -12,7 +12,7 @@ public class ParseSnapshotTest
     @Test
     public void parseSnapshot()
     {
-        final String str = Utils.readFile("snapshot.json");
+        final String str = TestUtils.readFile("snapshot.json");
         final var tokenizer = new JsonDecoder();
         tokenizer.wrap(str);
 
@@ -48,7 +48,7 @@ public class ParseSnapshotTest
     @SneakyThrows
     public static void measureParseSnapshot(final String fileName)
     {
-        final String str = Utils.readFile(fileName);
+        final String str = TestUtils.readFile(fileName);
         final var tokenizer = new JsonDecoder();
 
         final L2Update update = new L2Update();

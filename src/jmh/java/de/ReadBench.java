@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openjdk.jmh.annotations.*;
-import utils.Utils;
+import utils.TestUtils;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +16,7 @@ public class ReadBench
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private final JsonDecoder jsonDecoder = new JsonDecoder();
     private final L2Update update = new L2Update();
-    private final String message = Utils.readFile("big_increment.json");
+    private final String message = TestUtils.readFile("big_increment.json");
 
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
