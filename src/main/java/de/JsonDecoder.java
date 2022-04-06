@@ -236,8 +236,8 @@ public class JsonDecoder
             if (shouldSkip(next))
             {
                 // this is not a float, so just return long
-                mantissa *= sign;
-                decimalFloat.set(mantissa, 0);
+                decimalFloat.value(sign * mantissa);
+                decimalFloat.scale(0);
                 return Token.LONG;
             }
             if (next == '.')
@@ -247,7 +247,9 @@ public class JsonDecoder
             if (isEndOfStructure(next))
             {
                 offset--;
-                break;
+                decimalFloat.value(sign * mantissa);
+                decimalFloat.scale(0);
+                return Token.LONG;
             }
             throw new RuntimeException();
         }
@@ -336,9 +338,7 @@ public class JsonDecoder
                 throw new RuntimeException();
             }
         }
-        // It is recommended to call number.set(sign * mantissa, exponent), but we want to do it faster
-        number.value(sign * mantissa);
-        number.scale(exponent);
+        number.set(sign * mantissa, exponent);
     }
 
     private static boolean shouldSkip(final char next)

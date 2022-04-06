@@ -156,6 +156,65 @@ class JsonDecoderTest
     }
 
     @Test
+    public void testParseNegativeLong()
+    {
+        final String string = "[-5]";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        checkStartArray(decoder);
+        checkLong(decoder, -5);
+        checkEndArray(decoder);
+    }
+
+    @Test
+    public void testParseNegativeFloat()
+    {
+        final String string = "[-5.100]";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        checkStartArray(decoder);
+        checkFloat(decoder, -51, 1);
+        checkEndArray(decoder);
+    }
+
+    @Test
+    public void testParseNegativeFloatFromString()
+    {
+        final String string = "[\"-5.100\"]";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        checkStartArray(decoder);
+        final Token token = decoder.next();
+        Token.STRING.checkToken(token);
+        final DecimalFloat df = decoder.decimalFloatFromString();
+        assertEquals(-51, df.value());
+        assertEquals(1, df.scale());
+        checkEndArray(decoder);
+    }
+
+    @Test
+    public void testParseInvalidFloatFromString1()
+    {
+        final String string = "\"-5a.100\"";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        final Token token = decoder.next();
+        Token.STRING.checkToken(token);
+        assertThrows(RuntimeException.class, decoder::decimalFloatFromString);
+    }
+
+    @Test
+    public void testParseInvalidFloatFromString2()
+    {
+        final String string = "\"-5.10a0\"";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        final Token token = decoder.next();
+        Token.STRING.checkToken(token);
+        assertThrows(RuntimeException.class, decoder::decimalFloatFromString);
+    }
+
+    @Test
     public void testParseInvalidStruct()
     {
         final String string = "{\"1\":#}";
