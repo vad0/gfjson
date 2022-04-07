@@ -9,12 +9,12 @@ import uk.co.real_logic.artio.fields.DecimalFloat;
 import java.nio.ByteBuffer;
 import java.util.function.BiConsumer;
 
-public class Tokenizer
+public class JsonDecoder
 {
     // By default checks are applied, but they can be switched of by providing a system property
     public static final boolean APPLY_CHECKS = !Boolean.getBoolean("omit_checks");
     private static final char[] SKIP = new char[]{' ', '\n', ':', ','};
-    private static final BiConsumer<Tokenizer, ?> SKIP_LAMBDA = (t, u) -> t.skipValue();
+    private static final BiConsumer<JsonDecoder, ?> SKIP_LAMBDA = (t, u) -> t.skipValue();
     private final DirectBuffer buffer = new UnsafeBuffer();
     @Getter
     private final AsciiSequenceView string = new AsciiSequenceView();
@@ -24,6 +24,7 @@ public class Tokenizer
      * Offset of the next token to read
      */
     private int offset;
+    private int capacity;
     private boolean bool;
 
     /**
@@ -46,7 +47,7 @@ public class Tokenizer
      * @param actions   map of actions which should be taken when certain keys are encountered
      * @param structure to fill
      */
-    public <T> void parseStruct(final KeyMap<BiConsumer<Tokenizer, T>> actions, final T structure)
+    public <T> void parseStruct(final KeyMap<BiConsumer<JsonDecoder, T>> actions, final T structure)
     {
         Token token = next();
         Token.START_OBJECT.checkToken(token);
@@ -63,9 +64,9 @@ public class Tokenizer
         }
     }
 
-    public static <T> BiConsumer<Tokenizer, T> skip()
+    public static <T> BiConsumer<JsonDecoder, T> skip()
     {
-        return (BiConsumer<Tokenizer, T>)SKIP_LAMBDA;
+        return (BiConsumer<JsonDecoder, T>)SKIP_LAMBDA;
     }
 
     /**
@@ -103,19 +104,21 @@ public class Tokenizer
     {
         buffer.wrap(byteBuffer);
         offset = 0;
+        capacity = buffer.capacity();
     }
 
     public void wrap(final String string)
     {
         buffer.wrap(string.getBytes());
         offset = 0;
+        capacity = buffer.capacity();
     }
 
     public Token next()
     {
-        while (offset < buffer.capacity())
+        while (offset < capacity)
         {
-            final char next = (char)buffer.getByte(offset++);
+            final char next = nextChar();
             if (next == '"')
             {
                 parseString();
@@ -160,13 +163,13 @@ public class Tokenizer
 
     private void checkTrue()
     {
-        if (offset + 3 > buffer.capacity())
+        if (offset + 3 > capacity)
         {
             throw new TokenException("Not enough capacity to fit 'true'");
         }
-        if ((char)buffer.getByte(offset++) != 'r' ||
-            (char)buffer.getByte(offset++) != 'u' ||
-            (char)buffer.getByte(offset++) != 'e')
+        if (nextChar() != 'r' ||
+            nextChar() != 'u' ||
+            nextChar() != 'e')
         {
             throw new TokenException("Can't parse 'true'");
         }
@@ -174,25 +177,30 @@ public class Tokenizer
 
     private void checkFalse()
     {
-        if (offset + 4 > buffer.capacity())
+        if (offset + 4 > capacity)
         {
             throw new TokenException("Not enough capacity to fit 'false'");
         }
-        if ((char)buffer.getByte(offset++) != 'a' ||
-            (char)buffer.getByte(offset++) != 'l' ||
-            (char)buffer.getByte(offset++) != 's' ||
-            (char)buffer.getByte(offset++) != 'e')
+        if (nextChar() != 'a' ||
+            nextChar() != 'l' ||
+            nextChar() != 's' ||
+            nextChar() != 'e')
         {
             throw new TokenException("Can't parse 'false'");
         }
     }
 
+    private char nextChar()
+    {
+        return (char)buffer.getByte(offset++);
+    }
+
     private void parseString()
     {
         final int stringStart = offset;
-        while (offset < buffer.capacity() - 1)
+        while (offset < capacity)
         {
-            final char next = (char)buffer.getByte(offset++);
+            final char next = nextChar();
             if (next == '"')
             {
                 string.wrap(buffer, stringStart, offset - stringStart - 1);
@@ -217,9 +225,9 @@ public class Tokenizer
             mantissa = getLongFromChar(first);
         }
         // before dot
-        while (offset < buffer.capacity() - 1)
+        while (offset < capacity)
         {
-            final char next = (char)buffer.getByte(offset++);
+            final char next = nextChar();
             if (isDigit(next))
             {
                 mantissa = mantissa * 10 + getLongFromChar(next);
@@ -228,21 +236,28 @@ public class Tokenizer
             if (shouldSkip(next))
             {
                 // this is not a float, so just return long
-                mantissa *= sign;
-                decimalFloat.set(mantissa, 0);
+                decimalFloat.value(sign * mantissa);
+                decimalFloat.scale(0);
                 return Token.LONG;
             }
-            if (next != '.')
+            if (next == '.')
             {
-                throw new RuntimeException();
+                break;
             }
-            break;
+            if (isEndOfStructure(next))
+            {
+                offset--;
+                decimalFloat.value(sign * mantissa);
+                decimalFloat.scale(0);
+                return Token.LONG;
+            }
+            throw new RuntimeException();
         }
         // after dot
         int exponent = 0;
-        while (offset < buffer.capacity() - 1)
+        while (offset < capacity)
         {
-            final char next = (char)buffer.getByte(offset++);
+            final char next = nextChar();
             if (isDigit(next))
             {
                 mantissa = mantissa * 10 + getLongFromChar(next);
@@ -255,9 +270,21 @@ public class Tokenizer
                 decimalFloat.set(mantissa, exponent);
                 return Token.FLOAT;
             }
+            if (isEndOfStructure(next))
+            {
+                offset--;
+                mantissa *= sign;
+                decimalFloat.set(mantissa, exponent);
+                return Token.FLOAT;
+            }
             break;
         }
         throw new RuntimeException();
+    }
+
+    private static boolean isEndOfStructure(final char ch)
+    {
+        return ch == ']' || ch == '}';
     }
 
     private static void parseNumber(final AsciiSequenceView view, final DecimalFloat number)
@@ -311,9 +338,7 @@ public class Tokenizer
                 throw new RuntimeException();
             }
         }
-        // It is recommended to call number.set(sign * mantissa, exponent), but we want to do it faster
-        number.value(sign * mantissa);
-        number.scale(exponent);
+        number.set(sign * mantissa, exponent);
     }
 
     private static boolean shouldSkip(final char next)

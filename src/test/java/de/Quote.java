@@ -2,6 +2,12 @@ package de;
 
 public class Quote
 {
-    double price;
-    double size;
+    public double price;
+    public double size;
+
+    @Override
+    public String toString()
+    {
+        return size + " @ " + price;
+    }
 }

@@ -5,8 +5,8 @@ import java.util.Objects;
 public class L2Update
 {
     private static final long NOT_INITIALIZED = -1;
-    final SideMap<L2Side> sides = new SideMap<>(new L2Side(), new L2Side());
-    long timestamp;
+    public final SideMap<L2Side> sides = new SideMap<>(new L2Side(), new L2Side());
+    public long timestamp;
 
     public void clear()
     {
@@ -34,5 +34,11 @@ public class L2Update
     public int hashCode()
     {
         return Objects.hash(sides, timestamp);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "timestamp: " + timestamp + ", " + sides;
     }
 }

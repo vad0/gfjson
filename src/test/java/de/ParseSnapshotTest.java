@@ -3,6 +3,7 @@ package de;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import utils.TestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -11,8 +12,8 @@ public class ParseSnapshotTest
     @Test
     public void parseSnapshot()
     {
-        final String str = TokenizerTest.readFile("snapshot.json");
-        final var tokenizer = new Tokenizer();
+        final String str = TestUtils.readFile("snapshot.json");
+        final var tokenizer = new JsonDecoder();
         tokenizer.wrap(str);
 
         final L2Update expected = new L2Update();
@@ -47,8 +48,8 @@ public class ParseSnapshotTest
     @SneakyThrows
     public static void measureParseSnapshot(final String fileName)
     {
-        final String str = TokenizerTest.readFile(fileName);
-        final var tokenizer = new Tokenizer();
+        final String str = TestUtils.readFile(fileName);
+        final var tokenizer = new JsonDecoder();
 
         final L2Update update = new L2Update();
         for (int i = 0; i < 1000_000_000; i++)

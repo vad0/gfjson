@@ -1,10 +1,12 @@
 plugins {
     id "java"
-    id 'checkstyle'
+    id "jacoco"
+    id "checkstyle"
     id "me.champeau.gradle.jmh" version "0.5.3"
 }
 
-apply plugin: 'checkstyle'
+apply plugin: "checkstyle"
+apply plugin: "jacoco"
 
 group "org.example"
 version "1.0-SNAPSHOT"
@@ -16,12 +18,12 @@ repositories {
 String lombok = "org.projectlombok:lombok:1.18.22"
 dependencies {
     implementation "org.agrona:agrona:1.15.0"
-    implementation "uk.co.real-logic:artio-codecs:0.124"
+    implementation "uk.co.real-logic:artio-codecs:0.125"
     implementation group: "org.apache.commons", name: "commons-collections4", version: "4.4"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    testImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2.2'
+    testImplementation group: "com.fasterxml.jackson.core", name: "jackson-databind", version: "2.13.2.2"
     implementation lombok
     annotationProcessor lombok
     testImplementation lombok
@@ -36,7 +38,7 @@ test {
 }
 
 jmh {
-//    jvmArgs = []
+    jvmArgs = ["-Djmh.ignoreLock=true"]
 //    includes = ["Write*"]
     fork = 1
     warmupIterations = 3
@@ -49,3 +51,28 @@ jmh {
 }
 
 jmhJar { duplicatesStrategy(DuplicatesStrategy.INCLUDE) }
+
+jacocoTestReport {
+    reports {
+        xml.required.set(false)
+        csv.required.set(false)
+        html.required.set(true)
+        html.destination file("output/jacoco/jacocoHtml")
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+//            includes = [""]
+//            excludes = [""]
+            element = "CLASS"
+            limit {
+                counter = "LINE"
+                minimum = 1.00
+            }
+        }
+    }
+}
+
+check.dependsOn(jacocoTestCoverageVerification)
