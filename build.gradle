@@ -10,7 +10,6 @@ apply plugin: "checkstyle"
 apply plugin: "jacoco"
 
 group "org.example"
-version "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -79,4 +78,9 @@ check.dependsOn(jacocoTestCoverageVerification)
 
 clean.doLast {
     project.delete(projectDir.toPath().resolve("output"))
+}
+
+release {
+    failOnCommitNeeded = false
+    failOnUpdateNeeded = false
 }
