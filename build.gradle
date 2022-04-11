@@ -3,13 +3,13 @@ plugins {
     id "jacoco"
     id "checkstyle"
     id "me.champeau.gradle.jmh" version "0.5.3"
+    id 'net.researchgate.release' version '2.8.1'
 }
 
 apply plugin: "checkstyle"
 apply plugin: "jacoco"
 
 group "org.example"
-version "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -18,11 +18,10 @@ repositories {
 String lombok = "org.projectlombok:lombok:1.18.22"
 dependencies {
     implementation "org.agrona:agrona:1.15.0"
-    implementation "uk.co.real-logic:artio-codecs:0.125"
+    implementation "uk.co.real-logic:artio-codecs:0.126"
     implementation group: "org.apache.commons", name: "commons-collections4", version: "4.4"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     testImplementation group: "com.fasterxml.jackson.core", name: "jackson-databind", version: "2.13.2.2"
     implementation lombok
     annotationProcessor lombok
@@ -76,3 +75,12 @@ jacocoTestCoverageVerification {
 }
 
 check.dependsOn(jacocoTestCoverageVerification)
+
+clean.doLast {
+    project.delete(projectDir.toPath().resolve("output"))
+}
+
+release {
+    failOnCommitNeeded = false
+    failOnUpdateNeeded = false
+}
