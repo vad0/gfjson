@@ -29,6 +29,12 @@ dependencies {
     testAnnotationProcessor lombok
 }
 
+compileJava {
+    def javaVersion = JavaVersion.VERSION_11
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+}
+
 test {
     useJUnitPlatform()
     testLogging {
