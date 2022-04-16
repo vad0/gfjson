@@ -19,4 +19,9 @@ public enum Token
             assert token == this : token;
         }
     }
+
+    public boolean isNumber()
+    {
+        return this == LONG || this == FLOAT;
+    }
 }
