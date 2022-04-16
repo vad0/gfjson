@@ -44,16 +44,29 @@ public class JsonDecoder
     }
 
     /**
+     * This method parses struct from including initial '{'
+     *
      * @param actions   map of actions which should be taken when certain keys are encountered
      * @param structure to fill
      */
     public <T> void parseStruct(final KeyMap<BiConsumer<JsonDecoder, T>> actions, final T structure)
     {
-        Token token = next();
-        Token.START_OBJECT.checkToken(token);
+        Token.START_OBJECT.checkToken(next());
+        finishParsingStruct(actions, structure);
+    }
+
+    /**
+     * This method can be used to continue parsing struct. E.g. when first field contains information about message
+     * type. So we should decide on the parsing logic after parsing the first field.
+     *
+     * @param actions   map of actions which should be taken when certain keys are encountered
+     * @param structure to fill
+     */
+    public <T> void finishParsingStruct(final KeyMap<BiConsumer<JsonDecoder, T>> actions, final T structure)
+    {
         while (true)
         {
-            token = next();
+            final Token token = next();
             if (token == Token.END_OBJECT)
             {
                 break;
