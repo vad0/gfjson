@@ -1,0 +1,2 @@
+[libraries]
+agrona = "org.agrona:agrona:1.14.0"
