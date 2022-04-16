@@ -100,13 +100,13 @@ public class JsonEncoder
         putChar(']');
     }
 
-    public void putKey(final String key)
+    public void putKey(final CharSequence key)
     {
         putString(key);
         putChar(':');
     }
 
-    public void nextKey(final String key)
+    public void nextKey(final CharSequence key)
     {
         putComma();
         putKey(key);
@@ -122,7 +122,7 @@ public class JsonEncoder
         putChar('"');
     }
 
-    public void putString(final String str)
+    public void putString(final CharSequence str)
     {
         putQuote();
         putRawString(str);
@@ -132,7 +132,7 @@ public class JsonEncoder
     /**
      * Writes string without wrapping quotes. So can be used to write 'true' or 'false'
      */
-    private void putRawString(final String str)
+    private void putRawString(final CharSequence str)
     {
         // We can't use buffer.putStringAscii(offset, str) since it adds length prefix
         final int length = str.length();
