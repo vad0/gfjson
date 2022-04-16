@@ -1,6 +1,6 @@
 package de;
 
-interface ParseArrayElement<T>
+public interface ParseArrayElement<T>
 {
     /**
      * @param structure  to fill

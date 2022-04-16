@@ -2,12 +2,14 @@ plugins {
     id "java"
     id "jacoco"
     id "checkstyle"
-    id "me.champeau.gradle.jmh" version "0.5.3"
-    id 'net.researchgate.release' version '2.8.1'
+    alias(libs.plugins.jmh)
+    alias(libs.plugins.release)
+    alias(libs.plugins.jengelman)
 }
 
 apply plugin: "checkstyle"
 apply plugin: "jacoco"
+apply plugin: 'com.github.johnrengelman.shadow'
 
 group "org.example"
 
@@ -15,18 +17,23 @@ repositories {
     mavenCentral()
 }
 
-String lombok = "org.projectlombok:lombok:1.18.22"
 dependencies {
-    implementation "org.agrona:agrona:1.15.0"
-    implementation "uk.co.real-logic:artio-codecs:0.126"
-    implementation group: "org.apache.commons", name: "commons-collections4", version: "4.4"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
-    testImplementation group: "com.fasterxml.jackson.core", name: "jackson-databind", version: "2.13.2.2"
-    implementation lombok
-    annotationProcessor lombok
-    testImplementation lombok
-    testAnnotationProcessor lombok
+    implementation libs.agrona
+    implementation libs.artio.codecs
+    implementation libs.apache.commons.collections4
+    testImplementation libs.jupiter.api
+    testRuntimeOnly libs.jupiter.engine
+    testImplementation libs.jackson.databind
+    implementation libs.lombok
+    annotationProcessor libs.lombok
+    testImplementation libs.lombok
+    testAnnotationProcessor libs.lombok
+}
+
+compileJava {
+    def javaVersion = JavaVersion.VERSION_11
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
 }
 
 test {
