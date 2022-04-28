@@ -17,7 +17,7 @@ public class IncrementParser
     private static KeyMap<BiConsumer<JsonDecoder, L2Update>> initKeyMap()
     {
         final Map<String, BiConsumer<JsonDecoder, L2Update>> actions = Map.of(
-            EVENT_TIME, BinanceParser::parseEventTime,
+            EVENT_TIME, (jsonDecoder, update) -> update.timestamp = jsonDecoder.nextLong(),
             BIDS, BinanceParser::parseBid,
             ASKS, BinanceParser::parseAsk);
         return new KeyMap<>(actions, JsonDecoder.skip());
