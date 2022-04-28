@@ -10,7 +10,7 @@ public class SnapshotParser
     private static KeyMap<BiConsumer<JsonDecoder, L2Update>> initKeyMap()
     {
         final Map<String, BiConsumer<JsonDecoder, L2Update>> actions = Map.of(
-            "lastUpdateId", BinanceParser::parseEventTime,
+            "lastUpdateId", (jsonDecoder, update) -> update.timestamp = jsonDecoder.nextLong(),
             "bids", BinanceParser::parseBid,
             "asks", BinanceParser::parseAsk);
         return new KeyMap<>(actions, JsonDecoder.skip());

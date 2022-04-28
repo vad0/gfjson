@@ -23,7 +23,7 @@ class JsonDecoderTest
         final var tokenizer = new JsonDecoder();
         tokenizer.wrap(str);
 
-        checkStartObject(tokenizer);
+        tokenizer.nextStartObject();
         checkString(tokenizer, "e");
         checkString(tokenizer, "depthUpdate");
         checkString(tokenizer, "E");
@@ -35,20 +35,20 @@ class JsonDecoderTest
         checkString(tokenizer, "u");
         checkLong(tokenizer, 160);
         checkString(tokenizer, "b");
-        checkStartArray(tokenizer);
-        checkStartArray(tokenizer);
+        tokenizer.nextStartArray();
+        tokenizer.nextStartArray();
         checkString(tokenizer, "0.0024");
         checkString(tokenizer, "10");
-        checkEndArray(tokenizer);
-        checkEndArray(tokenizer);
+        tokenizer.nextEndArray();
+        tokenizer.nextEndArray();
         checkString(tokenizer, "a");
-        checkStartArray(tokenizer);
-        checkStartArray(tokenizer);
+        tokenizer.nextStartArray();
+        tokenizer.nextStartArray();
         checkString(tokenizer, "0.0026");
         checkString(tokenizer, "100");
-        checkEndArray(tokenizer);
-        checkEndArray(tokenizer);
-        checkEndObject(tokenizer);
+        tokenizer.nextEndArray();
+        tokenizer.nextEndArray();
+        tokenizer.nextEndObject();
         checkEnd(tokenizer);
     }
 
@@ -59,14 +59,14 @@ class JsonDecoderTest
         final var tokenizer = new JsonDecoder();
         tokenizer.wrap(str);
 
-        checkStartObject(tokenizer);
+        tokenizer.nextStartObject();
         checkString(tokenizer, "engine");
-        checkStartObject(tokenizer);
+        tokenizer.nextStartObject();
         checkString(tokenizer, "cylinders");
         checkLong(tokenizer, 4);
         checkString(tokenizer, "horse power");
         checkFloat(tokenizer, 1234, 1);
-        checkEndObject(tokenizer);
+        tokenizer.nextEndObject();
         checkString(tokenizer, "is electric");
         checkBoolean(tokenizer, false);
         checkString(tokenizer, "is petrol");
@@ -75,13 +75,8 @@ class JsonDecoderTest
         checkLong(tokenizer, -30);
         checkString(tokenizer, "max temperature");
         checkLong(tokenizer, 50);
-        checkEndObject(tokenizer);
+        tokenizer.nextEndObject();
         checkEnd(tokenizer);
-    }
-
-    private static void checkStartArray(final JsonDecoder jsonDecoder)
-    {
-        assertEquals(Token.START_ARRAY, jsonDecoder.next());
     }
 
     private static void checkEnd(final JsonDecoder jsonDecoder)
@@ -89,31 +84,14 @@ class JsonDecoderTest
         assertEquals(Token.END, jsonDecoder.next());
     }
 
-    private static void checkEndObject(final JsonDecoder jsonDecoder)
-    {
-        assertEquals(Token.END_OBJECT, jsonDecoder.next());
-    }
-
-    private static void checkEndArray(final JsonDecoder jsonDecoder)
-    {
-        assertEquals(Token.END_ARRAY, jsonDecoder.next());
-    }
-
-    private static void checkStartObject(final JsonDecoder jsonDecoder)
-    {
-        assertEquals(Token.START_OBJECT, jsonDecoder.next());
-    }
-
     private static void checkLong(final JsonDecoder jsonDecoder, final int expected)
     {
-        assertEquals(Token.LONG, jsonDecoder.next());
-        assertEquals(expected, jsonDecoder.getLong());
+        assertEquals(expected, jsonDecoder.nextLong());
     }
 
     private static void checkBoolean(final JsonDecoder jsonDecoder, final boolean expected)
     {
-        assertEquals(Token.BOOLEAN, jsonDecoder.next());
-        assertEquals(expected, jsonDecoder.getBoolean());
+        assertEquals(expected, jsonDecoder.nextBoolean());
     }
 
     private static void checkFloat(
@@ -121,16 +99,14 @@ class JsonDecoderTest
         final long expectedMantissa,
         final int expectedExponent)
     {
-        assertEquals(Token.FLOAT, jsonDecoder.next());
-        final DecimalFloat decimalFloat = jsonDecoder.getDecimalFloat();
+        final DecimalFloat decimalFloat = jsonDecoder.nextFloat();
         assertEquals(expectedMantissa, decimalFloat.value());
         assertEquals(expectedExponent, decimalFloat.scale());
     }
 
     private static void checkString(final JsonDecoder jsonDecoder, final String expected)
     {
-        assertEquals(Token.STRING, jsonDecoder.next());
-        assertEquals(expected, jsonDecoder.getString().toString());
+        assertEquals(expected, jsonDecoder.nextString().toString());
     }
 
     @Test
@@ -139,8 +115,7 @@ class JsonDecoderTest
         final String string = "{1.2";
         final JsonDecoder decoder = new JsonDecoder();
         decoder.wrap(string);
-        final var token = decoder.next();
-        Token.START_OBJECT.checkToken(token);
+        decoder.nextStartObject();
         assertThrows(RuntimeException.class, decoder::next);
     }
 
@@ -150,8 +125,7 @@ class JsonDecoderTest
         final String string = "{1a";
         final JsonDecoder decoder = new JsonDecoder();
         decoder.wrap(string);
-        final var token = decoder.next();
-        Token.START_OBJECT.checkToken(token);
+        decoder.nextStartObject();
         assertThrows(RuntimeException.class, decoder::next);
     }
 
@@ -161,9 +135,9 @@ class JsonDecoderTest
         final String string = "[-5]";
         final JsonDecoder decoder = new JsonDecoder();
         decoder.wrap(string);
-        checkStartArray(decoder);
+        decoder.nextStartArray();
         checkLong(decoder, -5);
-        checkEndArray(decoder);
+        decoder.nextEndArray();
     }
 
     @Test
@@ -172,9 +146,9 @@ class JsonDecoderTest
         final String string = "[-5.100]";
         final JsonDecoder decoder = new JsonDecoder();
         decoder.wrap(string);
-        checkStartArray(decoder);
+        decoder.nextStartArray();
         checkFloat(decoder, -51, 1);
-        checkEndArray(decoder);
+        decoder.nextEndArray();
     }
 
     @Test
@@ -183,13 +157,12 @@ class JsonDecoderTest
         final String string = "[\"-5.100\"]";
         final JsonDecoder decoder = new JsonDecoder();
         decoder.wrap(string);
-        checkStartArray(decoder);
-        final Token token = decoder.next();
-        Token.STRING.checkToken(token);
+        decoder.nextStartArray();
+        decoder.nextString();
         final DecimalFloat df = decoder.decimalFloatFromString();
         assertEquals(-51, df.value());
         assertEquals(1, df.scale());
-        checkEndArray(decoder);
+        decoder.nextEndArray();
     }
 
     @Test
@@ -198,8 +171,7 @@ class JsonDecoderTest
         final String string = "\"-5a.100\"";
         final JsonDecoder decoder = new JsonDecoder();
         decoder.wrap(string);
-        final Token token = decoder.next();
-        Token.STRING.checkToken(token);
+        decoder.nextString();
         assertThrows(RuntimeException.class, decoder::decimalFloatFromString);
     }
 
@@ -209,8 +181,7 @@ class JsonDecoderTest
         final String string = "\"-5.10a0\"";
         final JsonDecoder decoder = new JsonDecoder();
         decoder.wrap(string);
-        final Token token = decoder.next();
-        Token.STRING.checkToken(token);
+        decoder.nextString();
         assertThrows(RuntimeException.class, decoder::decimalFloatFromString);
     }
 
@@ -235,9 +206,7 @@ class JsonDecoderTest
         final String string = "false";
         final JsonDecoder decoder = new JsonDecoder();
         decoder.wrap(string);
-        final var token = decoder.next();
-        Token.BOOLEAN.checkToken(token);
-        assertFalse(decoder.getBoolean());
+        assertFalse(decoder.nextBoolean());
     }
 
     @Test
@@ -294,9 +263,7 @@ class JsonDecoderTest
         final String string = "\"1.2\"";
         final JsonDecoder decoder = new JsonDecoder();
         decoder.wrap(string);
-        final var token = decoder.next();
-        Token.STRING.checkToken(token);
-        final var parsed = decoder.doubleFromString();
+        final var parsed = decoder.nextDoubleFromString();
         final var expected = 1.2;
         assertEquals(expected, parsed);
     }
@@ -311,9 +278,7 @@ class JsonDecoderTest
 
         final JsonDecoder decoder = new JsonDecoder();
         decoder.wrap(byteBuffer);
-        final var token = decoder.next();
-        Token.STRING.checkToken(token);
-        final var parsed = decoder.getString().toString();
+        final var parsed = decoder.nextString().toString();
         assertEquals("abc", parsed);
     }
 
@@ -363,20 +328,8 @@ class JsonDecoderTest
     public void testParseStruct()
     {
         final String string = "{\"a\":5,\"b\":[false,{\"e\":1}],\"c\":\"d\"}";
-        final BiConsumer<JsonDecoder, Map<String, Object>> parseA = (dec, m) ->
-        {
-            final var token = dec.next();
-            Token.LONG.checkToken(token);
-            final long value = dec.getLong();
-            m.put("a", value);
-        };
-        final BiConsumer<JsonDecoder, Map<String, Object>> parseC = (dec, m) ->
-        {
-            final var token = dec.next();
-            Token.STRING.checkToken(token);
-            final var value = dec.getString().toString();
-            m.put("c", value);
-        };
+        final BiConsumer<JsonDecoder, Map<String, Object>> parseA = (dec, m) -> m.put("a", dec.nextLong());
+        final BiConsumer<JsonDecoder, Map<String, Object>> parseC = (dec, m) -> m.put("c", dec.nextString().toString());
         final KeyMap<BiConsumer<JsonDecoder, Map<String, Object>>> keyMap = new KeyMap<>(
             Map.of("a", parseA, "c", parseC),
             JsonDecoder.skip());
@@ -388,5 +341,16 @@ class JsonDecoderTest
             "a", 5L,
             "c", "d");
         assertEquals(expected, toFill);
+    }
+
+    @Test
+    public void testCheckKeySuccess()
+    {
+        final var decoder = new JsonDecoder();
+        decoder.wrap("{\"a\",1}");
+        decoder.nextStartObject();
+        decoder.checkKey(KeyMap.string2view("a"));
+        assertEquals(1, decoder.nextLong());
+        decoder.nextEndObject();
     }
 }
