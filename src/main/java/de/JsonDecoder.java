@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.agrona.AsciiSequenceView;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
+import org.apache.commons.collections4.trie.AsciiKeyAnalyser;
 import uk.co.real_logic.artio.fields.DecimalFloat;
 
 import java.nio.ByteBuffer;
@@ -33,9 +34,8 @@ public class JsonDecoder
      */
     public <T> void parseArray(final T structure, final ParseArrayElement<T> parseArrayElement)
     {
-        Token token = next();
-        Token.START_ARRAY.checkToken(token);
-        token = next();
+        nextStartArray();
+        var token = next();
         while (token != Token.END_ARRAY)
         {
             parseArrayElement.parseElement(this, structure, token);
@@ -51,7 +51,7 @@ public class JsonDecoder
      */
     public <T> void parseStruct(final KeyMap<BiConsumer<JsonDecoder, T>> actions, final T structure)
     {
-        Token.START_OBJECT.checkToken(next());
+        nextStartObject();
         finishParsingStruct(actions, structure);
     }
 
@@ -235,7 +235,7 @@ public class JsonDecoder
         else
         {
             sign = 1;
-            mantissa = getLongFromChar(first);
+            mantissa = getDigit(first);
         }
         // before dot
         while (offset < capacity)
@@ -243,7 +243,7 @@ public class JsonDecoder
             final char next = nextChar();
             if (isDigit(next))
             {
-                mantissa = mantissa * 10 + getLongFromChar(next);
+                mantissa = mantissa * 10 + getDigit(next);
                 continue;
             }
             if (shouldSkip(next))
@@ -273,7 +273,7 @@ public class JsonDecoder
             final char next = nextChar();
             if (isDigit(next))
             {
-                mantissa = mantissa * 10 + getLongFromChar(next);
+                mantissa = mantissa * 10 + getDigit(next);
                 exponent++;
                 continue;
             }
@@ -319,7 +319,7 @@ public class JsonDecoder
         else
         {
             sign = 1;
-            mantissa = getLongFromChar(first);
+            mantissa = getDigit(first);
         }
         // before dot
         while (offset < end)
@@ -327,7 +327,7 @@ public class JsonDecoder
             final char next = (char)buffer.getByte(offset++);
             if (isDigit(next))
             {
-                mantissa = mantissa * 10 + getLongFromChar(next);
+                mantissa = mantissa * 10 + getDigit(next);
                 continue;
             }
             if (next == '.')
@@ -343,7 +343,7 @@ public class JsonDecoder
             final char next = (char)buffer.getByte(i);
             if (isDigit(next))
             {
-                mantissa = mantissa * 10 + getLongFromChar(next);
+                mantissa = mantissa * 10 + getDigit(next);
                 exponent++;
             }
             else
@@ -366,12 +366,12 @@ public class JsonDecoder
         return false;
     }
 
-    private static boolean isDigit(final char next)
+    public static boolean isDigit(final char next)
     {
         return '0' <= next && next <= '9';
     }
 
-    private static long getLongFromChar(final char c)
+    public static int getDigit(final char c)
     {
         return c - '0';
     }
@@ -381,9 +381,53 @@ public class JsonDecoder
         return decimalFloat.value();
     }
 
+    public long nextLong()
+    {
+        Token.LONG.checkToken(next());
+        return getLong();
+    }
+
+    public DecimalFloat nextFloat()
+    {
+        Token.FLOAT.checkToken(next());
+        return getDecimalFloat();
+    }
+
+    public void nextStartObject()
+    {
+        Token.START_OBJECT.checkToken(next());
+    }
+
+    public void nextStartArray()
+    {
+        Token.START_ARRAY.checkToken(next());
+    }
+
+    public void nextEndObject()
+    {
+        Token.END_OBJECT.checkToken(next());
+    }
+
+    public void nextEndArray()
+    {
+        Token.END_ARRAY.checkToken(next());
+    }
+
     public boolean getBoolean()
     {
         return bool;
+    }
+
+    public boolean nextBoolean()
+    {
+        Token.BOOLEAN.checkToken(next());
+        return getBoolean();
+    }
+
+    public AsciiSequenceView nextString()
+    {
+        Token.STRING.checkToken(next());
+        return getString();
     }
 
     public DecimalFloat decimalFloatFromString()
@@ -396,5 +440,26 @@ public class JsonDecoder
     {
         final DecimalFloat decimalFloat = decimalFloatFromString();
         return decimalFloat.toDouble();
+    }
+
+    public double nextDoubleFromString()
+    {
+        nextString();
+        return doubleFromString();
+    }
+
+    public static void checkString(final AsciiSequenceView expected, final AsciiSequenceView actual)
+    {
+        assert stringEquals(expected, actual) : actual;
+    }
+
+    protected static boolean stringEquals(final AsciiSequenceView a, final AsciiSequenceView b)
+    {
+        return AsciiKeyAnalyser.INSTANCE.compare(a, b) == 0;
+    }
+
+    protected void checkKey(final AsciiSequenceView expected)
+    {
+        checkString(expected, nextString());
     }
 }
