@@ -12,7 +12,7 @@ import java.util.function.BiConsumer;
 
 public class JsonDecoder
 {
-    // By default checks are applied, but they can be switched of by providing a system property
+    // By default, checks are applied, but they can be switched of by providing a system property
     public static final boolean APPLY_CHECKS = !Boolean.getBoolean("omit_checks");
     private static final char[] SKIP = new char[]{' ', '\n', ':', ','};
     private static final BiConsumer<JsonDecoder, ?> SKIP_LAMBDA = (t, u) -> t.skipValue();
@@ -132,11 +132,6 @@ public class JsonDecoder
         while (offset < capacity)
         {
             final char next = nextChar();
-            if (next == '"')
-            {
-                parseString();
-                return Token.STRING;
-            }
             if (shouldSkip(next))
             {
                 continue;
@@ -145,20 +140,22 @@ public class JsonDecoder
             {
                 return parseNumber(next);
             }
-            if (next == 'f')
-            {
-                checkFalse();
-                bool = false;
-                return Token.BOOLEAN;
-            }
-            if (next == 't')
-            {
-                checkTrue();
-                bool = true;
-                return Token.BOOLEAN;
-            }
             switch (next)
             {
+                case '"':
+                    parseString();
+                    return Token.STRING;
+                case 'f':
+                    checkFalse();
+                    bool = false;
+                    return Token.BOOLEAN;
+                case 't':
+                    checkTrue();
+                    bool = true;
+                    return Token.BOOLEAN;
+                case 'n':
+                    checkNull();
+                    return Token.NULL;
                 case '{':
                     return Token.START_OBJECT;
                 case '}':
@@ -185,6 +182,20 @@ public class JsonDecoder
             nextChar() != 'e')
         {
             throw new TokenException("Can't parse 'true'");
+        }
+    }
+
+    private void checkNull()
+    {
+        if (offset + 3 > capacity)
+        {
+            throw new TokenException("Not enough capacity to fit 'null'");
+        }
+        if (nextChar() != 'u' ||
+            nextChar() != 'l' ||
+            nextChar() != 'l')
+        {
+            throw new TokenException("Can't parse 'null'");
         }
     }
 
@@ -430,6 +441,17 @@ public class JsonDecoder
         return getString();
     }
 
+    public AsciiSequenceView nextNullableString()
+    {
+        final Token token = next();
+        if (token == Token.NULL)
+        {
+            return null;
+        }
+        Token.STRING.checkToken(token);
+        return getString();
+    }
+
     public DecimalFloat decimalFloatFromString()
     {
         parseNumber(string, decimalFloat);
@@ -453,12 +475,12 @@ public class JsonDecoder
         assert stringEquals(expected, actual) : actual;
     }
 
-    protected static boolean stringEquals(final AsciiSequenceView a, final AsciiSequenceView b)
+    public static boolean stringEquals(final AsciiSequenceView a, final AsciiSequenceView b)
     {
         return AsciiKeyAnalyser.INSTANCE.compare(a, b) == 0;
     }
 
-    protected void checkKey(final AsciiSequenceView expected)
+    public void checkKey(final AsciiSequenceView expected)
     {
         checkString(expected, nextString());
     }

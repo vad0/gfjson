@@ -10,6 +10,7 @@ public enum Token
     BOOLEAN,
     LONG,
     FLOAT,
+    NULL,
     END;
 
     public void checkToken(final Token token)
