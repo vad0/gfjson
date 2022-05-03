@@ -6,5 +6,6 @@
   "is electric": false,
   "is petrol": true,
   "min temperature": -30,
-  "max temperature": 50
+  "max temperature": 50,
+  "license": null
 }
