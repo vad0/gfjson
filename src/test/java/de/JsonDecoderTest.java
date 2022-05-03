@@ -1,5 +1,6 @@
 package de;
 
+import org.agrona.AsciiSequenceView;
 import org.junit.jupiter.api.Test;
 import ser.JsonEncoder;
 import uk.co.real_logic.artio.fields.DecimalFloat;
@@ -56,27 +57,29 @@ class JsonDecoderTest
     public void parseCar()
     {
         final String str = TestUtils.readFile("car.json");
-        final var tokenizer = new JsonDecoder();
-        tokenizer.wrap(str);
+        final var decoder = new JsonDecoder();
+        decoder.wrap(str);
 
-        tokenizer.nextStartObject();
-        checkString(tokenizer, "engine");
-        tokenizer.nextStartObject();
-        checkString(tokenizer, "cylinders");
-        checkLong(tokenizer, 4);
-        checkString(tokenizer, "horse power");
-        checkFloat(tokenizer, 1234, 1);
-        tokenizer.nextEndObject();
-        checkString(tokenizer, "is electric");
-        checkBoolean(tokenizer, false);
-        checkString(tokenizer, "is petrol");
-        checkBoolean(tokenizer, true);
-        checkString(tokenizer, "min temperature");
-        checkLong(tokenizer, -30);
-        checkString(tokenizer, "max temperature");
-        checkLong(tokenizer, 50);
-        tokenizer.nextEndObject();
-        checkEnd(tokenizer);
+        decoder.nextStartObject();
+        checkString(decoder, "engine");
+        decoder.nextStartObject();
+        checkString(decoder, "cylinders");
+        checkLong(decoder, 4);
+        checkString(decoder, "horse power");
+        checkFloat(decoder, 1234, 1);
+        decoder.nextEndObject();
+        checkString(decoder, "is electric");
+        checkBoolean(decoder, false);
+        checkString(decoder, "is petrol");
+        checkBoolean(decoder, true);
+        checkString(decoder, "min temperature");
+        checkLong(decoder, -30);
+        checkString(decoder, "max temperature");
+        checkLong(decoder, 50);
+        checkString(decoder, "license");
+        checkNullableString(decoder, null);
+        decoder.nextEndObject();
+        checkEnd(decoder);
     }
 
     private static void checkEnd(final JsonDecoder jsonDecoder)
@@ -107,6 +110,19 @@ class JsonDecoderTest
     private static void checkString(final JsonDecoder jsonDecoder, final String expected)
     {
         assertEquals(expected, jsonDecoder.nextString().toString());
+    }
+
+    private static void checkNullableString(final JsonDecoder jsonDecoder, final String expected)
+    {
+        final AsciiSequenceView string = jsonDecoder.nextNullableString();
+        if (expected == null)
+        {
+            assertNull(string);
+        }
+        else
+        {
+            assertEquals(expected, string.toString());
+        }
     }
 
     @Test
@@ -228,6 +244,15 @@ class JsonDecoderTest
     }
 
     @Test
+    public void testShortNull()
+    {
+        final String string = "nul";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        assertThrows(TokenException.class, decoder::next);
+    }
+
+    @Test
     public void testWrongFalse()
     {
         final String string = "{\"1\":fald}";
@@ -258,6 +283,36 @@ class JsonDecoderTest
     }
 
     @Test
+    public void testWrongNull()
+    {
+        final String string = "{\"1\":nulll}";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        assertThrows(TokenException.class, () ->
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                decoder.next();
+            }
+        });
+    }
+
+    @Test
+    public void testWrongNull2()
+    {
+        final String string = "{\"1\":nul}";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        assertThrows(TokenException.class, () ->
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                decoder.next();
+            }
+        });
+    }
+
+    @Test
     public void testParseNumberString()
     {
         final String string = "\"1.2\"";
@@ -266,6 +321,20 @@ class JsonDecoderTest
         final var parsed = decoder.nextDoubleFromString();
         final var expected = 1.2;
         assertEquals(expected, parsed);
+    }
+
+    @Test
+    public void testNullableString()
+    {
+        final String string = "{\"k\": \"1.2\", \"v\": null}";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        decoder.nextStartObject();
+        checkString(decoder, "k");
+        checkNullableString(decoder, "1.2");
+        checkString(decoder, "v");
+        checkNullableString(decoder, null);
+        decoder.nextEndObject();
     }
 
     @Test
