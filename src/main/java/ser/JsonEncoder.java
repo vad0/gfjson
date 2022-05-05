@@ -176,4 +176,9 @@ public class JsonEncoder
     {
         into.wrap(buffer, startInclusive, endExclusive - startInclusive);
     }
+
+    public void nextLine()
+    {
+        putChar('\n');
+    }
 }

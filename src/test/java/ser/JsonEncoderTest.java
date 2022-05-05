@@ -302,4 +302,15 @@ public class JsonEncoderTest
         encoder.putDoubleAsString(quote.size);
         encoder.endArray();
     }
+
+    @Test
+    public void testNextLine()
+    {
+        check("{\n}", encoder ->
+        {
+            encoder.startObject();
+            encoder.nextLine();
+            encoder.endObject();
+        });
+    }
 }
