@@ -6,6 +6,7 @@ import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
 import org.apache.commons.collections4.trie.AsciiKeyAnalyser;
 import uk.co.real_logic.artio.fields.DecimalFloat;
+import uk.co.real_logic.artio.util.MutableAsciiBuffer;
 
 import java.nio.ByteBuffer;
 import java.util.function.BiConsumer;
@@ -17,6 +18,7 @@ public class JsonDecoder
     private static final char[] SKIP = new char[]{' ', '\n', ':', ','};
     private static final BiConsumer<JsonDecoder, ?> SKIP_LAMBDA = (t, u) -> t.skipValue();
     private final DirectBuffer buffer = new UnsafeBuffer();
+    private final MutableAsciiBuffer stringBuffer = new MutableAsciiBuffer();
     @Getter
     private final AsciiSequenceView string = new AsciiSequenceView();
     @Getter
@@ -120,11 +122,21 @@ public class JsonDecoder
         capacity = buffer.capacity();
     }
 
-    public void wrap(final String string)
+    public void wrap(final byte[] string)
     {
-        buffer.wrap(string.getBytes());
+        buffer.wrap(string);
         offset = 0;
         capacity = buffer.capacity();
+    }
+
+    public void wrap(final String string)
+    {
+        wrap(string.getBytes());
+    }
+
+    public void wrap(final AsciiSequenceView string)
+    {
+        wrap(string.buffer().byteArray());
     }
 
     public Token next()
@@ -222,14 +234,34 @@ public class JsonDecoder
     private void parseString()
     {
         final int stringStart = offset;
+        final int maxStringSize = buffer.capacity() - stringStart;
+        if (stringBuffer.capacity() < maxStringSize)
+        {
+            stringBuffer.wrap(new byte[maxStringSize]);
+        }
+        int stringOffset = 0;
+        boolean isEscaped = false;
         while (offset < capacity)
         {
             final char next = nextChar();
-            if (next == '"')
+            if (isEscaped)
             {
-                string.wrap(buffer, stringStart, offset - stringStart - 1);
-                return;
+                isEscaped = false;
             }
+            else
+            {
+                if (next == '"')
+                {
+                    string.wrap(stringBuffer, 0, stringOffset);
+                    return;
+                }
+                if (next == '\\')
+                {
+                    isEscaped = true;
+                    continue;
+                }
+            }
+            stringBuffer.putChar(stringOffset++, next);
         }
         throw new RuntimeException();
     }

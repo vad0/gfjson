@@ -21,36 +21,36 @@ class JsonDecoderTest
     public void parseIncrement()
     {
         final String str = TestUtils.readFile("increment.json");
-        final var tokenizer = new JsonDecoder();
-        tokenizer.wrap(str);
+        final var decoder = new JsonDecoder();
+        decoder.wrap(str);
 
-        tokenizer.nextStartObject();
-        checkString(tokenizer, "e");
-        checkString(tokenizer, "depthUpdate");
-        checkString(tokenizer, "E");
-        checkLong(tokenizer, 123456789);
-        checkString(tokenizer, "s");
-        checkString(tokenizer, "BNBBTC");
-        checkString(tokenizer, "U");
-        checkLong(tokenizer, 157);
-        checkString(tokenizer, "u");
-        checkLong(tokenizer, 160);
-        checkString(tokenizer, "b");
-        tokenizer.nextStartArray();
-        tokenizer.nextStartArray();
-        checkString(tokenizer, "0.0024");
-        checkString(tokenizer, "10");
-        tokenizer.nextEndArray();
-        tokenizer.nextEndArray();
-        checkString(tokenizer, "a");
-        tokenizer.nextStartArray();
-        tokenizer.nextStartArray();
-        checkString(tokenizer, "0.0026");
-        checkString(tokenizer, "100");
-        tokenizer.nextEndArray();
-        tokenizer.nextEndArray();
-        tokenizer.nextEndObject();
-        checkEnd(tokenizer);
+        decoder.nextStartObject();
+        checkString(decoder, "e");
+        checkString(decoder, "depthUpdate");
+        checkString(decoder, "E");
+        checkLong(decoder, 123456789);
+        checkString(decoder, "s");
+        checkString(decoder, "BNBBTC");
+        checkString(decoder, "U");
+        checkLong(decoder, 157);
+        checkString(decoder, "u");
+        checkLong(decoder, 160);
+        checkString(decoder, "b");
+        decoder.nextStartArray();
+        decoder.nextStartArray();
+        checkString(decoder, "0.0024");
+        checkString(decoder, "10");
+        decoder.nextEndArray();
+        decoder.nextEndArray();
+        checkString(decoder, "a");
+        decoder.nextStartArray();
+        decoder.nextStartArray();
+        checkString(decoder, "0.0026");
+        checkString(decoder, "100");
+        decoder.nextEndArray();
+        decoder.nextEndArray();
+        decoder.nextEndObject();
+        checkEnd(decoder);
     }
 
     @Test
@@ -87,7 +87,7 @@ class JsonDecoderTest
         assertEquals(Token.END, jsonDecoder.next());
     }
 
-    private static void checkLong(final JsonDecoder jsonDecoder, final int expected)
+    private static void checkLong(final JsonDecoder jsonDecoder, final long expected)
     {
         assertEquals(expected, jsonDecoder.nextLong());
     }
@@ -420,6 +420,58 @@ class JsonDecoderTest
         decoder.nextStartObject();
         decoder.checkKey(KeyMap.string2view("a"));
         assertEquals(1, decoder.nextLong());
+        decoder.nextEndObject();
+    }
+
+    @Test
+    public void escape()
+    {
+        final String str = TestUtils.readFile("escape.json");
+        final var decoder = new JsonDecoder();
+        decoder.wrap(str);
+        decoder.nextStartObject();
+        checkString(decoder, "topic");
+        checkString(decoder, "md");
+        checkString(decoder, "value");
+        checkString(
+            decoder,
+            "{\"@timestamp\":1652429935.521021,\"log\":\"{\\\"t\\\":\\\"i2\\\",\\\"o\\\":1652429935519264064}");
+        checkString(decoder, "offset");
+        checkLong(decoder, 13015);
+        decoder.nextEndObject();
+    }
+
+    @Test
+    public void escapeWrong()
+    {
+        final String str = TestUtils.readFile("escape_wrong.json");
+        final var decoder = new JsonDecoder();
+        decoder.wrap(str);
+        decoder.nextStartObject();
+        checkString(decoder, "value");
+        assertThrows(RuntimeException.class, decoder::next);
+    }
+
+    @Test
+    public void nested()
+    {
+        final String str = TestUtils.readFile("nested.json");
+        final var decoder = new JsonDecoder();
+        decoder.wrap(str);
+        decoder.nextStartObject();
+        checkString(decoder, "value");
+        checkString(decoder, "{\"log\":1652429935519264064}");
+
+        final AsciiSequenceView string = decoder.getString();
+        {
+            final var subDecoder = new JsonDecoder();
+            subDecoder.wrap(string);
+            subDecoder.nextStartObject();
+            checkString(subDecoder, "log");
+            checkLong(subDecoder, 1652429935519264064L);
+            subDecoder.nextEndObject();
+        }
+
         decoder.nextEndObject();
     }
 }
