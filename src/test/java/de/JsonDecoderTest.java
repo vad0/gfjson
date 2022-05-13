@@ -21,36 +21,36 @@ class JsonDecoderTest
     public void parseIncrement()
     {
         final String str = TestUtils.readFile("increment.json");
-        final var tokenizer = new JsonDecoder();
-        tokenizer.wrap(str);
+        final var decoder = new JsonDecoder();
+        decoder.wrap(str);
 
-        tokenizer.nextStartObject();
-        checkString(tokenizer, "e");
-        checkString(tokenizer, "depthUpdate");
-        checkString(tokenizer, "E");
-        checkLong(tokenizer, 123456789);
-        checkString(tokenizer, "s");
-        checkString(tokenizer, "BNBBTC");
-        checkString(tokenizer, "U");
-        checkLong(tokenizer, 157);
-        checkString(tokenizer, "u");
-        checkLong(tokenizer, 160);
-        checkString(tokenizer, "b");
-        tokenizer.nextStartArray();
-        tokenizer.nextStartArray();
-        checkString(tokenizer, "0.0024");
-        checkString(tokenizer, "10");
-        tokenizer.nextEndArray();
-        tokenizer.nextEndArray();
-        checkString(tokenizer, "a");
-        tokenizer.nextStartArray();
-        tokenizer.nextStartArray();
-        checkString(tokenizer, "0.0026");
-        checkString(tokenizer, "100");
-        tokenizer.nextEndArray();
-        tokenizer.nextEndArray();
-        tokenizer.nextEndObject();
-        checkEnd(tokenizer);
+        decoder.nextStartObject();
+        checkString(decoder, "e");
+        checkString(decoder, "depthUpdate");
+        checkString(decoder, "E");
+        checkLong(decoder, 123456789);
+        checkString(decoder, "s");
+        checkString(decoder, "BNBBTC");
+        checkString(decoder, "U");
+        checkLong(decoder, 157);
+        checkString(decoder, "u");
+        checkLong(decoder, 160);
+        checkString(decoder, "b");
+        decoder.nextStartArray();
+        decoder.nextStartArray();
+        checkString(decoder, "0.0024");
+        checkString(decoder, "10");
+        decoder.nextEndArray();
+        decoder.nextEndArray();
+        checkString(decoder, "a");
+        decoder.nextStartArray();
+        decoder.nextStartArray();
+        checkString(decoder, "0.0026");
+        checkString(decoder, "100");
+        decoder.nextEndArray();
+        decoder.nextEndArray();
+        decoder.nextEndObject();
+        checkEnd(decoder);
     }
 
     @Test
@@ -420,6 +420,24 @@ class JsonDecoderTest
         decoder.nextStartObject();
         decoder.checkKey(KeyMap.string2view("a"));
         assertEquals(1, decoder.nextLong());
+        decoder.nextEndObject();
+    }
+
+    @Test
+    public void escape()
+    {
+        final String str = TestUtils.readFile("escape.json");
+        final var decoder = new JsonDecoder();
+        decoder.wrap(str);
+        decoder.nextStartObject();
+        checkString(decoder, "topic");
+        checkString(decoder, "md");
+        checkString(decoder, "value");
+        checkString(
+            decoder,
+            "{\"@timestamp\":1652429935.521021,\"log\":\"{\\\"t\\\":\\\"i2\\\",\\\"o\\\":1652429935519264064}");
+        checkString(decoder, "offset");
+        checkLong(decoder, 13015);
         decoder.nextEndObject();
     }
 }
