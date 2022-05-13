@@ -122,11 +122,21 @@ public class JsonDecoder
         capacity = buffer.capacity();
     }
 
-    public void wrap(final String string)
+    public void wrap(final byte[] string)
     {
-        buffer.wrap(string.getBytes());
+        buffer.wrap(string);
         offset = 0;
         capacity = buffer.capacity();
+    }
+
+    public void wrap(final String string)
+    {
+        wrap(string.getBytes());
+    }
+
+    public void wrap(final AsciiSequenceView string)
+    {
+        wrap(string.buffer().byteArray());
     }
 
     public Token next()

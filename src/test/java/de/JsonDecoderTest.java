@@ -87,7 +87,7 @@ class JsonDecoderTest
         assertEquals(Token.END, jsonDecoder.next());
     }
 
-    private static void checkLong(final JsonDecoder jsonDecoder, final int expected)
+    private static void checkLong(final JsonDecoder jsonDecoder, final long expected)
     {
         assertEquals(expected, jsonDecoder.nextLong());
     }
@@ -438,6 +438,40 @@ class JsonDecoderTest
             "{\"@timestamp\":1652429935.521021,\"log\":\"{\\\"t\\\":\\\"i2\\\",\\\"o\\\":1652429935519264064}");
         checkString(decoder, "offset");
         checkLong(decoder, 13015);
+        decoder.nextEndObject();
+    }
+
+    @Test
+    public void escapeWrong()
+    {
+        final String str = TestUtils.readFile("escape_wrong.json");
+        final var decoder = new JsonDecoder();
+        decoder.wrap(str);
+        decoder.nextStartObject();
+        checkString(decoder, "value");
+        assertThrows(RuntimeException.class, decoder::next);
+    }
+
+    @Test
+    public void nested()
+    {
+        final String str = TestUtils.readFile("nested.json");
+        final var decoder = new JsonDecoder();
+        decoder.wrap(str);
+        decoder.nextStartObject();
+        checkString(decoder, "value");
+        checkString(decoder, "{\"log\":1652429935519264064}");
+
+        final AsciiSequenceView string = decoder.getString();
+        {
+            final var subDecoder = new JsonDecoder();
+            subDecoder.wrap(string);
+            subDecoder.nextStartObject();
+            checkString(subDecoder, "log");
+            checkLong(subDecoder, 1652429935519264064L);
+            subDecoder.nextEndObject();
+        }
+
         decoder.nextEndObject();
     }
 }
