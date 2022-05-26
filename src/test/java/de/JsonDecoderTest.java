@@ -67,6 +67,8 @@ class JsonDecoderTest
         checkLong(decoder, 4);
         checkString(decoder, "horse power");
         checkFloat(decoder, 1234, 1);
+        checkString(decoder, "volume");
+        checkFloat(decoder, 2, 0);
         decoder.nextEndObject();
         checkString(decoder, "is electric");
         checkBoolean(decoder, false);
