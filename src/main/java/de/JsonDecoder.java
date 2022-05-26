@@ -432,7 +432,7 @@ public class JsonDecoder
 
     public DecimalFloat nextFloat()
     {
-        Token.FLOAT.checkToken(next());
+        next().checkNumber();
         return getDecimalFloat();
     }
 

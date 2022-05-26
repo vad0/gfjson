@@ -21,6 +21,14 @@ public enum Token
         }
     }
 
+    public void checkNumber()
+    {
+        if (JsonDecoder.APPLY_CHECKS)
+        {
+            assert isNumber() : this;
+        }
+    }
+
     public boolean isNumber()
     {
         return this == LONG || this == FLOAT;
