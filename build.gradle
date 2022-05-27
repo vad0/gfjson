@@ -5,11 +5,13 @@ plugins {
     alias(libs.plugins.jmh)
     alias(libs.plugins.release)
     alias(libs.plugins.jengelman)
+    id 'maven-publish'
 }
 
 apply plugin: "checkstyle"
 apply plugin: "jacoco"
 apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'maven-publish'
 
 group "org.example"
 
