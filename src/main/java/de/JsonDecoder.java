@@ -496,10 +496,23 @@ public class JsonDecoder
         return decimalFloat.toDouble();
     }
 
+    public double longFromString()
+    {
+        final DecimalFloat decimalFloat = decimalFloatFromString();
+        assert decimalFloat.scale() == 0;
+        return decimalFloat.value();
+    }
+
     public double nextDoubleFromString()
     {
         nextString();
         return doubleFromString();
+    }
+
+    public double nextLongFromString()
+    {
+        nextString();
+        return longFromString();
     }
 
     public static void checkString(final AsciiSequenceView expected, final AsciiSequenceView actual)
