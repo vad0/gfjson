@@ -326,6 +326,17 @@ class JsonDecoderTest
     }
 
     @Test
+    public void testParseLongString()
+    {
+        final String string = "\"12\"";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        final var parsed = decoder.nextLongFromString();
+        final var expected = 12;
+        assertEquals(expected, parsed);
+    }
+
+    @Test
     public void testNullableString()
     {
         final String string = "{\"k\": \"1.2\", \"v\": null}";
