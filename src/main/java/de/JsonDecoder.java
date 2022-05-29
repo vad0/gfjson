@@ -496,7 +496,7 @@ public class JsonDecoder
         return decimalFloat.toDouble();
     }
 
-    public double longFromString()
+    public long longFromString()
     {
         final DecimalFloat decimalFloat = decimalFloatFromString();
         assert decimalFloat.scale() == 0;
@@ -509,7 +509,7 @@ public class JsonDecoder
         return doubleFromString();
     }
 
-    public double nextLongFromString()
+    public long nextLongFromString()
     {
         nextString();
         return longFromString();
