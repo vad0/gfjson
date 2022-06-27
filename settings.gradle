@@ -9,7 +9,7 @@ dependencyResolutionManagement {
 
             library("agrona", "org.agrona:agrona:1.15.2")
             library("lombok", "org.projectlombok:lombok:1.18.24")
-            library("artio.codecs", "uk.co.real-logic:artio-codecs:0.128")
+            library("artio.codecs", "uk.co.real-logic:artio-codecs:0.130")
             library("apache.commons.collections4", "org.apache.commons:commons-collections4:4.4")
             library("jackson-databind", "com.fasterxml.jackson.core:jackson-databind:2.13.3")
             library("jupiter.api", "org.junit.jupiter:junit-jupiter-api:5.8.2")
