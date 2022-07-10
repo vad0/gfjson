@@ -1,6 +1,7 @@
 package de;
 
 import org.agrona.AsciiSequenceView;
+import org.agrona.concurrent.UnsafeBuffer;
 import org.junit.jupiter.api.Test;
 import ser.JsonEncoder;
 import uk.co.real_logic.artio.fields.DecimalFloat;
@@ -362,6 +363,23 @@ class JsonDecoderTest
         decoder.wrap(byteBuffer);
         final var parsed = decoder.nextString().toString();
         assertEquals("abc", parsed);
+    }
+
+    @Test
+    public void testParseString2()
+    {
+        final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(1024);
+        final var unsafeBuffer = new UnsafeBuffer(byteBuffer);
+        final int index = 123;
+        final int length = unsafeBuffer.putStringWithoutLengthAscii(index, "\"abcd\"");
+        final var string = new AsciiSequenceView();
+        string.wrap(unsafeBuffer, index, length);
+
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        final var actualString = decoder.nextString();
+        final var parsed = actualString.toString();
+        assertEquals("abcd", parsed);
     }
 
     @Test
