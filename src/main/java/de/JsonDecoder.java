@@ -27,7 +27,7 @@ public class JsonDecoder
      * Offset of the next token to read
      */
     private int offset;
-    private int capacity;
+    private int length;
     private boolean bool;
 
     /**
@@ -117,16 +117,16 @@ public class JsonDecoder
 
     public void wrap(final ByteBuffer byteBuffer)
     {
-        buffer.wrap(byteBuffer);
         offset = 0;
-        capacity = buffer.capacity();
+        length = byteBuffer.capacity();
+        buffer.wrap(byteBuffer);
     }
 
     public void wrap(final byte[] string)
     {
-        buffer.wrap(string);
         offset = 0;
-        capacity = buffer.capacity();
+        length = string.length;
+        buffer.wrap(string);
     }
 
     public void wrap(final String string)
@@ -136,12 +136,14 @@ public class JsonDecoder
 
     public void wrap(final AsciiSequenceView string)
     {
-        wrap(string.buffer().byteArray());
+        offset = 0;
+        length = string.length();
+        buffer.wrap(string.buffer(), string.offset(), string.length());
     }
 
     public Token next()
     {
-        while (offset < capacity)
+        while (offset < length)
         {
             final char next = nextChar();
             if (shouldSkip(next))
@@ -185,7 +187,7 @@ public class JsonDecoder
 
     private void checkTrue()
     {
-        if (offset + 3 > capacity)
+        if (offset + 3 > length)
         {
             throw new TokenException("Not enough capacity to fit 'true'");
         }
@@ -199,7 +201,7 @@ public class JsonDecoder
 
     private void checkNull()
     {
-        if (offset + 3 > capacity)
+        if (offset + 3 > length)
         {
             throw new TokenException("Not enough capacity to fit 'null'");
         }
@@ -213,7 +215,7 @@ public class JsonDecoder
 
     private void checkFalse()
     {
-        if (offset + 4 > capacity)
+        if (offset + 4 > length)
         {
             throw new TokenException("Not enough capacity to fit 'false'");
         }
@@ -241,7 +243,7 @@ public class JsonDecoder
         }
         int stringOffset = 0;
         boolean isEscaped = false;
-        while (offset < capacity)
+        while (offset < length)
         {
             final char next = nextChar();
             if (isEscaped)
@@ -281,7 +283,7 @@ public class JsonDecoder
             mantissa = getDigit(first);
         }
         // before dot
-        while (offset < capacity)
+        while (offset < length)
         {
             final char next = nextChar();
             if (isDigit(next))
@@ -311,7 +313,7 @@ public class JsonDecoder
         }
         // after dot
         int exponent = 0;
-        while (offset < capacity)
+        while (offset < length)
         {
             final char next = nextChar();
             if (isDigit(next))
