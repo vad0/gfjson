@@ -134,12 +134,7 @@ public class JsonEncoder
      */
     private void putRawString(final CharSequence str)
     {
-        // We can't use buffer.putStringAscii(offset, str) since it adds length prefix
-        final int length = str.length();
-        for (int i = 0; i < length; i++)
-        {
-            putChar(str.charAt(i));
-        }
+        offset += buffer.putStringWithoutLengthAscii(offset, str);
     }
 
     public void putLong(final long value)
