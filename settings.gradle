@@ -12,7 +12,7 @@ dependencyResolutionManagement {
             library("artio.codecs", "uk.co.real-logic:artio-codecs:0.133")
             library("apache.commons.collections4", "org.apache.commons:commons-collections4:4.4")
             library("jackson-databind", "com.fasterxml.jackson.core:jackson-databind:2.13.3")
-            library("jupiter.api", "org.junit.jupiter:junit-jupiter-api:5.8.2")
+            library("jupiter.api", "org.junit.jupiter:junit-jupiter-api:5.9.0")
             library("jupiter.engine", "org.junit.jupiter:junit-jupiter-engine:5.8.2")
         }
     }
