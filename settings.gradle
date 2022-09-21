@@ -7,11 +7,11 @@ dependencyResolutionManagement {
             plugin("release", "net.researchgate.release").version("2.8.1")
             plugin("jengelman", "com.github.johnrengelman.shadow").version("7.1.2")
 
-            library("agrona", "org.agrona:agrona:1.16.0")
+            library("agrona", "org.agrona:agrona:1.17.1")
             library("lombok", "org.projectlombok:lombok:1.18.24")
             library("artio.codecs", "uk.co.real-logic:artio-codecs:0.135")
             library("apache.commons.collections4", "org.apache.commons:commons-collections4:4.4")
-            library("jackson-databind", "com.fasterxml.jackson.core:jackson-databind:2.13.3")
+            library("jackson-databind", "com.fasterxml.jackson.core:jackson-databind:2.13.4")
             library("jupiter.api", "org.junit.jupiter:junit-jupiter-api:5.9.0")
             library("jupiter.engine", "org.junit.jupiter:junit-jupiter-engine:5.9.1")
         }
