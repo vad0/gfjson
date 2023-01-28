@@ -79,6 +79,39 @@ public class JsonDecoder
         }
     }
 
+    /**
+     * This method parses struct from including initial '{'
+     *
+     * @param actions   map of actions which should be taken when certain keys are encountered
+     */
+    public <T> void parseStructRunnables(final KeyMap<Runnable> actions)
+    {
+        nextStartObject();
+        finishParsingStructRunnables(actions);
+    }
+
+    /**
+     * This method can be used to continue parsing struct. E.g. when first field contains information about message
+     * type. So we should decide on the parsing logic after parsing the first field.
+     *
+     * @param actions   map of actions which should be taken when certain keys are encountered
+     * @param structure to fill
+     */
+    public <T> void finishParsingStructRunnables(final KeyMap<Runnable> actions)
+    {
+        while (true)
+        {
+            final Token token = next();
+            if (token == Token.END_OBJECT)
+            {
+                break;
+            }
+            Token.STRING.checkToken(token);
+            final var key = actions.getKey(getString());
+            key.run();
+        }
+    }
+
     public static <T> BiConsumer<JsonDecoder, T> skip()
     {
         return (BiConsumer<JsonDecoder, T>)SKIP_LAMBDA;
