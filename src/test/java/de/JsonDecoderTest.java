@@ -449,11 +449,10 @@ class JsonDecoderTest
         final String string = "{\"a\":5,\"b\":[false,{\"e\":1}],\"c\":\"d\"}";
         final Map<String, Object> result = new HashMap<>();
         final JsonDecoder decoder = new JsonDecoder();
-        final KeyMap<Runnable> keyMap = new KeyMap<>(
-            Map.of(
-                "a", () -> result.put("a", decoder.nextLong()),
-                "c", () -> result.put("c", decoder.nextString().toString())),
-            decoder::skipValue);
+        final Map<String, Runnable> actions = Map.of(
+            "a", () -> result.put("a", decoder.nextLong()),
+            "c", () -> result.put("c", decoder.nextString().toString()));
+        final KeyMap<Runnable> keyMap = new KeyMap<>(actions, decoder::skipValue);
         decoder.wrap(string);
         decoder.parseStructRunnables(keyMap);
         final Map<String, Object> expected = Map.of(
