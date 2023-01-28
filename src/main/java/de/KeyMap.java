@@ -5,6 +5,7 @@ import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
 import org.apache.commons.collections4.trie.AsciiTrie;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,6 +30,16 @@ public class KeyMap<T>
         final AsciiSequenceView result = new AsciiSequenceView();
         result.wrap(buffer, 0, bytes.length);
         return result;
+    }
+
+    public static <T extends Enum<T>> KeyMap<T> forEnum(final Class<T> k)
+    {
+        final Map<String, T> map = new HashMap<>();
+        for (final var e : k.getEnumConstants())
+        {
+            map.put(e.toString(), e);
+        }
+        return new KeyMap<>(map, null);
     }
 
     public T getKey(final AsciiSequenceView string)

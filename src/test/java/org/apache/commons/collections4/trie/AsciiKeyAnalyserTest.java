@@ -130,4 +130,20 @@ class AsciiKeyAnalyserTest
         final int bits = analyser.bitsPerElement();
         assertEquals(-1, analyser.bitIndex(a, 0, a.length() * bits, b, 0, b.length() * bits));
     }
+
+    @Test
+    public void stringEquals()
+    {
+        final var x = KeyMap.string2view("ONE");
+        final var y = KeyMap.string2view("ONE");
+        assertTrue(AsciiKeyAnalyser.stringEquals(x, y));
+    }
+
+    @Test
+    public void stringNotEquals()
+    {
+        final var x = KeyMap.string2view("ONE");
+        final var y = KeyMap.string2view("TWO");
+        assertFalse(AsciiKeyAnalyser.stringEquals(x, y));
+    }
 }

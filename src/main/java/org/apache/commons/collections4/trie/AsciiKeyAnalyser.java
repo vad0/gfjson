@@ -163,4 +163,9 @@ public class AsciiKeyAnalyser
         }
         return 0;
     }
+
+    public static boolean stringEquals(final AsciiSequenceView x, final AsciiSequenceView y)
+    {
+        return AsciiKeyAnalyser.INSTANCE.compare(x, y) == 0;
+    }
 }
