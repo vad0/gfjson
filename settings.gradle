@@ -8,7 +8,7 @@ dependencyResolutionManagement {
             plugin("jengelman", "com.github.johnrengelman.shadow").version("7.1.2")
 
             library("agrona", "org.agrona:agrona:1.17.1")
-            library("lombok", "org.projectlombok:lombok:1.18.24")
+            library("lombok", "org.projectlombok:lombok:1.18.26")
             library("artio.codecs", "uk.co.real-logic:artio-codecs:0.139")
             library("apache.commons.collections4", "org.apache.commons:commons-collections4:4.4")
             library("jupiter.api", "org.junit.jupiter:junit-jupiter-api:5.9.2")
