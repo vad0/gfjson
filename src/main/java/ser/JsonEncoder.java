@@ -14,6 +14,7 @@ public class JsonEncoder
     private static final String TRUE = "true";
     private static final String FALSE = "false";
     private final MutableAsciiBuffer buffer = new MutableAsciiBuffer();
+    @Getter
     private final DecimalFloat decimalFloat = new DecimalFloat();
     @Getter
     private int offset = 0;
@@ -149,7 +150,7 @@ public class JsonEncoder
         putDecimalFloat(decimalFloat);
     }
 
-    private void putDecimalFloat(final DecimalFloat x)
+    public void putDecimalFloat(final DecimalFloat x)
     {
         final int encodedLength = buffer.putFloatAscii(offset, x.value(), x.scale());
         offset += encodedLength;
