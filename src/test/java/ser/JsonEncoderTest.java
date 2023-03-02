@@ -313,4 +313,15 @@ public class JsonEncoderTest
             encoder.endObject();
         });
     }
+
+    @Test
+    public void testDecimalFloat()
+    {
+        check("1234.56", encoder ->
+        {
+            final var df = encoder.getDecimalFloat();
+            df.set(123456, 2);
+            encoder.putDecimalFloat(df);
+        });
+    }
 }
