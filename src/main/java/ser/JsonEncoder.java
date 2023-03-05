@@ -133,7 +133,7 @@ public class JsonEncoder
     /**
      * Writes string without wrapping quotes. So can be used to write 'true' or 'false'
      */
-    private void putRawString(final CharSequence str)
+    public void putRawString(final CharSequence str)
     {
         offset += buffer.putStringWithoutLengthAscii(offset, str);
     }
