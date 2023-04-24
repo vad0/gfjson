@@ -84,7 +84,7 @@ public class JsonDecoder
      *
      * @param actions map of actions which should be taken when certain keys are encountered
      */
-    public <T> void parseStructRunnables(final KeyMap<Runnable> actions)
+    public void parseStructRunnables(final KeyMap<Runnable> actions)
     {
         nextStartObject();
         finishParsingStructRunnables(actions);
@@ -96,7 +96,7 @@ public class JsonDecoder
      *
      * @param actions map of actions which should be taken when certain keys are encountered
      */
-    public <T> void finishParsingStructRunnables(final KeyMap<Runnable> actions)
+    public void finishParsingStructRunnables(final KeyMap<Runnable> actions)
     {
         while (true)
         {
