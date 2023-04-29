@@ -146,12 +146,22 @@ public class JsonEncoder
 
     public void putDouble(final double value)
     {
-        decimalFloat.fromDouble(value);
+        final boolean success = decimalFloat.fromDouble(value);
+        if (!success)
+        {
+            throw new NumberFormatException("Can't represent " + value + " as DecimalFloat");
+        }
         putDecimalFloat(decimalFloat);
     }
 
     public void putDecimalFloat(final DecimalFloat x)
     {
+        if (x.isNaNValue())
+        {
+            final int encodedLength = buffer.putStringWithoutLengthAscii(offset, "NaN");
+            offset += encodedLength;
+            return;
+        }
         final int encodedLength = buffer.putFloatAscii(offset, x.value(), x.scale());
         offset += encodedLength;
     }

@@ -15,6 +15,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JsonEncoderTest
 {
@@ -322,6 +323,37 @@ public class JsonEncoderTest
             final var df = encoder.getDecimalFloat();
             df.set(123456, 2);
             encoder.putDecimalFloat(df);
+        });
+    }
+
+    @Test
+    public void putNaN()
+    {
+        check("NaN", encoder ->
+        {
+            final var df = encoder.getDecimalFloat();
+            df.fromDouble(Double.NaN);
+            encoder.putDecimalFloat(df);
+        });
+    }
+
+    @Test
+    public void putPositiveInfinity()
+    {
+        assertThrows(NumberFormatException.class, () ->
+        {
+            final var encoder = new JsonEncoder();
+            encoder.putDouble(Double.POSITIVE_INFINITY);
+        });
+    }
+
+    @Test
+    public void putNegativeInfinity()
+    {
+        assertThrows(NumberFormatException.class, () ->
+        {
+            final var encoder = new JsonEncoder();
+            encoder.putDouble(Double.NEGATIVE_INFINITY);
         });
     }
 }
