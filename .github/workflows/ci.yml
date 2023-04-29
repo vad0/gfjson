@@ -30,6 +30,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: check --info
+          cache-disabled: true
 
       - name: Checkstyle and tests
         run: gradle check
