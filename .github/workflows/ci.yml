@@ -25,10 +25,11 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: 17
-          cache: gradle
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
+        with:
+          arguments: check --info
 
       - name: Checkstyle and tests
         run: gradle check
