@@ -5,13 +5,13 @@ plugins {
 //    alias(libs.plugins.jmh)
 //    alias(libs.plugins.release)
     alias(libs.plugins.jengelman)
-//    id("maven-publish")
+    id("maven-publish")
 }
 
 apply(plugin = "checkstyle")
 apply(plugin = "jacoco")
 apply(plugin = "com.github.johnrengelman.shadow")
-//apply(plugin = "maven-publish")
+apply(plugin = "maven-publish")
 
 group = "vad0"
 
@@ -95,18 +95,18 @@ tasks.getByName("clean") {
 //    failOnCommitNeeded = false
 //    failOnUpdateNeeded = false
 //}
-//
-//publishing {
-//    publications {
-//        // This mavenJava can be filled in randomly, it's just a task name
-//        // MavenPublication must have, this is the task class to call
-//        mavenJava(MavenPublication) {
-//            // The header here is the artifacts configuration information, do not fill in the default
-//            groupId = "gfjson"
-//            artifactId = "library"
-//            version = "1.1"
-//
-//            from components . java
-//        }
-//    }
-//}
+
+publishing {
+    publications {
+        // This mavenJava can be filled in randomly, it's just a task name
+        // MavenPublication must have, this is the task class to call
+        create<MavenPublication>("maven") {
+            // The header here is the artifacts configuration information, do not fill in the default
+            groupId = "gfjson"
+            artifactId = "library"
+            version = "1.1"
+
+            from(components["java"])
+        }
+    }
+}
