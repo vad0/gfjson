@@ -6,6 +6,7 @@ import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
 import org.apache.commons.collections4.trie.AsciiKeyAnalyser;
 import uk.co.real_logic.artio.fields.DecimalFloat;
+import uk.co.real_logic.artio.fields.ReadOnlyDecimalFloat;
 import uk.co.real_logic.artio.util.MutableAsciiBuffer;
 
 import java.nio.ByteBuffer;
@@ -202,6 +203,10 @@ public class JsonDecoder
                 case 'n':
                     checkNull();
                     return Token.NULL;
+                case 'N':
+                    checkNaN();
+                    decimalFloat.set(ReadOnlyDecimalFloat.NAN);
+                    return Token.FLOAT;
                 case '{':
                     return Token.START_OBJECT;
                 case '}':
@@ -242,6 +247,19 @@ public class JsonDecoder
             nextChar() != 'l')
         {
             throw new TokenException("Can't parse 'null'");
+        }
+    }
+
+    private void checkNaN()
+    {
+        if (offset + 2 > length)
+        {
+            throw new TokenException("Not enough capacity to fit 'NaN'");
+        }
+        if (nextChar() != 'a' ||
+            nextChar() != 'N')
+        {
+            throw new TokenException("Can't parse 'NaN'");
         }
     }
 

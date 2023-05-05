@@ -205,6 +205,36 @@ class JsonDecoderTest
     }
 
     @Test
+    public void testParseNaN()
+    {
+        final String string = "NaN";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        final var value = decoder.nextFloat();
+        assertTrue(value.isNaNValue());
+        final double doubleValue = value.toDouble();
+        assertTrue(Double.isNaN(doubleValue));
+    }
+
+    @Test
+    public void testParseNaNInvalid1()
+    {
+        final String string = "Na";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        assertThrows(TokenException.class, decoder::nextFloat);
+    }
+
+    @Test
+    public void testParseNaNInvalid2()
+    {
+        final String string = "Nan";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        assertThrows(TokenException.class, decoder::nextFloat);
+    }
+
+    @Test
     public void testParseInvalidStruct()
     {
         final String string = "{\"1\":#}";

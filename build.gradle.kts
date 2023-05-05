@@ -3,7 +3,6 @@ plugins {
     id("jacoco")
     id("checkstyle")
 //    alias(libs.plugins.jmh)
-//    alias(libs.plugins.release)
     alias(libs.plugins.jengelman)
     id("maven-publish")
 }
@@ -90,11 +89,6 @@ tasks.getByName("clean") {
         project.delete(projectDir.toPath().resolve("output"))
     }
 }
-
-//release {
-//    failOnCommitNeeded = false
-//    failOnUpdateNeeded = false
-//}
 
 publishing {
     publications {
