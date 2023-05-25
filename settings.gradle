@@ -8,7 +8,7 @@ dependencyResolutionManagement {
             plugin("jengelman", "com.github.johnrengelman.shadow").version("7.1.2")
 
             library("agrona", "org.agrona:agrona:1.18.1")
-            library("lombok", "org.projectlombok:lombok:1.18.26")
+            library("lombok", "org.projectlombok:lombok:1.18.28")
             library("artio.codecs", "uk.co.real-logic:artio-codecs:0.142")
             library("apache.commons.collections4", "org.apache.commons:commons-collections4:4.4")
             library("jackson-databind", "com.fasterxml.jackson.core:jackson-databind:2.15.0")
