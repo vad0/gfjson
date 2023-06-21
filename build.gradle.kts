@@ -24,7 +24,7 @@ dependencies {
     implementation(libs.apache.commons.collections4)
     testImplementation(libs.jupiter.api)
     testRuntimeOnly(libs.jupiter.engine)
-    testImplementation(libs.jackson.databind)
+    implementation(libs.jackson.databind)
     implementation(libs.lombok)
     annotationProcessor(libs.lombok)
     testImplementation(libs.lombok)
@@ -101,6 +101,14 @@ publishing {
             version = "1.1"
 
             from(components["java"])
+        }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir("build/generated/sources/gfjson")
         }
     }
 }
