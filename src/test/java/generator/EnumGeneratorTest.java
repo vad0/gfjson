@@ -20,10 +20,10 @@ class EnumGeneratorTest
     public void generateEnum()
     {
         final var file = TestUtils.getResourcePath("generator/schema.json").toFile();
-        final var schema = Generator.parseSchema(file);
+        final var schema = JsonTool.parseSchema(file);
 //        final var debugDir = Path.of(System.getProperty("user.dir"), "build/generated/sources/gfjson");
         final var outputDir = tempDir;
-        EnumGenerator.generate(schema, outputDir.toString(), "OrderType");
+        EnumGenerator.generate(schema, outputDir, "OrderType");
 
         final String expected = TestUtils.readFile(Path.of("generator/expected_order_type.txt").toString());
         final String actual = Files.readString(outputDir.resolve("md/OrderType.java"));

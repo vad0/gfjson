@@ -1,6 +1,5 @@
 package generator;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.JsonDecoder;
 import de.KeyMap;
 import lombok.SneakyThrows;
@@ -8,76 +7,74 @@ import org.agrona.AsciiSequenceView;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.StringJoiner;
 
-public class Generator
+public class StructDecoderGenerator
+    implements AutoCloseable
 {
-    private final String outputDir;
-    private final Schema schema;
+    private final StructDefinition definition;
+    private final Writer writer;
 
-    public Generator(final File schemaFile, final String outputDir)
+    public StructDecoderGenerator(final Schema schema, final Path outputDir, final String structName)
     {
-        this.schema = parseSchema(schemaFile);
-        this.outputDir = outputDir;
+        this.definition = schema.structByName(structName);
+        final File file = JsonTool.mkdirs(outputDir, definition)
+            .resolve(definition.decoderName() + ".java")
+            .toFile();
+        this.writer = new Writer(file);
     }
 
-    @SneakyThrows
-    public static Schema parseSchema(final File file)
+    public static void generate(final Schema schema, final Path outputDir, final String structName)
     {
-        return new ObjectMapper().readValue(file, Schema.class);
-    }
-
-    @SneakyThrows
-    public void generateDecoder(final String messageName)
-    {
-        final var message = schema.messageByName(messageName);
-        final Path dir = Paths.get(outputDir).resolve(message.packageName());
-        dir.toFile().mkdirs();
-        final var className = messageName + "Decoder";
-        try (final var writer = new Writer(dir.resolve(className + ".java").toFile()))
+        try (final var generator = new StructDecoderGenerator(schema, outputDir, structName))
         {
-            writePackage(message, writer);
-
-            writeImports(message, writer);
-
-            writer.printf("public class %s", className);
-            writer.startScope();
-
-            writeFields(message, writer);
-
-            writeConstructor(message, writer);
-
-            writeParseSignature(message, writer);
-            writer.startScope();
-            writer.printf("decoder.nextStartObject();\n\n");
-
-            for (final var field : message.fields())
-            {
-                parseField(writer, field);
-            }
-
-            writer.printf("decoder.nextEndObject();\n");
-
-            writer.endScope();
-
-            writer.endScope();
+            generator.generateDecoder();
         }
     }
 
-    private void writeConstructor(StructDefinition structDefinition, Writer writer)
+    @SneakyThrows
+    public void generateDecoder()
+    {
+        JsonTool.writePackage(definition, writer);
+
+        writeImports(definition, writer);
+
+        writer.printf("public class %s", definition.decoderName());
+        writer.startScope();
+
+        writeFields(definition, writer);
+
+        writeConstructor(definition, writer);
+
+        writeParseSignature(definition, writer);
+        writer.startScope();
+        writer.printf("decoder.nextStartObject();\n\n");
+
+        for (final var field : definition.fields())
+        {
+            parseField(writer, field);
+        }
+
+        writer.printf("decoder.nextEndObject();\n");
+
+        writer.endScope();
+
+        writer.endScope();
+    }
+
+    private static void writeConstructor(final StructDefinition struct, final Writer writer)
     {
         final var sb = new StringJoiner(", ");
-        for (final var field : structDefinition.fields())
+        for (final var field : struct.fields())
         {
             if (field.isMappedString())
             {
                 sb.add("KeyMap<%s> %s".formatted(field.mappedClassSimpleName(), field.mapName()));
             }
         }
-        writer.printf("public %sDecoder(%s)", structDefinition.name(), sb);
+        writer.printf("public %sDecoder(%s)", struct.name(), sb);
         writer.startScope();
-        for (final var field : structDefinition.fields())
+        for (final var field : struct.fields())
         {
             if (field.isMappedString())
             {
@@ -88,7 +85,7 @@ public class Generator
         writer.println();
     }
 
-    private static void parseField(Writer writer, Field field)
+    private static void parseField(final Writer writer, final Field field)
     {
         writer.printf("decoder.checkKey(%s);\n", viewConstName(field));
         if (field.constant())
@@ -198,13 +195,6 @@ public class Generator
         writer.println();
     }
 
-    static void writePackage(final Definition definition, final Writer writer)
-    {
-        writer.printf("package %s;", definition.packageName());
-        writer.println();
-        writer.println();
-    }
-
     private static String viewConstName(final Field field)
     {
         return field.screamingSnakeName();
@@ -213,5 +203,11 @@ public class Generator
     private static String expectedConstName(final Field field)
     {
         return "EXPECTED_" + field.screamingSnakeName();
+    }
+
+    @Override
+    public void close()
+    {
+        writer.close();
     }
 }

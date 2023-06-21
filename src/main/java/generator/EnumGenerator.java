@@ -2,8 +2,8 @@ package generator;
 
 import lombok.SneakyThrows;
 
+import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 public class EnumGenerator
@@ -12,15 +12,16 @@ public class EnumGenerator
     private final EnumDefinition definition;
     private final Writer writer;
 
-    public EnumGenerator(final Schema schema, final String outputDir, final String enumName)
+    public EnumGenerator(final Schema schema, final Path outputDir, final String enumName)
     {
         this.definition = schema.enumByName(enumName);
-        final Path dir = Paths.get(outputDir).resolve(definition.packageName());
-        dir.toFile().mkdirs();
-        this.writer = new Writer(dir.resolve(enumName + ".java").toFile());
+        final File file = JsonTool.mkdirs(outputDir, definition)
+            .resolve(enumName + ".java")
+            .toFile();
+        this.writer = new Writer(file);
     }
 
-    public static void generate(final Schema schema, final String outputDir, final String enumName)
+    public static void generate(final Schema schema, final Path outputDir, final String enumName)
     {
         try (final var generator = new EnumGenerator(schema, outputDir, enumName))
         {
@@ -31,7 +32,7 @@ public class EnumGenerator
     @SneakyThrows
     public void generateEnum()
     {
-        Generator.writePackage(definition, writer);
+        JsonTool.writePackage(definition, writer);
 
         writer.printf("public enum " + definition.name());
         writer.startScope();

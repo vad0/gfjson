@@ -38,7 +38,7 @@ public class Schema
         return this;
     }
 
-    public StructDefinition messageByName(final String messageName)
+    public StructDefinition structByName(final String messageName)
     {
         return structs()
             .stream()

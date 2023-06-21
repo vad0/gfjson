@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class GeneratorTest
+class StructDecoderGeneratorTest
 {
     @TempDir
     public Path tempDir;
@@ -20,7 +20,7 @@ class GeneratorTest
     public void testParseSchema()
     {
         final var file = TestUtils.getResourcePath("generator/schema.json").toFile();
-        final var schema = Generator.parseSchema(file);
+        final var schema = JsonTool.parseSchema(file);
 
         final var expected = new Schema()
             .addEnum(new EnumDefinition()
@@ -75,10 +75,10 @@ class GeneratorTest
     public void generateDecoder()
     {
         final var file = TestUtils.getResourcePath("generator/schema.json").toFile();
+        final var schema = JsonTool.parseSchema(file);
         final var debugDir = Path.of(System.getProperty("user.dir"), "build/generated/sources/gfjson");
         final var outputDir = tempDir;
-        final var generator = new Generator(file, outputDir.toString());
-        generator.generateDecoder("L1Update");
+        StructDecoderGenerator.generate(schema, outputDir, "L1Update");
 
         final String expected = TestUtils.readFile(Path.of("generator/expected_l1_decoder.txt").toString());
         final String actual = Files.readString(outputDir.resolve("md/L1UpdateDecoder.java"));
