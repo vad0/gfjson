@@ -31,7 +31,7 @@ public class Generator
     @SneakyThrows
     public void generateDecoder(final String messageName)
     {
-        final var message = schema.getByName(messageName);
+        final var message = schema.messageByName(messageName);
         final Path dir = Paths.get(outputDir).resolve(message.packageName());
         dir.toFile().mkdirs();
         final var className = messageName + "Decoder";
@@ -65,19 +65,19 @@ public class Generator
         }
     }
 
-    private void writeConstructor(Message message, Writer writer)
+    private void writeConstructor(StructDefinition structDefinition, Writer writer)
     {
         final var sb = new StringJoiner(", ");
-        for (final var field : message.fields())
+        for (final var field : structDefinition.fields())
         {
             if (field.isMappedString())
             {
                 sb.add("KeyMap<%s> %s".formatted(field.mappedClassSimpleName(), field.mapName()));
             }
         }
-        writer.printf("public %sDecoder(%s)", message.name(), sb);
+        writer.printf("public %sDecoder(%s)", structDefinition.name(), sb);
         writer.startScope();
-        for (final var field : message.fields())
+        for (final var field : structDefinition.fields())
         {
             if (field.isMappedString())
             {
@@ -102,22 +102,26 @@ public class Generator
                 default -> throw new RuntimeException("Not implemented constant field parsing for " + field.type());
             }
         }
+        else if (field.ignored())
+        {
+            writer.printf("decoder.skipValue();\n");
+        }
         else
         {
             switch (field.type())
             {
                 case LONG ->
                 {
-                    writer.printf("message.%s(decoder.nextLong());\n", field.name());
+                    writer.printf("struct.%s(decoder.nextLong());\n", field.name());
                 }
                 case QUOTED_DOUBLE ->
                 {
-                    writer.printf("message.%s(decoder.nextDoubleFromString());\n", field.name());
+                    writer.printf("struct.%s(decoder.nextDoubleFromString());\n", field.name());
                 }
                 case STRING ->
                 {
                     writer.printf(
-                        "message.%s(%sMap.getKey(decoder.nextString()));\n",
+                        "struct.%s(%sMap.getKey(decoder.nextString()));\n",
                         field.name(),
                         field.name());
                 }
@@ -127,20 +131,20 @@ public class Generator
         writer.println();
     }
 
-    private static void writeParseSignature(final Message message, final Writer writer)
+    private static void writeParseSignature(final StructDefinition struct, final Writer writer)
     {
-        writer.printf("public void parse(JsonDecoder decoder, %s message)", message.name());
+        writer.printf("public void parse(JsonDecoder decoder, %s struct)", struct.name());
     }
 
-    private static void writeFields(final Message message, final Writer writer)
+    private static void writeFields(final StructDefinition struct, final Writer writer)
     {
-        writeStaticFields(message, writer);
-        writeInstanceFields(message, writer);
+        writeStaticFields(struct, writer);
+        writeInstanceFields(struct, writer);
     }
 
-    private static void writeInstanceFields(Message message, Writer writer)
+    private static void writeInstanceFields(final StructDefinition struct, final Writer writer)
     {
-        for (final var field : message.fields())
+        for (final var field : struct.fields())
         {
             if (field.isMappedString())
             {
@@ -150,9 +154,9 @@ public class Generator
         writer.println();
     }
 
-    private static void writeStaticFields(Message message, Writer writer)
+    private static void writeStaticFields(final StructDefinition struct, final Writer writer)
     {
-        for (final var field : message.fields())
+        for (final var field : struct.fields())
         {
             writer.printf(
                 "private static final %s %s = KeyMap.string2view(\"%s\");\n",
@@ -178,12 +182,12 @@ public class Generator
         writer.println();
     }
 
-    private static void writeImports(Message message, final Writer writer)
+    private static void writeImports(final StructDefinition struct, final Writer writer)
     {
         writer.importClass(JsonDecoder.class);
         writer.importClass(KeyMap.class);
         writer.importClass(AsciiSequenceView.class);
-        for (final var field : message.fields())
+        for (final var field : struct.fields())
         {
             if (field.isMappedString())
             {
@@ -194,16 +198,11 @@ public class Generator
         writer.println();
     }
 
-    private static void writePackage(final Message message, final Writer writer)
+    static void writePackage(final Definition definition, final Writer writer)
     {
-        writer.printf("package %s;", message.packageName());
+        writer.printf("package %s;", definition.packageName());
         writer.println();
         writer.println();
-    }
-
-    private static String stringConstName(final Field field)
-    {
-        return field.screamingSnakeName() + "_STR";
     }
 
     private static String viewConstName(final Field field)

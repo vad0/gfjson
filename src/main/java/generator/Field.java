@@ -14,6 +14,7 @@ public class Field
     private String name;
     private Type type;
     private boolean constant;
+    private boolean ignored;
     private String description;
     private Object expected;
     private String mappedClass;
@@ -55,7 +56,7 @@ public class Field
 
     boolean isMappedString()
     {
-        return type() == Type.STRING && !constant();
+        return type() == Type.STRING && !constant() && !ignored();
     }
 
     public String screamingSnakeName()

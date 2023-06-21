@@ -1,5 +1,26 @@
 {
-  "messages": [
+  "enums": [
+    {
+      "name": "OrderType",
+      "packageName": "md",
+      "generate": true,
+      "values": [
+        "LIMIT",
+        "MARKET",
+        "MARKET_LIMIT"
+      ]
+    },
+    {
+      "name": "TimeInForce",
+      "packageName": "md",
+      "values": [
+        "IOC",
+        "GTC",
+        "FOK"
+      ]
+    }
+  ],
+  "structs": [
     {
       "name": "L1Update",
       "packageName": "md",
@@ -31,6 +52,12 @@
           "type": "STRING",
           "constant": false,
           "mappedClass": "org.agrona.collections.MutableInteger"
+        },
+        {
+          "key": "x",
+          "name": "error",
+          "type": "STRING",
+          "ignored": true
         }
       ]
     }

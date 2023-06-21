@@ -13,19 +13,45 @@ import java.util.List;
 @Getter(onMethod = @__(@JsonProperty))
 public class Schema
 {
-    private List<Message> messages = new ArrayList<>();
+    private List<EnumDefinition> enums = new ArrayList<>();
+    private List<StructDefinition> structs = new ArrayList<>();
 
-    public Schema addMessage(final Message message)
+    public Schema addEnum(final Definition definition)
     {
-        messages.add(message);
+        return addEnum((EnumDefinition)definition);
+    }
+
+    public Schema addEnum(final EnumDefinition definition)
+    {
+        enums.add(definition);
         return this;
     }
 
-    public Message getByName(final String messageName)
+    public Schema addMessage(final Definition message)
     {
-        return messages()
+        return addMessage((StructDefinition)message);
+    }
+
+    public Schema addMessage(final StructDefinition structDefinition)
+    {
+        structs.add(structDefinition);
+        return this;
+    }
+
+    public StructDefinition messageByName(final String messageName)
+    {
+        return structs()
             .stream()
             .filter(m -> m.name().equals(messageName))
+            .findFirst()
+            .orElseThrow();
+    }
+
+    public EnumDefinition enumByName(final String enumName)
+    {
+        return enums()
+            .stream()
+            .filter(m -> m.name().equals(enumName))
             .findFirst()
             .orElseThrow();
     }

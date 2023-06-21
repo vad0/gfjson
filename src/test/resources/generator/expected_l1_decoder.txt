@@ -1,0 +1,46 @@
+package md;
+
+import de.JsonDecoder;
+import de.KeyMap;
+import org.agrona.AsciiSequenceView;
+import org.agrona.collections.MutableInteger;
+
+
+public class L1UpdateDecoder
+{
+    private static final AsciiSequenceView EVENT_TYPE = KeyMap.string2view("eventType");
+    private static final AsciiSequenceView EXPECTED_EVENT_TYPE = KeyMap.string2view("bookTicker");
+    private static final AsciiSequenceView UPDATE_ID = KeyMap.string2view("updateId");
+    private static final AsciiSequenceView BEST_BID_PRICE = KeyMap.string2view("bestBidPrice");
+    private static final AsciiSequenceView SYMBOL = KeyMap.string2view("symbol");
+    private static final AsciiSequenceView ERROR = KeyMap.string2view("error");
+
+    private final KeyMap<MutableInteger> symbolMap;
+
+    public L1UpdateDecoder(KeyMap<MutableInteger> symbolMap)
+    {
+        this.symbolMap = symbolMap;
+    }
+
+    public void parse(JsonDecoder decoder, L1Update struct)
+    {
+        decoder.nextStartObject();
+
+        decoder.checkKey(EVENT_TYPE);
+        decoder.checkKey(EXPECTED_EVENT_TYPE);
+
+        decoder.checkKey(UPDATE_ID);
+        struct.updateId(decoder.nextLong());
+
+        decoder.checkKey(BEST_BID_PRICE);
+        struct.bestBidPrice(decoder.nextDoubleFromString());
+
+        decoder.checkKey(SYMBOL);
+        struct.symbol(symbolMap.getKey(decoder.nextString()));
+
+        decoder.checkKey(ERROR);
+        decoder.skipValue();
+
+        decoder.nextEndObject();
+    }
+}

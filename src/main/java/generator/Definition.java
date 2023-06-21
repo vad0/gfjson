@@ -5,22 +5,22 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Data
 @Accessors(fluent = true, chain = true)
 @Getter(onMethod = @__(@JsonProperty))
-public class Message
+public class Definition
 {
     private String name;
     private String packageName;
-    private boolean strictOrder;
-    private List<Field> fields = new ArrayList<>();
+    private boolean generate;
 
-    public Message addField(Field field)
+    public EnumDefinition asEnum()
     {
-        fields.add(field);
-        return this;
+        return (EnumDefinition)this;
+    }
+
+    public StructDefinition asMessage()
+    {
+        return (StructDefinition)this;
     }
 }

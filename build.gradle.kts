@@ -106,7 +106,7 @@ publishing {
 }
 
 sourceSets {
-    main {
+    test {
         java {
             srcDir("build/generated/sources/gfjson")
         }
