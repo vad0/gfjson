@@ -112,3 +112,8 @@ sourceSets {
         }
     }
 }
+
+tasks.register("checkstyleAll") {
+    group = "verification"
+    dependsOn(tasks.withType<Checkstyle>())
+}

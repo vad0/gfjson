@@ -7,7 +7,7 @@ public class TimeInForceDecoder
 {
     private static final KeyMap<TimeInForce> MAP = KeyMap.forEnum(TimeInForce.class);
 
-    public static TimeInForce parse(AsciiSequenceView string)
+    public static TimeInForce parse(final AsciiSequenceView string)
     {
         return MAP.getKey(string);
     }

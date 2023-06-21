@@ -23,7 +23,7 @@ public class EnumDecoderGenerator
 
     public static void generate(final Schema schema, final Path outputDir, final String enumName)
     {
-        try (final var generator = new EnumDecoderGenerator(schema, outputDir, enumName))
+        try (var generator = new EnumDecoderGenerator(schema, outputDir, enumName))
         {
             generator.generateDecoder();
         }

@@ -28,7 +28,7 @@ public class StructDecoderGenerator
 
     public static void generate(final Schema schema, final Path outputDir, final String structName)
     {
-        try (final var generator = new StructDecoderGenerator(schema, outputDir, structName))
+        try (var generator = new StructDecoderGenerator(schema, outputDir, structName))
         {
             generator.generateDecoder();
         }
@@ -87,7 +87,7 @@ public class StructDecoderGenerator
         writer.println();
     }
 
-    private  void parseField(final Field field)
+    private void parseField(final Field field)
     {
         writer.printf("decoder.checkKey(%s);\n", viewConstName(field));
         if (field.constant())

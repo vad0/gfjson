@@ -23,7 +23,7 @@ public class EnumGenerator
 
     public static void generate(final Schema schema, final Path outputDir, final String enumName)
     {
-        try (final var generator = new EnumGenerator(schema, outputDir, enumName))
+        try (var generator = new EnumGenerator(schema, outputDir, enumName))
         {
             generator.generateEnum();
         }

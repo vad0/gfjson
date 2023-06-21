@@ -50,7 +50,7 @@ public class Writer
         writer.println();
     }
 
-    void printf(String format, Object... args)
+    void printf(final String format, final Object... args)
     {
         writer.printf(TAB.repeat(indent) + format, args);
     }

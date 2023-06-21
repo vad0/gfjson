@@ -25,16 +25,13 @@ public class Field
      */
     public static String camelToSnake(final String str)
     {
-        // Empty String
-        StringBuilder result = new StringBuilder();
+        final var result = new StringBuilder();
 
-        // Append first character(in lower case)
-        // to result string
+        // Append first character(in lower case) to result string
         final char c = str.charAt(0);
         result.append(Character.toLowerCase(c));
 
-        // Traverse the string from
-        // ist index to last index
+        // Traverse the string from ist index to last index
         for (int i = 1; i < str.length(); i++)
         {
             final char ch = str.charAt(i);
