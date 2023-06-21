@@ -63,6 +63,10 @@ class JsonToolTest
                     .name("timeInForce")
                     .type(Field.Type.ENUM)
                     .mappedClass("md.TimeInForce"))
+                .addField(new Field()
+                    .key("bo")
+                    .name("isFast")
+                    .type(Field.Type.BOOLEAN))
             );
 
         assertEquals(expected, schema);

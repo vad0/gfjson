@@ -90,7 +90,11 @@ public class StructDecoderGenerator
     private void parseField(final Field field)
     {
         writer.printf("decoder.checkKey(%s);\n", viewConstName(field));
-        if (field.constant())
+        if (field.ignored())
+        {
+            writer.printf("decoder.skipValue();\n");
+        }
+        else if (field.constant())
         {
             switch (field.type())
             {
@@ -101,29 +105,16 @@ public class StructDecoderGenerator
                 default -> throw new RuntimeException("Not implemented constant field parsing for " + field.type());
             }
         }
-        else if (field.ignored())
-        {
-            writer.printf("decoder.skipValue();\n");
-        }
         else
         {
             switch (field.type())
             {
-                case LONG ->
-                {
-                    writer.printf("struct.%s(decoder.nextLong());\n", field.name());
-                }
-                case QUOTED_DOUBLE ->
-                {
-                    writer.printf("struct.%s(decoder.nextDoubleFromString());\n", field.name());
-                }
-                case STRING ->
-                {
-                    writer.printf(
-                        "struct.%s(%sMap.getKey(decoder.nextString()));\n",
-                        field.name(),
-                        field.name());
-                }
+                case LONG -> writer.printf("struct.%s(decoder.nextLong());\n", field.name());
+                case QUOTED_DOUBLE -> writer.printf("struct.%s(decoder.nextDoubleFromString());\n", field.name());
+                case STRING -> writer.printf(
+                    "struct.%s(%sMap.getKey(decoder.nextString()));\n",
+                    field.name(),
+                    field.name());
                 case ENUM ->
                 {
                     final var enumDefinition = schema.enumByMappedClass(field.mappedClass());
@@ -132,6 +123,7 @@ public class StructDecoderGenerator
                         field.name(),
                         enumDefinition.decoderName());
                 }
+                case BOOLEAN -> writer.printf("struct.%s(decoder.nextBoolean());\n", field.name());
                 default -> throw new RuntimeException("Not implemented non constant field parsing for " + field.type());
             }
         }

@@ -22,7 +22,7 @@ class EnumDecoderGeneratorTest
         final var file = TestUtils.getResourcePath("generator/schema.json").toFile();
         final var schema = JsonTool.parseSchema(file);
         final var debugDir = Path.of(System.getProperty("user.dir"), "build/generated/sources/gfjson");
-        final var outputDir = debugDir;
+        final var outputDir = tempDir;
         EnumDecoderGenerator.generate(schema, outputDir, "OrderType");
 
         final String expected = TestUtils.readFile(Path.of("generator/expected_order_type_decoder.txt").toString());

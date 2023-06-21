@@ -12,4 +12,5 @@ public class L1Update
     private double bestBidPrice;
     private MutableInteger symbol;
     private TimeInForce timeInForce;
+    private boolean isFast;
 }

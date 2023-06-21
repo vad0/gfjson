@@ -64,6 +64,11 @@
           "name": "timeInForce",
           "type": "ENUM",
           "mappedClass": "md.TimeInForce"
+        },
+        {
+          "key": "bo",
+          "name": "isFast",
+          "type": "BOOLEAN"
         }
       ]
     }

@@ -15,6 +15,7 @@ public class L1UpdateDecoder
     private static final AsciiSequenceView SYMBOL = KeyMap.string2view("symbol");
     private static final AsciiSequenceView ERROR = KeyMap.string2view("error");
     private static final AsciiSequenceView TIME_IN_FORCE = KeyMap.string2view("timeInForce");
+    private static final AsciiSequenceView IS_FAST = KeyMap.string2view("isFast");
 
     private final KeyMap<MutableInteger> symbolMap;
 
@@ -44,6 +45,9 @@ public class L1UpdateDecoder
 
         decoder.checkKey(TIME_IN_FORCE);
         struct.timeInForce(TimeInForceDecoder.parse(decoder.nextString()));
+
+        decoder.checkKey(IS_FAST);
+        struct.isFast(decoder.nextBoolean());
 
         decoder.nextEndObject();
     }
