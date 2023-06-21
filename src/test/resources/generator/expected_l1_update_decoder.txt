@@ -14,6 +14,7 @@ public class L1UpdateDecoder
     private static final AsciiSequenceView BEST_BID_PRICE = KeyMap.string2view("bestBidPrice");
     private static final AsciiSequenceView SYMBOL = KeyMap.string2view("symbol");
     private static final AsciiSequenceView ERROR = KeyMap.string2view("error");
+    private static final AsciiSequenceView TIME_IN_FORCE = KeyMap.string2view("timeInForce");
 
     private final KeyMap<MutableInteger> symbolMap;
 
@@ -40,6 +41,9 @@ public class L1UpdateDecoder
 
         decoder.checkKey(ERROR);
         decoder.skipValue();
+
+        decoder.checkKey(TIME_IN_FORCE);
+        struct.timeInForce(TimeInForceDecoder.parse(decoder.nextString()));
 
         decoder.nextEndObject();
     }

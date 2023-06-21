@@ -11,4 +11,5 @@ public class L1Update
     private long updateId;
     private double bestBidPrice;
     private MutableInteger symbol;
+    private TimeInForce timeInForce;
 }

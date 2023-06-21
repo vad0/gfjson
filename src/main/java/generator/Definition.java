@@ -23,4 +23,9 @@ public class Definition
     {
         return (StructDefinition)this;
     }
+
+    public String decoderName()
+    {
+        return name() + "Decoder";
+    }
 }

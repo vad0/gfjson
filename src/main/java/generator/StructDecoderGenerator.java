@@ -12,11 +12,13 @@ import java.util.StringJoiner;
 public class StructDecoderGenerator
     implements AutoCloseable
 {
+    private final Schema schema;
     private final StructDefinition definition;
     private final Writer writer;
 
     public StructDecoderGenerator(final Schema schema, final Path outputDir, final String structName)
     {
+        this.schema = schema;
         this.definition = schema.structByName(structName);
         final File file = JsonTool.mkdirs(outputDir, definition)
             .resolve(definition.decoderName() + ".java")
@@ -52,7 +54,7 @@ public class StructDecoderGenerator
 
         for (final var field : definition.fields())
         {
-            parseField(writer, field);
+            parseField(field);
         }
 
         writer.printf("decoder.nextEndObject();\n");
@@ -85,7 +87,7 @@ public class StructDecoderGenerator
         writer.println();
     }
 
-    private static void parseField(final Writer writer, final Field field)
+    private  void parseField(final Field field)
     {
         writer.printf("decoder.checkKey(%s);\n", viewConstName(field));
         if (field.constant())
@@ -121,6 +123,14 @@ public class StructDecoderGenerator
                         "struct.%s(%sMap.getKey(decoder.nextString()));\n",
                         field.name(),
                         field.name());
+                }
+                case ENUM ->
+                {
+                    final var enumDefinition = schema.enumByMappedClass(field.mappedClass());
+                    writer.printf(
+                        "struct.%s(%s.parse(decoder.nextString()));\n",
+                        field.name(),
+                        enumDefinition.decoderName());
                 }
                 default -> throw new RuntimeException("Not implemented non constant field parsing for " + field.type());
             }

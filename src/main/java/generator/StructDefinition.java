@@ -24,9 +24,4 @@ public class StructDefinition
         fields.add(field);
         return this;
     }
-
-    public String decoderName()
-    {
-        return name() + "Decoder";
-    }
 }

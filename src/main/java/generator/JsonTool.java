@@ -30,13 +30,15 @@ public class JsonTool
         writer.println();
     }
 
-    public static Path mkdirs(Path outputDir, Definition definition)
+    public static Path mkdirs(final Path outputDir, final Definition definition)
     {
         final Path path = outputDir.resolve(definition.packageName());
-        boolean success = path
-            .toFile()
-            .mkdirs();
-        assert success;
+        final File file = path.toFile();
+        if (!file.exists())
+        {
+            final boolean success = file.mkdirs();
+            assert success;
+        }
         return path;
     }
 }

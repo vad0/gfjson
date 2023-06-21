@@ -55,4 +55,17 @@ public class Schema
             .findFirst()
             .orElseThrow();
     }
+
+    public EnumDefinition enumByMappedClass(final String mappedClass)
+    {
+        final int lastDot = mappedClass.lastIndexOf('.');
+        final String packageName = mappedClass.substring(0, lastDot);
+        final String simpleClassName = mappedClass.substring(lastDot + 1);
+        return enums()
+            .stream()
+            .filter(m -> m.packageName().equals(packageName))
+            .filter(m -> m.name().equals(simpleClassName))
+            .findFirst()
+            .orElseThrow();
+    }
 }

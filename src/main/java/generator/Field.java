@@ -77,6 +77,7 @@ public class Field
 
     public enum Type
     {
+        ENUM(String.class),
         STRING(String.class),
         LONG(long.class),
         QUOTED_DOUBLE(double.class);

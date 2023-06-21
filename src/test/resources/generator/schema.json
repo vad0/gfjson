@@ -58,6 +58,12 @@
           "name": "error",
           "type": "STRING",
           "ignored": true
+        },
+        {
+          "key": "t",
+          "name": "timeInForce",
+          "type": "ENUM",
+          "mappedClass": "md.TimeInForce"
         }
       ]
     }
