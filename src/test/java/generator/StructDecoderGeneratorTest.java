@@ -21,7 +21,6 @@ class StructDecoderGeneratorTest
     {
         final var file = TestUtils.getResourcePath("generator/schema.json").toFile();
         final var schema = JsonTool.parseSchema(file);
-        final var debugDir = Path.of(System.getProperty("user.dir"), "build/generated/sources/gfjson");
         final var outputDir = tempDir;
         StructDecoderGenerator.generate(schema, outputDir, "L1Update");
 

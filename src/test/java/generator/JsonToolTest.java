@@ -3,12 +3,15 @@ package generator;
 import org.junit.jupiter.api.Test;
 import utils.TestUtils;
 
+import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class JsonToolTest
+public class JsonToolTest
 {
+    public static final Path DEBUG_DIR = Path.of(System.getProperty("user.dir"), "build/generated/sources/gfjson");
+
     @Test
     public void testParseSchema()
     {
@@ -25,8 +28,7 @@ class JsonToolTest
             .addEnum(new EnumDefinition()
                 .name("TimeInForce")
                 .packageName("md")
-                .asEnum()
-                .values(List.of("IOC", "GTC", "FOK")))
+                .asEnum())
             .addMessage(new StructDefinition()
                 .name("L1Update")
                 .packageName("md")

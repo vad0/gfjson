@@ -24,6 +24,11 @@ public class Definition
         return (StructDefinition)this;
     }
 
+    public String arrayDecoderName()
+    {
+        return name() + "ArrayDecoder";
+    }
+
     public String decoderName()
     {
         return name() + "Decoder";

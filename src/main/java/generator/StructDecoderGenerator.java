@@ -1,7 +1,6 @@
 package generator;
 
-import de.JsonDecoder;
-import de.KeyMap;
+import de.*;
 import lombok.SneakyThrows;
 import org.agrona.AsciiSequenceView;
 
@@ -41,42 +40,76 @@ public class StructDecoderGenerator
 
         writeImports(definition, writer);
 
-        writer.printf("public class %s", definition.decoderName());
+        writer.printf("public class %s\n", definition.decoderName());
+        writer.printf("    implements ParseArrayElement<Array<%s>>", definition.name());
         writer.startScope();
 
-        writeFields(definition, writer);
+        writeFields();
 
-        writeConstructor(definition, writer);
+        writeConstructor();
 
-        writeParseSignature(definition, writer);
-        writer.startScope();
-        writer.printf("decoder.nextStartObject();\n\n");
-
-        for (final var field : definition.fields())
-        {
-            parseField(field);
-        }
-
-        writer.printf("decoder.nextEndObject();\n");
-
-        writer.endScope();
+        writeParseMethod();
+        writeFinishParsingMethod();
+        writeParseElementMethod();
 
         writer.endScope();
     }
 
-    private static void writeConstructor(final StructDefinition struct, final Writer writer)
+    private void writeParseMethod()
+    {
+        writer.printf("public void parse(final JsonDecoder decoder, final %s struct)", definition.name());
+        writer.startScope();
+        writer.printf("decoder.nextStartObject();\n");
+        writer.printf("finishParsing(decoder, struct);\n");
+        writer.endScope();
+        writer.println();
+    }
+
+    private void writeFinishParsingMethod()
+    {
+        writer.printf("private void finishParsing(final JsonDecoder decoder, final %s struct)", definition.name());
+        writer.startScope();
+        for (final var field : definition.fields())
+        {
+            parseField(field);
+        }
+        writer.printf("decoder.nextEndObject();\n");
+        writer.endScope();
+        writer.println();
+    }
+
+    private void writeParseElementMethod()
+    {
+        writer.printf("@Override\n");
+        writer.printf(
+            "public void parseElement(final JsonDecoder jsonDecoder, final Array<%s> array, final Token firstToken)",
+            definition.name());
+        writer.startScope();
+        writer.printf("Token.START_OBJECT.checkToken(firstToken);\n");
+        writer.printf("final var struct = array.claimNext();\n");
+        writer.printf("finishParsing(jsonDecoder, struct);\n");
+        writer.endScope();
+    }
+
+    private void writeConstructor()
     {
         final var sb = new StringJoiner(", ");
-        for (final var field : struct.fields())
+        for (final var field : definition.fields())
         {
             if (field.isMappedString())
             {
-                sb.add("KeyMap<%s> %s".formatted(field.mappedClassSimpleName(), field.mapName()));
+                sb.add("final KeyMap<%s> %s".formatted(field.mappedClassSimpleName(), field.mapName()));
             }
         }
-        writer.printf("public %sDecoder(%s)", struct.name(), sb);
+        final var args = sb.toString();
+        if (args.isEmpty())
+        {
+            // We don't need to generate an empty constructor
+            return;
+        }
+        writer.printf("public %sDecoder(%s)", definition.name(), args);
         writer.startScope();
-        for (final var field : struct.fields())
+        for (final var field : definition.fields())
         {
             if (field.isMappedString())
             {
@@ -130,20 +163,15 @@ public class StructDecoderGenerator
         writer.println();
     }
 
-    private static void writeParseSignature(final StructDefinition struct, final Writer writer)
+    private void writeFields()
     {
-        writer.printf("public void parse(JsonDecoder decoder, %s struct)", struct.name());
+        writeStaticFields();
+        writeInstanceFields();
     }
 
-    private static void writeFields(final StructDefinition struct, final Writer writer)
+    private void writeInstanceFields()
     {
-        writeStaticFields(struct, writer);
-        writeInstanceFields(struct, writer);
-    }
-
-    private static void writeInstanceFields(final StructDefinition struct, final Writer writer)
-    {
-        for (final var field : struct.fields())
+        for (final var field : definition.fields())
         {
             if (field.isMappedString())
             {
@@ -153,27 +181,24 @@ public class StructDecoderGenerator
         writer.println();
     }
 
-    private static void writeStaticFields(final StructDefinition struct, final Writer writer)
+    private void writeStaticFields()
     {
-        for (final var field : struct.fields())
+        for (final var field : definition.fields())
         {
             writer.printf(
                 "private static final %s %s = KeyMap.string2view(\"%s\");\n",
                 AsciiSequenceView.class.getSimpleName(),
                 viewConstName(field),
-                field.name());
+                field.key());
             if (field.constant())
             {
                 switch (field.type())
                 {
-                    case STRING ->
-                    {
-                        writer.printf(
-                            "private static final %s %s = KeyMap.string2view(\"%s\");\n",
-                            AsciiSequenceView.class.getSimpleName(),
-                            expectedConstName(field),
-                            field.expected());
-                    }
+                    case STRING -> writer.printf(
+                        "private static final %s %s = KeyMap.string2view(\"%s\");\n",
+                        AsciiSequenceView.class.getSimpleName(),
+                        expectedConstName(field),
+                        field.expected());
                     default -> throw new RuntimeException("Not implemented constant values for " + field.type());
                 }
             }
@@ -185,6 +210,9 @@ public class StructDecoderGenerator
     {
         writer.importClass(JsonDecoder.class);
         writer.importClass(KeyMap.class);
+        writer.importClass(ParseArrayElement.class);
+        writer.importClass(Token.class);
+        writer.importClass(Array.class);
         writer.importClass(AsciiSequenceView.class);
         for (final var field : struct.fields())
         {

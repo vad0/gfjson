@@ -12,12 +12,7 @@
     },
     {
       "name": "TimeInForce",
-      "packageName": "md",
-      "values": [
-        "IOC",
-        "GTC",
-        "FOK"
-      ]
+      "packageName": "md"
     }
   ],
   "structs": [

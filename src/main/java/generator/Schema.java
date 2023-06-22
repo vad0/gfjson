@@ -15,21 +15,12 @@ public class Schema
 {
     private List<EnumDefinition> enums = new ArrayList<>();
     private List<StructDefinition> structs = new ArrayList<>();
-
-    public Schema addEnum(final Definition definition)
-    {
-        return addEnum((EnumDefinition)definition);
-    }
+    private List<String> arrays = new ArrayList<>();
 
     public Schema addEnum(final EnumDefinition definition)
     {
         enums.add(definition);
         return this;
-    }
-
-    public Schema addMessage(final Definition message)
-    {
-        return addMessage((StructDefinition)message);
     }
 
     public Schema addMessage(final StructDefinition structDefinition)
