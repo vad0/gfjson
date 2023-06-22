@@ -1,0 +1,8 @@
+package md;
+
+public enum OrderType
+{
+    LIMIT,
+    MARKET,
+    MARKET_LIMIT;
+}

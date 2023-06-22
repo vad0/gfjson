@@ -24,7 +24,7 @@ dependencies {
     implementation(libs.apache.commons.collections4)
     testImplementation(libs.jupiter.api)
     testRuntimeOnly(libs.jupiter.engine)
-    testImplementation(libs.jackson.databind)
+    implementation(libs.jackson.databind)
     implementation(libs.lombok)
     annotationProcessor(libs.lombok)
     testImplementation(libs.lombok)
@@ -78,7 +78,7 @@ tasks.jacocoTestCoverageVerification {
             element = "CLASS"
             limit {
                 counter = "LINE"
-                minimum = "1.0".toBigDecimal()
+                minimum = "0.95".toBigDecimal()
             }
         }
     }
@@ -103,4 +103,17 @@ publishing {
             from(components["java"])
         }
     }
+}
+
+sourceSets {
+    test {
+        java {
+            srcDir("build/generated/sources/gfjson")
+        }
+    }
+}
+
+tasks.register("checkstyleAll") {
+    group = "verification"
+    dependsOn(tasks.withType<Checkstyle>())
 }

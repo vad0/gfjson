@@ -27,9 +27,7 @@ public class KeyMap<T>
         final DirectBuffer buffer = new UnsafeBuffer();
         final byte[] bytes = string.getBytes();
         buffer.wrap(bytes);
-        final AsciiSequenceView result = new AsciiSequenceView();
-        result.wrap(buffer, 0, bytes.length);
-        return result;
+        return new AsciiSequenceView(buffer, 0, bytes.length);
     }
 
     public static <T extends Enum<T>> KeyMap<T> forEnum(final Class<T> k)

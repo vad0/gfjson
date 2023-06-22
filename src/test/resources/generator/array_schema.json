@@ -1,0 +1,24 @@
+{
+  "structs": [
+    {
+      "name": "SizePrice",
+      "packageName": "md",
+      "strictOrder": true,
+      "fields": [
+        {
+          "key": "l",
+          "name": "lots",
+          "type": "LONG"
+        },
+        {
+          "key": "p",
+          "name": "price",
+          "type": "QUOTED_DOUBLE"
+        }
+      ]
+    }
+  ],
+  "arrays": [
+    "SizePrice"
+  ]
+}

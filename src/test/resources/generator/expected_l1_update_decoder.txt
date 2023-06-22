@@ -1,0 +1,70 @@
+package md;
+
+import de.JsonDecoder;
+import de.KeyMap;
+import de.ParseArrayElement;
+import de.Token;
+import de.Array;
+import org.agrona.AsciiSequenceView;
+import org.agrona.collections.MutableInteger;
+
+
+public class L1UpdateDecoder
+    implements ParseArrayElement<Array<L1Update>>
+{
+    private static final AsciiSequenceView EVENT_TYPE = KeyMap.string2view("e");
+    private static final AsciiSequenceView EXPECTED_EVENT_TYPE = KeyMap.string2view("bookTicker");
+    private static final AsciiSequenceView UPDATE_ID = KeyMap.string2view("u");
+    private static final AsciiSequenceView BEST_BID_PRICE = KeyMap.string2view("b");
+    private static final AsciiSequenceView SYMBOL = KeyMap.string2view("s");
+    private static final AsciiSequenceView ERROR = KeyMap.string2view("x");
+    private static final AsciiSequenceView TIME_IN_FORCE = KeyMap.string2view("t");
+    private static final AsciiSequenceView IS_FAST = KeyMap.string2view("bo");
+
+    private final KeyMap<MutableInteger> symbolMap;
+
+    public L1UpdateDecoder(final KeyMap<MutableInteger> symbolMap)
+    {
+        this.symbolMap = symbolMap;
+    }
+
+    public void parse(final JsonDecoder decoder, final L1Update struct)
+    {
+        decoder.nextStartObject();
+        finishParsing(decoder, struct);
+    }
+
+    private void finishParsing(final JsonDecoder decoder, final L1Update struct)
+    {
+        decoder.checkKey(EVENT_TYPE);
+        decoder.checkKey(EXPECTED_EVENT_TYPE);
+
+        decoder.checkKey(UPDATE_ID);
+        struct.updateId(decoder.nextLong());
+
+        decoder.checkKey(BEST_BID_PRICE);
+        struct.bestBidPrice(decoder.nextDoubleFromString());
+
+        decoder.checkKey(SYMBOL);
+        struct.symbol(symbolMap.getKey(decoder.nextString()));
+
+        decoder.checkKey(ERROR);
+        decoder.skipValue();
+
+        decoder.checkKey(TIME_IN_FORCE);
+        struct.timeInForce(TimeInForceDecoder.parse(decoder.nextString()));
+
+        decoder.checkKey(IS_FAST);
+        struct.isFast(decoder.nextBoolean());
+
+        decoder.nextEndObject();
+    }
+
+    @Override
+    public void parseElement(final JsonDecoder jsonDecoder, final Array<L1Update> array, final Token firstToken)
+    {
+        Token.START_OBJECT.checkToken(firstToken);
+        final var struct = array.claimNext();
+        finishParsing(jsonDecoder, struct);
+    }
+}

@@ -1,0 +1,71 @@
+{
+  "enums": [
+    {
+      "name": "OrderType",
+      "packageName": "md",
+      "generate": true,
+      "values": [
+        "LIMIT",
+        "MARKET",
+        "MARKET_LIMIT"
+      ]
+    },
+    {
+      "name": "TimeInForce",
+      "packageName": "md"
+    }
+  ],
+  "structs": [
+    {
+      "name": "L1Update",
+      "packageName": "md",
+      "strictOrder": true,
+      "fields": [
+        {
+          "key": "e",
+          "name": "eventType",
+          "type": "STRING",
+          "description": "event type, e.g. bookTicker",
+          "constant": true,
+          "expected": "bookTicker"
+        },
+        {
+          "key": "u",
+          "name": "updateId",
+          "type": "LONG",
+          "description": "order book updateId"
+        },
+        {
+          "key": "b",
+          "name": "bestBidPrice",
+          "type": "QUOTED_DOUBLE",
+          "description": "best bid price"
+        },
+        {
+          "key": "s",
+          "name": "symbol",
+          "type": "STRING",
+          "constant": false,
+          "mappedClass": "org.agrona.collections.MutableInteger"
+        },
+        {
+          "key": "x",
+          "name": "error",
+          "type": "STRING",
+          "ignored": true
+        },
+        {
+          "key": "t",
+          "name": "timeInForce",
+          "type": "ENUM",
+          "mappedClass": "md.TimeInForce"
+        },
+        {
+          "key": "bo",
+          "name": "isFast",
+          "type": "BOOLEAN"
+        }
+      ]
+    }
+  ]
+}

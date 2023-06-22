@@ -1,0 +1,15 @@
+package md;
+
+import de.KeyMap;
+import org.agrona.AsciiSequenceView;
+
+
+public class OrderTypeDecoder
+{
+    private static final KeyMap<OrderType> MAP = KeyMap.forEnum(OrderType.class);
+
+    public static OrderType parse(AsciiSequenceView string)
+    {
+        return MAP.getKey(string);
+    }
+}

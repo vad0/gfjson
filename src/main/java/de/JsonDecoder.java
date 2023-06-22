@@ -14,7 +14,7 @@ import java.util.function.BiConsumer;
 
 public class JsonDecoder
 {
-    // By default, checks are applied, but they can be switched of by providing a system property
+    // By default, checks are applied, but they can be switched off by providing a system property
     public static final boolean APPLY_CHECKS = !Boolean.getBoolean("omit_checks");
     private static final char[] SKIP = new char[]{' ', '\n', ':', ','};
     private static final BiConsumer<JsonDecoder, ?> SKIP_LAMBDA = (t, u) -> t.skipValue();
