@@ -8,6 +8,9 @@ import lombok.experimental.Accessors;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class describes all structs and enums which should be generated or at least referenced in a generated code.
+ */
 @Data
 @Accessors(fluent = true, chain = true)
 @Getter(onMethod = @__(@JsonProperty))
@@ -49,13 +52,9 @@ public class Schema
 
     public EnumDefinition enumByMappedClass(final String mappedClass)
     {
-        final int lastDot = mappedClass.lastIndexOf('.');
-        final String packageName = mappedClass.substring(0, lastDot);
-        final String simpleClassName = mappedClass.substring(lastDot + 1);
         return enums()
             .stream()
-            .filter(m -> m.packageName().equals(packageName))
-            .filter(m -> m.name().equals(simpleClassName))
+            .filter(m -> m.fullClassName().equals(mappedClass))
             .findFirst()
             .orElseThrow();
     }

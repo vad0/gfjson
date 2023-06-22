@@ -6,17 +6,12 @@ import lombok.SneakyThrows;
 import java.io.File;
 import java.nio.file.Path;
 
+/**
+ * This class is the main class in a jar which generates code.
+ * Here we read {@link Schema} and generate all classes according to it.
+ */
 public class JsonTool
 {
-    private final Path outputDir;
-    private final Schema schema;
-
-    public JsonTool(final File schemaFile, final Path outputDir)
-    {
-        this.schema = parseSchema(schemaFile);
-        this.outputDir = outputDir;
-    }
-
     @SneakyThrows
     public static Schema parseSchema(final File file)
     {

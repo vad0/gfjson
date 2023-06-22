@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
+/**
+ * This class helps to write strings to file. The main value of it is that it tracks indentation.
+ */
 public class Writer
     implements AutoCloseable
 {

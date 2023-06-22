@@ -5,6 +5,9 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
+/**
+ * This class describes a field in a struct: name, type, etc. Not all fields are mandatory.
+ */
 @Data
 @Accessors(fluent = true, chain = true)
 @Getter(onMethod = @__(@JsonProperty))

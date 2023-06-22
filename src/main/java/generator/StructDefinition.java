@@ -9,6 +9,9 @@ import lombok.experimental.Accessors;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class describes some class: its name, package, fields and attributed needed for code generation.
+ */
 @Data
 @Accessors(fluent = true, chain = true)
 @Getter(onMethod = @__(@JsonProperty))

@@ -3,10 +3,13 @@ package generator;
 import org.junit.jupiter.api.Test;
 import utils.TestUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JsonToolTest
 {
@@ -72,5 +75,13 @@ public class JsonToolTest
             );
 
         assertEquals(expected, schema);
+    }
+
+    @Test
+    public void wrongPath()
+    {
+        assertThrows(
+            FileNotFoundException.class,
+            () -> JsonTool.parseSchema(new File("non existent path")));
     }
 }
