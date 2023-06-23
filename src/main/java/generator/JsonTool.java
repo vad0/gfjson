@@ -1,8 +1,5 @@
 package generator;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
-
 import java.io.File;
 import java.nio.file.Path;
 
@@ -12,10 +9,37 @@ import java.nio.file.Path;
  */
 public class JsonTool
 {
-    @SneakyThrows
-    public static Schema parseSchema(final File file)
+    public static void main(final String[] args)
     {
-        return new ObjectMapper().readValue(file, Schema.class);
+        final Schema schema = getSchema();
+        final Path outputDir = getOutputDir();
+        schema.generateEnums(outputDir);
+        schema.generateStructs(outputDir);
+    }
+
+    private static Schema getSchema()
+    {
+        final String path = System.getProperty("schemaPath");
+        if (path == null)
+        {
+            throw new RuntimeException("Missing schema path: -DschemaPath=...");
+        }
+        final var file = new File(path);
+        if (!file.exists() || !file.isFile())
+        {
+            throw new RuntimeException("Schema not found at location: " + file.getAbsolutePath());
+        }
+        return Schema.read(file);
+    }
+
+    private static Path getOutputDir()
+    {
+        final String outputPath = System.getProperty("outputDir");
+        if (outputPath == null)
+        {
+            throw new RuntimeException("Missing output dir: -DoutputDir=...");
+        }
+        return Path.of(outputPath);
     }
 
     static void writePackage(final Definition definition, final Writer writer)

@@ -19,7 +19,7 @@ public class JsonToolTest
     public void testParseSchema()
     {
         final var file = TestUtils.getResourcePath("generator/schema.json").toFile();
-        final var schema = JsonTool.parseSchema(file);
+        final var schema = Schema.read(file);
 
         final var expected = new Schema()
             .addEnum(new EnumDefinition()
@@ -82,6 +82,6 @@ public class JsonToolTest
     {
         assertThrows(
             FileNotFoundException.class,
-            () -> JsonTool.parseSchema(new File("non existent path")));
+            () -> Schema.read(new File("non existent path")));
     }
 }

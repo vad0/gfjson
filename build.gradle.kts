@@ -117,3 +117,12 @@ tasks.register("checkstyleAll") {
     group = "verification"
     dependsOn(tasks.withType<Checkstyle>())
 }
+
+tasks.register<JavaExec>("runJsonTool") {
+//    classpath(sourceSets.main)
+    systemProperty("schemaPath", "test/resources/generator/schema.json");
+    systemProperty("outputDir", "build/generated/sources/gfjson");
+    systemProperty("agrona.disable.bounds.checks", false);
+    mainClass.set("generator.JsonTool")
+    enableAssertions = true
+}

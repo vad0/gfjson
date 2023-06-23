@@ -1,6 +1,6 @@
 package md;
 
-import generator.JsonTool;
+import generator.Schema;
 import generator.StructDecoderGenerator;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ public class SizePriceDecoderTest
     public void testDecoder()
     {
         final var file = TestUtils.getResourcePath("generator/array_schema.json").toFile();
-        final var schema = JsonTool.parseSchema(file);
+        final var schema = Schema.read(file);
         final var outputDir = tempDir;
         StructDecoderGenerator.generate(schema, outputDir, "SizePrice");
 

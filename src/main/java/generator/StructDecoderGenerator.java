@@ -15,10 +15,10 @@ public class StructDecoderGenerator
     private final StructDefinition definition;
     private final Writer writer;
 
-    public StructDecoderGenerator(final Schema schema, final Path outputDir, final String structName)
+    private StructDecoderGenerator(final Schema schema, final Path outputDir, final StructDefinition definition)
     {
         this.schema = schema;
-        this.definition = schema.structByName(structName);
+        this.definition = definition;
         final File file = JsonTool.mkdirs(outputDir, definition)
             .resolve(definition.decoderName() + ".java")
             .toFile();
@@ -27,7 +27,12 @@ public class StructDecoderGenerator
 
     public static void generate(final Schema schema, final Path outputDir, final String structName)
     {
-        try (var generator = new StructDecoderGenerator(schema, outputDir, structName))
+        generate(schema, outputDir, schema.structByName(structName));
+    }
+
+    public static void generate(final Schema schema, final Path outputDir, final StructDefinition struct)
+    {
+        try (var generator = new StructDecoderGenerator(schema, outputDir, struct))
         {
             generator.generateDecoder();
         }
