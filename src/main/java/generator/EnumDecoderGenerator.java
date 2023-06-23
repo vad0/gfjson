@@ -6,7 +6,7 @@ import org.agrona.AsciiSequenceView;
 import java.io.File;
 import java.nio.file.Path;
 
-public class EnumDecoderGenerator
+public final class EnumDecoderGenerator
     implements AutoCloseable
 {
     private final EnumDefinition definition;

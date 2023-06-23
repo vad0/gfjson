@@ -8,7 +8,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.StringJoiner;
 
-public class StructDecoderGenerator
+public final class StructDecoderGenerator
     implements AutoCloseable
 {
     private final Schema schema;

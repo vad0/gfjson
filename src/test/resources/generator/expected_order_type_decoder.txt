@@ -8,7 +8,7 @@ public class OrderTypeDecoder
 {
     private static final KeyMap<OrderType> MAP = KeyMap.forEnum(OrderType.class);
 
-    public static OrderType parse(AsciiSequenceView string)
+    public static OrderType parse(final AsciiSequenceView string)
     {
         return MAP.getKey(string);
     }

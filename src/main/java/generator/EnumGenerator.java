@@ -6,7 +6,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 
-public class EnumGenerator
+public final class EnumGenerator
     implements AutoCloseable
 {
     private final EnumDefinition definition;
