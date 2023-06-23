@@ -203,7 +203,7 @@ public final class StructDecoderGenerator
                         "private static final %s %s = KeyMap.string2view(\"%s\");\n",
                         AsciiSequenceView.class.getSimpleName(),
                         expectedConstName(field),
-                        field.expected());
+                        field.expectedString());
                     default -> throw new RuntimeException("Not implemented constant values for " + field.type());
                 }
             }

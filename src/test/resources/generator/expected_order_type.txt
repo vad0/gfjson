@@ -1,7 +1,13 @@
 package md;
 
+/**
+* obvious
+*/
 public enum OrderType
 {
+    /**
+    * Order has price.
+    */
     LIMIT,
     MARKET,
     MARKET_LIMIT;

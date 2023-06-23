@@ -20,8 +20,12 @@ class SchemaTest
                 .name("OrderType")
                 .packageName("md")
                 .generate(true)
+                .javadoc("obvious")
                 .asEnum()
-                .values(List.of("LIMIT", "MARKET", "MARKET_LIMIT")))
+                .values(List.of(
+                    new EnumValue("LIMIT", "Order has price."),
+                    new EnumValue("MARKET"),
+                    new EnumValue("MARKET_LIMIT"))))
             .addEnum(new EnumDefinition()
                 .name("TimeInForce")
                 .packageName("md")
