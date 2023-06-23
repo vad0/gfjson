@@ -117,3 +117,11 @@ tasks.register("checkstyleAll") {
     group = "verification"
     dependsOn(tasks.withType<Checkstyle>())
 }
+
+tasks.register<JavaExec>("runJsonTool") {
+    systemProperty("schemaPath", "src/test/resources/generator/schema.json");
+    systemProperty("outputDir", "build/generated/sources/gfjson");
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass.set("generator.JsonTool")
+    enableAssertions = true
+}

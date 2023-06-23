@@ -6,24 +6,24 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 
-public class EnumGenerator
+public final class EnumGenerator
     implements AutoCloseable
 {
     private final EnumDefinition definition;
     private final Writer writer;
 
-    public EnumGenerator(final Schema schema, final Path outputDir, final String enumName)
+    private EnumGenerator(final Path outputDir, final EnumDefinition definition)
     {
-        this.definition = schema.enumByName(enumName);
+        this.definition = definition;
         final File file = JsonTool.mkdirs(outputDir, definition)
-            .resolve(enumName + ".java")
+            .resolve(definition.name() + ".java")
             .toFile();
         this.writer = new Writer(file);
     }
 
-    public static void generate(final Schema schema, final Path outputDir, final String enumName)
+    public static void generate(final Path outputDir, final EnumDefinition definition)
     {
-        try (var generator = new EnumGenerator(schema, outputDir, enumName))
+        try (var generator = new EnumGenerator(outputDir, definition))
         {
             generator.generateEnum();
         }

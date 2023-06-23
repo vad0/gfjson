@@ -1,10 +1,14 @@
 package generator;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +23,32 @@ public class Schema
     private List<EnumDefinition> enums = new ArrayList<>();
     private List<StructDefinition> structs = new ArrayList<>();
     private List<String> arrays = new ArrayList<>();
+
+    @SneakyThrows
+    public static Schema read(final File file)
+    {
+        return new ObjectMapper().readValue(file, Schema.class);
+    }
+
+    void generateEnums(final Path outputDir)
+    {
+        for (final var enumDefinition : enums())
+        {
+            if (enumDefinition.generate())
+            {
+                EnumGenerator.generate(outputDir, enumDefinition);
+            }
+            EnumDecoderGenerator.generate(outputDir, enumDefinition);
+        }
+    }
+
+    void generateStructs(final Path outputDir)
+    {
+        for (final var structDefinition : structs())
+        {
+            StructDecoderGenerator.generate(this, outputDir, structDefinition);
+        }
+    }
 
     public Schema addEnum(final EnumDefinition definition)
     {

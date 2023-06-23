@@ -20,9 +20,9 @@ class EnumDecoderGeneratorTest
     public void generateOrderTypeDecoder()
     {
         final var file = TestUtils.getResourcePath("generator/schema.json").toFile();
-        final var schema = JsonTool.parseSchema(file);
+        final var schema = Schema.read(file);
         final var outputDir = tempDir;
-        EnumDecoderGenerator.generate(schema, outputDir, "OrderType");
+        EnumDecoderGenerator.generate(outputDir, schema.enumByName("OrderType"));
 
         final String expected = TestUtils.readFile(Path.of("generator/expected_order_type_decoder.txt").toString());
         final String actual = Files.readString(outputDir.resolve("md/OrderTypeDecoder.java"));

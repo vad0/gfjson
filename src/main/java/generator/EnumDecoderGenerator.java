@@ -6,24 +6,24 @@ import org.agrona.AsciiSequenceView;
 import java.io.File;
 import java.nio.file.Path;
 
-public class EnumDecoderGenerator
+public final class EnumDecoderGenerator
     implements AutoCloseable
 {
     private final EnumDefinition definition;
     private final Writer writer;
 
-    public EnumDecoderGenerator(final Schema schema, final Path outputDir, final String enumName)
+    private EnumDecoderGenerator(final Path outputDir, final EnumDefinition definition)
     {
-        this.definition = schema.enumByName(enumName);
+        this.definition = definition;
         final File file = JsonTool.mkdirs(outputDir, definition)
             .resolve(definition.decoderName() + ".java")
             .toFile();
         this.writer = new Writer(file);
     }
 
-    public static void generate(final Schema schema, final Path outputDir, final String enumName)
+    public static void generate(final Path outputDir, final EnumDefinition definition)
     {
-        try (var generator = new EnumDecoderGenerator(schema, outputDir, enumName))
+        try (var generator = new EnumDecoderGenerator(outputDir, definition))
         {
             generator.generateDecoder();
         }
@@ -47,7 +47,7 @@ public class EnumDecoderGenerator
 
     private void writeParseMethod()
     {
-        writer.printf("public static %s parse(AsciiSequenceView string)", definition.name());
+        writer.printf("public static %s parse(final AsciiSequenceView string)", definition.name());
         writer.startScope();
         writer.printf("return MAP.getKey(string);\n");
         writer.endScope();

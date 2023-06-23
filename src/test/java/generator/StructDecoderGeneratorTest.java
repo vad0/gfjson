@@ -20,7 +20,7 @@ class StructDecoderGeneratorTest
     public void generateDecoder()
     {
         final var file = TestUtils.getResourcePath("generator/schema.json").toFile();
-        final var schema = JsonTool.parseSchema(file);
+        final var schema = Schema.read(file);
         final var outputDir = tempDir;
         StructDecoderGenerator.generate(schema, outputDir, "L1Update");
 
