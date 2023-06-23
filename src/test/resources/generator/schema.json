@@ -4,10 +4,18 @@
       "name": "OrderType",
       "packageName": "md",
       "generate": true,
+      "javadoc": "obvious",
       "values": [
-        "LIMIT",
-        "MARKET",
-        "MARKET_LIMIT"
+        {
+          "name": "LIMIT",
+          "javadoc": "Order has price."
+        },
+        {
+          "name": "MARKET"
+        },
+        {
+          "name": "MARKET_LIMIT"
+        }
       ]
     },
     {

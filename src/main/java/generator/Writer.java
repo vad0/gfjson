@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.util.Arrays;
 
 /**
  * This class helps to write strings to file. The main value of it is that it tracks indentation.
@@ -20,6 +21,18 @@ public class Writer
     public Writer(final File file)
     {
         this.writer = new PrintWriter(new FileWriter(file));
+    }
+
+    void writeJavadoc(final HasJavadoc value)
+    {
+        final String javadoc = value.javadoc();
+        if (javadoc == null)
+        {
+            return;
+        }
+        println("/**");
+        println("* %s", javadoc);
+        println("*/");
     }
 
     void endScope()
@@ -53,8 +66,13 @@ public class Writer
         writer.println();
     }
 
-    void printf(final String format, final Object... args)
+    void println(final String format, final String... args)
     {
-        writer.printf(TAB.repeat(indent) + format, args);
+        printf(format + '\n', args);
+    }
+
+    void printf(final String format, final String... args)
+    {
+        writer.printf(TAB.repeat(indent) + format, Arrays.stream(args).toArray());
     }
 }

@@ -12,10 +12,12 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true, chain = true)
 @Getter(onMethod = @__(@JsonProperty))
 public class Definition
+    implements HasJavadoc
 {
     private String name;
     private String packageName;
     private boolean generate;
+    private String javadoc;
 
     public String fullClassName()
     {

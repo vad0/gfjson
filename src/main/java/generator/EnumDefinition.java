@@ -16,5 +16,5 @@ import java.util.List;
 public class EnumDefinition
     extends Definition
 {
-    private List<String> values = new ArrayList<>();
+    private List<EnumValue> values = new ArrayList<>();
 }

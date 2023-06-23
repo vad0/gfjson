@@ -23,6 +23,11 @@ public class Field
     private String mappedClass;
     private Object details;
 
+    public String expectedString()
+    {
+        return String.valueOf(expected);
+    }
+
     /**
      * Function to convert camel case string to snake case string
      */

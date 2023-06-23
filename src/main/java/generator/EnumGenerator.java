@@ -29,24 +29,34 @@ public final class EnumGenerator
         }
     }
 
+    /**
+     *
+     */
     @SneakyThrows
     public void generateEnum()
     {
         JsonTool.writePackage(definition, writer);
 
+        writer.writeJavadoc(definition);
         writer.printf("public enum " + definition.name());
         writer.startScope();
 
-        final List<String> values = definition.values();
+        final List<EnumValue> values = definition.values();
         final int lastIndex = values.size() - 1;
         for (int i = 0; i < lastIndex; i++)
         {
-            final var value = values.get(i);
-            writer.printf("%s,\n", value);
+            final EnumValue value = values.get(i);
+            writeEnumValue(value, ",");
         }
-        writer.printf("%s;\n", values.get(lastIndex));
+        writeEnumValue(values.get(lastIndex), ";");
 
         writer.endScope();
+    }
+
+    private void writeEnumValue(final EnumValue value, final String separator)
+    {
+        writer.writeJavadoc(value);
+        writer.printf("%s%s\n", value.name(), separator);
     }
 
     @Override
