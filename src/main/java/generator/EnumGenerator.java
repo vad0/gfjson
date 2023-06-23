@@ -29,9 +29,6 @@ public final class EnumGenerator
         }
     }
 
-    /**
-     *
-     */
     @SneakyThrows
     public void generateEnum()
     {
@@ -45,8 +42,7 @@ public final class EnumGenerator
         final int lastIndex = values.size() - 1;
         for (int i = 0; i < lastIndex; i++)
         {
-            final EnumValue value = values.get(i);
-            writeEnumValue(value, ",");
+            writeEnumValue(values.get(i), ",");
         }
         writeEnumValue(values.get(lastIndex), ";");
 

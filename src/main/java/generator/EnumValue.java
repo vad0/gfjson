@@ -7,6 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+
+/**
+ * This class represents one of the enum values
+ */
 @Data
 @Accessors(fluent = true, chain = true)
 @Getter(onMethod = @__(@JsonProperty))
