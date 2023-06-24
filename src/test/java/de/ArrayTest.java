@@ -40,7 +40,8 @@ class ArrayTest
     {
         final var array = new Array<>(MutableInteger::new);
         array.claimNext().set(10);
-        assertEquals(array, array);
+        assertEquals(1, array.size());
+        assertEquals(array, array, array.toString());
         assertFalse(array.equals(null));
         assertFalse(array.equals(new MutableInteger(5)));
 

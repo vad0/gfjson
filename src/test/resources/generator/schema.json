@@ -33,7 +33,7 @@
           "key": "e",
           "name": "eventType",
           "type": "STRING",
-          "description": "event type, e.g. bookTicker",
+          "javadoc": "event type, e.g. bookTicker",
           "constant": true,
           "expected": "bookTicker"
         },
@@ -41,13 +41,13 @@
           "key": "u",
           "name": "updateId",
           "type": "LONG",
-          "description": "order book updateId"
+          "javadoc": "order book updateId"
         },
         {
           "key": "b",
           "name": "bestBidPrice",
           "type": "QUOTED_DOUBLE",
-          "description": "best bid price"
+          "javadoc": "best bid price"
         },
         {
           "key": "s",

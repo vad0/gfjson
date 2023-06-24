@@ -12,16 +12,42 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true, chain = true)
 @Getter(onMethod = @__(@JsonProperty))
 public class Field
+    implements HasJavadoc
 {
     private String key;
     private String name;
     private Type type;
     private boolean constant;
     private boolean ignored;
-    private String description;
+    private String javadoc;
     private Object expected;
     private String mappedClass;
     private Object details;
+
+    String getFieldType()
+    {
+        switch (type())
+        {
+            case BOOLEAN ->
+            {
+                return boolean.class.getSimpleName();
+            }
+            case LONG ->
+            {
+                return long.class.getSimpleName();
+            }
+            case QUOTED_DOUBLE ->
+            {
+                return double.class.getSimpleName();
+            }
+            case ENUM ->
+            {
+                return mappedClassSimpleName();
+            }
+        }
+        assert isMappedString() : this;
+        return mappedClassSimpleName();
+    }
 
     public String expectedString()
     {
@@ -61,7 +87,12 @@ public class Field
 
     boolean isMappedString()
     {
-        return type() == Type.STRING && !constant() && !ignored();
+        return type() == Type.STRING && isGenerated();
+    }
+
+    boolean isGenerated()
+    {
+        return !constant() && !ignored();
     }
 
     public String screamingSnakeName()
@@ -86,6 +117,6 @@ public class Field
         ENUM,
         STRING,
         LONG,
-        QUOTED_DOUBLE
+        QUOTED_DOUBLE;
     }
 }

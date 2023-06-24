@@ -1,6 +1,10 @@
 package de;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
+
 import java.util.ArrayList;
+import java.util.StringJoiner;
 import java.util.function.Supplier;
 
 /**
@@ -9,13 +13,15 @@ import java.util.function.Supplier;
  * Then get elements from the array by repeatedly calling {@link #claimNext()}.
  * Then use these elements, but don't store links to them in any places.
  * <p>
- * When the next message arrives repeat this procedure. Note that you will get exact same objects as before, but now
- * they will have new contents.
+ * When the next message arrives, repeat this procedure. Note that you will get the exact same objects as before, but
+ * now they will have new contents.
  */
+@Accessors(fluent = true)
 public class Array<T>
 {
     private final ArrayList<T> array = new ArrayList<>();
     private final Supplier<T> constructor;
+    @Getter
     private int size;
 
     public Array(final Supplier<T> constructor)
@@ -80,5 +86,16 @@ public class Array<T>
     public int hashCode()
     {
         return Integer.hashCode(size);
+    }
+
+    @Override
+    public String toString()
+    {
+        final var joiner = new StringJoiner(", ");
+        for (int i = 0; i < size; i++)
+        {
+            joiner.add(get(i).toString());
+        }
+        return "[" + joiner + "]";
     }
 }
