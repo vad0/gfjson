@@ -35,7 +35,7 @@ public final class EnumGenerator
         JsonTool.writePackage(definition, writer);
 
         writer.writeJavadoc(definition);
-        writer.printf("public enum " + definition.name());
+        writer.printf("public enum %s", definition.name());
         writer.startScope();
 
         final List<EnumValue> values = definition.values();
@@ -52,7 +52,7 @@ public final class EnumGenerator
     private void writeEnumValue(final EnumValue value, final String separator)
     {
         writer.writeJavadoc(value);
-        writer.printf("%s%s\n", value.name(), separator);
+        writer.println("%s%s", value.name(), separator);
     }
 
     @Override

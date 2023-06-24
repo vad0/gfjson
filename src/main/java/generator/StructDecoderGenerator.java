@@ -45,7 +45,7 @@ public final class StructDecoderGenerator
 
         writeImports(definition, writer);
 
-        writer.printf("public class %s\n", definition.decoderName());
+        writer.println("public class %s", definition.decoderName());
         writer.printf("    implements ParseArrayElement<Array<%s>>", definition.name());
         writer.startScope();
 
@@ -219,13 +219,7 @@ public final class StructDecoderGenerator
         writer.importClass(Token.class);
         writer.importClass(Array.class);
         writer.importClass(AsciiSequenceView.class);
-        for (final var field : struct.fields())
-        {
-            if (field.isMappedString())
-            {
-                writer.printf("import %s;\n", field.mappedClass());
-            }
-        }
+        writer.importMappedClasses(struct);
         writer.println();
         writer.println();
     }

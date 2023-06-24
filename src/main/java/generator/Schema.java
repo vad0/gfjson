@@ -46,6 +46,10 @@ public class Schema
     {
         for (final var structDefinition : structs())
         {
+            if (structDefinition.generate())
+            {
+                StructGenerator.generate(this, outputDir, structDefinition);
+            }
             StructDecoderGenerator.generate(this, outputDir, structDefinition);
         }
     }

@@ -30,6 +30,8 @@
         <property name="tabWidth" value="4"/>
         <property name="severity" value="error"/>
 
+        <module name="SuppressionCommentFilter"/>
+
         <module name="AnnotationLocation">
             <property name="allowSamelineMultipleAnnotations" value="false"/>
             <property name="allowSamelineSingleParameterlessAnnotation" value="false"/>

@@ -23,6 +23,17 @@ public class Writer
         this.writer = new PrintWriter(new FileWriter(file));
     }
 
+    void importMappedClasses(final StructDefinition struct)
+    {
+        for (final var field : struct.fields())
+        {
+            if (field.isMappedString())
+            {
+                println("import %s;", field.mappedClass());
+            }
+        }
+    }
+
     void writeJavadoc(final HasJavadoc value)
     {
         final String javadoc = value.javadoc();
@@ -31,15 +42,15 @@ public class Writer
             return;
         }
         println("/**");
-        println("* %s", javadoc);
-        println("*/");
+        println(" * %s", javadoc);
+        println(" */");
     }
 
     void endScope()
     {
         indent--;
         assert indent >= 0 : indent;
-        printf("}\n");
+        println("}");
     }
 
     void startScope()
@@ -52,12 +63,13 @@ public class Writer
 
     void importClass(final Class<?> k)
     {
-        printf("import %s;\n", k.getCanonicalName());
+        println("import %s;", k.getCanonicalName());
     }
 
     @Override
     public void close()
     {
+        assert indent == 0 : indent;
         writer.close();
     }
 
@@ -74,5 +86,11 @@ public class Writer
     void printf(final String format, final String... args)
     {
         writer.printf(TAB.repeat(indent) + format, Arrays.stream(args).toArray());
+    }
+
+    void signature(final String format, final String... args)
+    {
+        printf(format, args);
+        startScope();
     }
 }
