@@ -155,7 +155,7 @@ public final class StructGenerator
     {
         writer.println("@Override");
         writer.signature("public int hashCode()");
-        writer.println("final int PRIME = 59;");
+        writer.println("final int prime = 59;");
         writer.println("int result = 1;");
         for (final var field : definition.fields())
         {
@@ -177,7 +177,7 @@ public final class StructGenerator
                     yield "Objects.hashCode(%s)".formatted(field.name());
                 }
             };
-            writer.println("result = result * PRIME + %s;", str);
+            writer.println("result = result * prime + %s;", str);
         }
         writer.println("return result;");
         writer.endScope();

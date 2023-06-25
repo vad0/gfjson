@@ -34,11 +34,14 @@ public class Schema
     {
         for (final var enumDefinition : enums())
         {
-            if (enumDefinition.generate())
+            if (enumDefinition.generatePojo())
             {
                 EnumGenerator.generate(outputDir, enumDefinition);
             }
-            EnumDecoderGenerator.generate(outputDir, enumDefinition);
+            if (enumDefinition.generateDecoder())
+            {
+                EnumDecoderGenerator.generate(outputDir, enumDefinition);
+            }
         }
     }
 
@@ -46,11 +49,14 @@ public class Schema
     {
         for (final var structDefinition : structs())
         {
-            if (structDefinition.generate())
+            if (structDefinition.generatePojo())
             {
                 StructGenerator.generate(this, outputDir, structDefinition);
             }
-            StructDecoderGenerator.generate(this, outputDir, structDefinition);
+            if (structDefinition.generateDecoder())
+            {
+                StructDecoderGenerator.generate(this, outputDir, structDefinition);
+            }
         }
     }
 

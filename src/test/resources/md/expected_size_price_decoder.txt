@@ -11,8 +11,8 @@ import org.agrona.AsciiSequenceView;
 public class SizePriceDecoder
     implements ParseArrayElement<Array<SizePrice>>
 {
-    private static final AsciiSequenceView LOTS = KeyMap.string2view("l");
-    private static final AsciiSequenceView PRICE = KeyMap.string2view("p");
+    public static final AsciiSequenceView LOTS = KeyMap.string2view("l");
+    public static final AsciiSequenceView PRICE = KeyMap.string2view("p");
 
 
     public void parse(final JsonDecoder decoder, final SizePrice struct)

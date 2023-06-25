@@ -111,13 +111,13 @@ public class L1Update
     @Override
     public int hashCode()
     {
-        final int PRIME = 59;
+        final int prime = 59;
         int result = 1;
-        result = result * PRIME + Long.hashCode(updateId);
-        result = result * PRIME + Double.hashCode(bestBidPrice);
-        result = result * PRIME + Objects.hashCode(symbol);
-        result = result * PRIME + Objects.hashCode(timeInForce);
-        result = result * PRIME + Boolean.hashCode(isFast);
+        result = result * prime + Long.hashCode(updateId);
+        result = result * prime + Double.hashCode(bestBidPrice);
+        result = result * prime + Objects.hashCode(symbol);
+        result = result * prime + Objects.hashCode(timeInForce);
+        result = result * prime + Boolean.hashCode(isFast);
         return result;
     }
 

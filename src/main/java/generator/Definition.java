@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 /**
  * This is a parent class for description of generated structs and enums.
  */
@@ -16,8 +18,23 @@ public class Definition
 {
     private String name;
     private String packageName;
-    private boolean generate;
+    private List<Generate> generate;
     private String javadoc;
+
+    public boolean generatePojo()
+    {
+        return generate.contains(Generate.POJO);
+    }
+
+    public boolean generateEncoder()
+    {
+        return generate.contains(Generate.ENCODER);
+    }
+
+    public boolean generateDecoder()
+    {
+        return generate.contains(Generate.DECODER);
+    }
 
     public String fullClassName()
     {
@@ -29,7 +46,7 @@ public class Definition
         return (EnumDefinition)this;
     }
 
-    public StructDefinition asMessage()
+    public StructDefinition asStruct()
     {
         return (StructDefinition)this;
     }
