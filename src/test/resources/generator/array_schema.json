@@ -4,6 +4,9 @@
       "name": "SizePrice",
       "packageName": "md",
       "strictOrder": true,
+      "generate": [
+        "DECODER"
+      ],
       "fields": [
         {
           "key": "l",

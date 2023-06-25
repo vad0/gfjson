@@ -3,7 +3,10 @@
     {
       "name": "OrderType",
       "packageName": "md",
-      "generate": true,
+      "generate": [
+        "POJO",
+        "DECODER"
+      ],
       "javadoc": "obvious",
       "values": [
         {
@@ -20,7 +23,10 @@
     },
     {
       "name": "TimeInForce",
-      "packageName": "md"
+      "packageName": "md",
+      "generate": [
+        "DECODER"
+      ]
     }
   ],
   "structs": [
@@ -28,6 +34,9 @@
       "name": "L1Update",
       "packageName": "md",
       "strictOrder": true,
+      "generate": [
+        "DECODER"
+      ],
       "fields": [
         {
           "key": "e",

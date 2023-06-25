@@ -12,14 +12,14 @@ import org.agrona.collections.MutableInteger;
 public class L1UpdateDecoder
     implements ParseArrayElement<Array<L1Update>>
 {
-    private static final AsciiSequenceView EVENT_TYPE = KeyMap.string2view("e");
-    private static final AsciiSequenceView EXPECTED_EVENT_TYPE = KeyMap.string2view("bookTicker");
-    private static final AsciiSequenceView UPDATE_ID = KeyMap.string2view("u");
-    private static final AsciiSequenceView BEST_BID_PRICE = KeyMap.string2view("b");
-    private static final AsciiSequenceView SYMBOL = KeyMap.string2view("s");
-    private static final AsciiSequenceView ERROR = KeyMap.string2view("x");
-    private static final AsciiSequenceView TIME_IN_FORCE = KeyMap.string2view("t");
-    private static final AsciiSequenceView IS_FAST = KeyMap.string2view("bo");
+    public static final AsciiSequenceView EVENT_TYPE = KeyMap.string2view("e");
+    public static final AsciiSequenceView EXPECTED_EVENT_TYPE = KeyMap.string2view("bookTicker");
+    public static final AsciiSequenceView UPDATE_ID = KeyMap.string2view("u");
+    public static final AsciiSequenceView BEST_BID_PRICE = KeyMap.string2view("b");
+    public static final AsciiSequenceView SYMBOL = KeyMap.string2view("s");
+    public static final AsciiSequenceView ERROR = KeyMap.string2view("x");
+    public static final AsciiSequenceView TIME_IN_FORCE = KeyMap.string2view("t");
+    public static final AsciiSequenceView IS_FAST = KeyMap.string2view("bo");
 
     private final KeyMap<MutableInteger> symbolMap;
 

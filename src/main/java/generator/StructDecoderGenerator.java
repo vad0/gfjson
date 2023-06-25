@@ -191,7 +191,7 @@ public final class StructDecoderGenerator
         for (final var field : definition.fields())
         {
             writer.printf(
-                "private static final %s %s = KeyMap.string2view(\"%s\");\n",
+                "public static final %s %s = KeyMap.string2view(\"%s\");\n",
                 AsciiSequenceView.class.getSimpleName(),
                 viewConstName(field),
                 field.key());
@@ -200,7 +200,7 @@ public final class StructDecoderGenerator
                 switch (field.type())
                 {
                     case STRING -> writer.printf(
-                        "private static final %s %s = KeyMap.string2view(\"%s\");\n",
+                        "public static final %s %s = KeyMap.string2view(\"%s\");\n",
                         AsciiSequenceView.class.getSimpleName(),
                         expectedConstName(field),
                         field.expectedString());
