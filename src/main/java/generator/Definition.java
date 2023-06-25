@@ -26,11 +26,6 @@ public class Definition
         return generate.contains(Generate.POJO);
     }
 
-    public boolean generateEncoder()
-    {
-        return generate.contains(Generate.ENCODER);
-    }
-
     public boolean generateDecoder()
     {
         return generate.contains(Generate.DECODER);
