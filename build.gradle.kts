@@ -29,6 +29,7 @@ dependencies {
     annotationProcessor(libs.lombok)
     testImplementation(libs.lombok)
     testAnnotationProcessor(libs.lombok)
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 java {
