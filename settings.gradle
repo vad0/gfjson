@@ -7,12 +7,12 @@ dependencyResolutionManagement {
 //            plugin("release", "net.researchgate.release").version("2.8.1")
             plugin("jengelman", "com.github.johnrengelman.shadow").version("8.1.1")
 
-            library("agrona", "org.agrona:agrona:1.18.2")
+            library("agrona", "org.agrona:agrona:1.19.0")
             library("artio.codecs", "uk.co.real-logic:artio-codecs:0.142")
             library("apache.commons.collections4", "org.apache.commons:commons-collections4:4.4")
             library("jackson-databind", "com.fasterxml.jackson.core:jackson-databind:2.15.2")
-            library("jupiter.api", "org.junit.jupiter:junit-jupiter-api:5.9.3")
             library("jupiter.engine", "org.junit.jupiter:junit-jupiter-engine:5.10.0")
+            library("jupiter.api", "org.junit.jupiter:junit-jupiter-api:5.10.0")
             library("lombok", "org.projectlombok:lombok:1.18.28")
         }
     }
