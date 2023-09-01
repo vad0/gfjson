@@ -29,27 +29,6 @@ public class JsonEncoderTest
     private static final String BIG_INCREMENT_JSON = "big_increment.json";
     private static final String INCREMENT_JSON = "increment.json";
 
-    @Test
-    public void testWrite()
-    {
-        final String jackson = jacksonEncode(new ObjectMapper());
-        check(jackson, JsonEncoderTest::encodeGfjson);
-    }
-
-    @Test
-    public void manyWrites()
-    {
-        final var encoder = new JsonEncoder();
-        final AsciiSequenceView gfjson = new AsciiSequenceView();
-        for (int i = 0; i < 100; i++)
-        {
-            final int startOffset = encoder.getOffset();
-            encodeGfjson(encoder);
-            final int endOffset = encoder.getOffset();
-            encoder.readString(gfjson, startOffset, endOffset);
-        }
-    }
-
     public static void encodeGfjson(final JsonEncoder encoder)
     {
         encoder.wrap(BYTE_BUFFER);
@@ -114,75 +93,6 @@ public class JsonEncoderTest
         return update;
     }
 
-    @Test
-    public void testFalse()
-    {
-        final Consumer<JsonEncoder> encode = e -> e.putBoolean(false);
-        check("false", encode);
-    }
-
-    @Test
-    public void testTrue()
-    {
-        final Consumer<JsonEncoder> encode = e -> e.putBoolean(true);
-        check("true", encode);
-    }
-
-    @Test
-    public void testLong()
-    {
-        final long value = -123456;
-        check(String.valueOf(value), e -> e.putLong(value));
-    }
-
-    @Test
-    public void testEncodeString()
-    {
-        final Consumer<JsonEncoder> encode = e -> e.putDoubleAsString(1.1);
-        check("\"1.1\"", encode);
-    }
-
-    @Test
-    public void testEncodeEmptyArrayList()
-    {
-        final Consumer<JsonEncoder> encode = e -> e.encodeArray(TestUtils.doNothing(), List.of());
-        check("[]", encode);
-    }
-
-    @Test
-    public void testEncodeArrayList()
-    {
-        final Consumer<JsonEncoder> encode = e -> e.encodeArray((enc, i) -> enc.putLong(i), List.of(1, 2));
-        check("[1,2]", encode);
-    }
-
-    @Test
-    public void testEncodeEmptyArray2()
-    {
-        final MutableReference<String> reference = new MutableReference<>();
-        final FillElement<List<MutableReference<String>>, MutableReference<String>> fill = (a, i, e) ->
-        {
-        };
-        final Consumer<JsonEncoder> encode = e -> e.encodeArray(List.of(), 0, reference, fill, TestUtils.doNothing());
-        check("[]", encode);
-    }
-
-    @Test
-    public void testEncodeArrayList2()
-    {
-        final MutableLong reference = new MutableLong();
-        final FillElement<List<Long>, MutableLong> fill = (a, i, e) -> e.set(a.get(i));
-        final BiConsumer<JsonEncoder, MutableLong> encodeElement = (enc, ml) -> enc.putLong(ml.get());
-        final List<Long> list = List.of(1L, 2L);
-        final Consumer<JsonEncoder> encode = e -> e.encodeArray(
-            list,
-            list.size(),
-            reference,
-            fill,
-            encodeElement);
-        check("[1,2]", encode);
-    }
-
     private static void check(final String expected, final Consumer<JsonEncoder> encode)
     {
         final JsonEncoder encoder = new JsonEncoder();
@@ -194,32 +104,6 @@ public class JsonEncoderTest
         encoder.readString(string, startOffset, endOffset);
         final String actual = string.toString();
         assertEquals(expected, actual);
-    }
-
-    @Test
-    public void testEncodeIncrementGfjson()
-    {
-        final L2Update update = readSmallIncrement();
-        final String increment = TestUtils.readFile(INCREMENT_JSON);
-        final Quote quote = new Quote();
-        final String expected = increment
-            .replace("\n", "")
-            .replace(" ", "");
-        check(expected, e -> encodeIncrement(e, update, quote));
-    }
-
-    @Test
-    public void testEncodeIncrementJackson()
-    {
-        final L2Update update = readSmallIncrement();
-        final ObjectMapper mapper = new ObjectMapper();
-        final Quote quote = new Quote();
-        final String increment = TestUtils.readFile(INCREMENT_JSON);
-        final String expected = increment
-            .replace("\n", "")
-            .replace(" ", "");
-        final String string = encodeIncrementJackson(update, mapper, quote);
-        assertEquals(expected, string);
     }
 
     public static String encodeIncrementJackson(final L2Update update, final ObjectMapper mapper, final Quote quote)
@@ -235,8 +119,7 @@ public class JsonEncoderTest
         return objectNode.toString();
     }
 
-    private static void fillSideJackson(
-        final ObjectMapper mapper,
+    private static void fillSideJackson(final ObjectMapper mapper,
         final Quote quote,
         final com.fasterxml.jackson.databind.node.ArrayNode bids,
         final L2Side side)
@@ -305,6 +188,113 @@ public class JsonEncoderTest
     }
 
     @Test
+    public void testWrite()
+    {
+        final String jackson = jacksonEncode(new ObjectMapper());
+        check(jackson, JsonEncoderTest::encodeGfjson);
+    }
+
+    @Test
+    public void manyWrites()
+    {
+        final var encoder = new JsonEncoder();
+        final AsciiSequenceView gfjson = new AsciiSequenceView();
+        for (int i = 0; i < 100; i++)
+        {
+            final int startOffset = encoder.getOffset();
+            encodeGfjson(encoder);
+            final int endOffset = encoder.getOffset();
+            encoder.readString(gfjson, startOffset, endOffset);
+        }
+    }
+
+    @Test
+    public void testFalse()
+    {
+        final Consumer<JsonEncoder> encode = e -> e.putBoolean(false);
+        check("false", encode);
+    }
+
+    @Test
+    public void testTrue()
+    {
+        final Consumer<JsonEncoder> encode = e -> e.putBoolean(true);
+        check("true", encode);
+    }
+
+    @Test
+    public void testLong()
+    {
+        final long value = -123456;
+        check(String.valueOf(value), e -> e.putLong(value));
+    }
+
+    @Test
+    public void testEncodeString()
+    {
+        final Consumer<JsonEncoder> encode = e -> e.putDoubleAsString(1.1);
+        check("\"1.1\"", encode);
+    }
+
+    @Test
+    public void testEncodeEmptyArrayList()
+    {
+        final Consumer<JsonEncoder> encode = e -> e.encodeArray(TestUtils.doNothing(), List.of());
+        check("[]", encode);
+    }
+
+    @Test
+    public void testEncodeArrayList()
+    {
+        final Consumer<JsonEncoder> encode = e -> e.encodeArray((enc, i) -> enc.putLong(i), List.of(1, 2));
+        check("[1,2]", encode);
+    }
+
+    @Test
+    public void testEncodeEmptyArray2()
+    {
+        final MutableReference<String> reference = new MutableReference<>();
+        final FillElement<List<MutableReference<String>>, MutableReference<String>> fill = (a, i, e) ->
+        {
+        };
+        final Consumer<JsonEncoder> encode = e -> e.encodeArray(List.of(), 0, reference, fill, TestUtils.doNothing());
+        check("[]", encode);
+    }
+
+    @Test
+    public void testEncodeArrayList2()
+    {
+        final MutableLong reference = new MutableLong();
+        final FillElement<List<Long>, MutableLong> fill = (a, i, e) -> e.set(a.get(i));
+        final BiConsumer<JsonEncoder, MutableLong> encodeElement = (enc, ml) -> enc.putLong(ml.get());
+        final List<Long> list = List.of(1L, 2L);
+        final Consumer<JsonEncoder> encode = e -> e.encodeArray(list, list.size(), reference, fill, encodeElement);
+        check("[1,2]", encode);
+    }
+
+    @Test
+    public void testEncodeIncrementGfjson()
+    {
+        final L2Update update = readSmallIncrement();
+        final String increment = TestUtils.readFile(INCREMENT_JSON);
+        final Quote quote = new Quote();
+        final String expected = increment.replace("\n", "").replace(" ", "");
+        check(expected, e -> encodeIncrement(e, update, quote));
+    }
+
+    @Test
+    public void testEncodeIncrementJackson()
+    {
+        final L2Update update = readSmallIncrement();
+        final ObjectMapper mapper = new ObjectMapper();
+        final Quote quote = new Quote();
+        final String increment = TestUtils.readFile(INCREMENT_JSON);
+        final String expected = increment.replace("\n", "").replace(" ", "");
+        final String string = encodeIncrementJackson(update, mapper, quote);
+        assertEquals(expected, string);
+    }
+
+    @Test
     public void testNextLine()
     {
         check("{\n}", encoder ->
@@ -354,6 +344,51 @@ public class JsonEncoderTest
         {
             final var encoder = new JsonEncoder();
             encoder.putDouble(Double.NEGATIVE_INFINITY);
+        });
+    }
+
+    @Test
+    public void testAdvanceOffset()
+    {
+        final JsonEncoder encoder = new JsonEncoder();
+        final AsciiSequenceView string = new AsciiSequenceView();
+        encoder.wrap(BYTE_BUFFER);
+        final int startOffset = encoder.getOffset();
+
+        encoder.startArray();
+        BYTE_BUFFER.put(encoder.getOffset(), (byte)'1');
+        encoder.advanceOffset(1);
+        encoder.endArray();
+
+        final int endOffset = encoder.getOffset();
+        encoder.readString(string, startOffset, endOffset);
+        final String actual = string.toString();
+        assertEquals("[1]", actual);
+    }
+
+    @Test
+    public void testBase64Blob()
+    {
+        check("{\"key\":\"c29tZQkKdGV4dA==\"}", encoder ->
+        {
+            encoder.startObject();
+            encoder.putKey("key");
+            final var source = ByteBuffer.wrap("some\t\ntext".getBytes());
+            encoder.putByteBufferAsBase64(source);
+            encoder.endObject();
+        });
+    }
+
+    @Test
+    public void testBase64Blob2()
+    {
+        check("{\"key\":\"bWUJCnRl\"}", encoder ->
+        {
+            encoder.startObject();
+            encoder.putKey("key");
+            final var source = ByteBuffer.wrap("some\t\ntext".getBytes());
+            encoder.putByteBufferAsBase64(source, 2, source.limit() - 4);
+            encoder.endObject();
         });
     }
 }
