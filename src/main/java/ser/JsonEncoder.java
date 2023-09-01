@@ -19,6 +19,11 @@ public class JsonEncoder
     @Getter
     private int offset = 0;
 
+    public int advanceOffset(final int diff)
+    {
+        return offset += diff;
+    }
+
     public void putDoubleAsString(final double value)
     {
         putQuote();
@@ -26,8 +31,22 @@ public class JsonEncoder
         putQuote();
     }
 
-    public <E, A> void encodeArray(
-        final A array,
+    public void putByteBufferAsBase64(final ByteBuffer bufferToEncode)
+    {
+        putByteBufferAsBase64(bufferToEncode,
+            bufferToEncode.position(),
+            bufferToEncode.limit() - bufferToEncode.position());
+    }
+
+    public void putByteBufferAsBase64(final ByteBuffer bufferToEncode, final int startIdx, final int srcLen)
+    {
+        putQuote();
+        final var encodedLength = B64Encoder.encode(startIdx, srcLen, offset, bufferToEncode, buffer);
+        advanceOffset(encodedLength);
+        putQuote();
+    }
+
+    public <E, A> void encodeArray(final A array,
         final int arraySize,
         final E element,
         final FillElement<A, E> fillElement,
@@ -50,9 +69,7 @@ public class JsonEncoder
         endArray();
     }
 
-    public <T> void encodeArray(
-        final BiConsumer<JsonEncoder, T> encodeElement,
-        final List<T> array)
+    public <T> void encodeArray(final BiConsumer<JsonEncoder, T> encodeElement, final List<T> array)
     {
         startArray();
         final int size = array.size();
@@ -74,6 +91,12 @@ public class JsonEncoder
     {
         buffer.wrap(byteBuffer);
         offset = 0;
+    }
+
+    public void wrap(final ByteBuffer byteBuffer, final int offset)
+    {
+        buffer.wrap(byteBuffer);
+        this.offset = offset;
     }
 
     private void putChar(final char c)
