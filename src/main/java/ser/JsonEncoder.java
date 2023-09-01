@@ -41,7 +41,7 @@ public class JsonEncoder
     public void putByteBufferAsBase64(final ByteBuffer bufferToEncode, final int startIdx, final int srcLen)
     {
         putQuote();
-        final var encodedLength = B64Encoder.encode(startIdx, srcLen, offset, bufferToEncode, buffer.byteBuffer());
+        final var encodedLength = B64Encoder.encode(startIdx, srcLen, offset, bufferToEncode, buffer);
         advanceOffset(encodedLength);
         putQuote();
     }

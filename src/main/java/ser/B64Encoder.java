@@ -1,5 +1,7 @@
 package ser;
 
+import uk.co.real_logic.artio.util.MutableAsciiBuffer;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -16,15 +18,16 @@ public class B64Encoder
      * <a href="https://en.wikibooks.org/wiki/Algorithm_Implementation/Miscellaneous/Base64"/>
      * This implementation is a mix of Java and C++ implementations
      */
-    public static int encode(final int srcStartPos,
+    public static int encode(
+        final int srcStartPos,
         final int srcLen,
         final int dstStartPos,
         final ByteBuffer source,
-        final ByteBuffer destination)
+        final MutableAsciiBuffer destination)
     {
         int srcIdx = srcStartPos;
 
-        destination.position(dstStartPos);
+        int destIdx = dstStartPos;
 
         final int lastSourceIdx = srcLen + srcStartPos;
         while (srcIdx < srcLen)
@@ -48,10 +51,10 @@ public class B64Encoder
             final byte c3 = BASE64_CHARS_BUFFER.get(n3);
             final byte c4 = BASE64_CHARS_BUFFER.get(n4);
 
-            destination.put(c1);
-            destination.put(c2);
-            destination.put(c3);
-            destination.put(c4);
+            destination.putByte(destIdx++, c1);
+            destination.putByte(destIdx++, c2);
+            destination.putByte(destIdx++, c3);
+            destination.putByte(destIdx++, c4);
 
             srcIdx += 3;
         }
@@ -60,22 +63,27 @@ public class B64Encoder
 
         if (remainder == 1)
         {
-            writeLastOneChar(srcIdx, source, destination);
+            destIdx = writeLastOneChar(srcIdx, destIdx, source, destination);
         }
         else if (remainder == 2)
         {
-            writeLastTwoChars(srcIdx, source, destination);
+            destIdx = writeLastTwoChars(srcIdx, destIdx, source, destination);
         }
         else
         {
             assert remainder == 0;
         }
 
-        return destination.position() - dstStartPos;
+        return destIdx - dstStartPos;
     }
 
-    private static void writeLastOneChar(final int srcIdx, final ByteBuffer src, final ByteBuffer dst)
+    private static int writeLastOneChar(
+        final int srcIdx,
+        final int destIdxParam,
+        final ByteBuffer src,
+        final MutableAsciiBuffer dst)
     {
+        var result = destIdxParam;
         final int n = src.get(srcIdx) << 16;
 
         final var n1 = (n >> 18) & 63;
@@ -84,14 +92,21 @@ public class B64Encoder
         final var c1 = BASE64_CHARS_BUFFER.get(n1);
         final var c2 = BASE64_CHARS_BUFFER.get(n2);
 
-        dst.put(c1);
-        dst.put(c2);
-        dst.put(PAD_BYTE);
-        dst.put(PAD_BYTE);
+        dst.putByte(result++, c1);
+        dst.putByte(result++, c2);
+        dst.putByte(result++, PAD_BYTE);
+        dst.putByte(result++, PAD_BYTE);
+
+        return result;
     }
 
-    private static void writeLastTwoChars(final int srcIdx, final ByteBuffer src, final ByteBuffer dst)
+    private static int writeLastTwoChars(
+        final int srcIdx,
+        final int destIdx,
+        final ByteBuffer src,
+        final MutableAsciiBuffer dst)
     {
+        var result = destIdx;
         int n = src.get(srcIdx) << 16;
         n += src.get(srcIdx + 1) << 8;
 
@@ -103,9 +118,11 @@ public class B64Encoder
         final var c2 = BASE64_CHARS_BUFFER.get(n2);
         final var c3 = BASE64_CHARS_BUFFER.get(n3);
 
-        dst.put(c1);
-        dst.put(c2);
-        dst.put(c3);
-        dst.put(PAD_BYTE);
+        dst.putByte(result++, c1);
+        dst.putByte(result++, c2);
+        dst.putByte(result++, c3);
+        dst.putByte(result++, PAD_BYTE);
+
+        return result;
     }
 }
