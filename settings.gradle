@@ -8,7 +8,7 @@ dependencyResolutionManagement {
             plugin("jengelman", "com.github.johnrengelman.shadow").version("8.1.1")
 
             library("agrona", "org.agrona:agrona:1.19.1")
-            library("artio.codecs", "uk.co.real-logic:artio-codecs:0.142")
+            library("artio.codecs", "uk.co.real-logic:artio-codecs:0.143")
             library("apache.commons.collections4", "org.apache.commons:commons-collections4:4.4")
             library("jackson-databind", "com.fasterxml.jackson.core:jackson-databind:2.15.2")
             library("jupiter.engine", "org.junit.jupiter:junit-jupiter-engine:5.10.0")
