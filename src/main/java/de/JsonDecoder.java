@@ -18,7 +18,7 @@ public class JsonDecoder
     public static final boolean APPLY_CHECKS = !Boolean.getBoolean("omit_checks");
     private static final char[] SKIP = new char[]{' ', '\n', ':', ','};
     private static final BiConsumer<JsonDecoder, ?> SKIP_LAMBDA = (t, u) -> t.skipValue();
-    private static final long MAX_MANTISSA = Long.MAX_VALUE / 10 - 1;
+    private static final long MAX_MANTISSA = DecimalFloat.MAX_VALUE.value() / 10;
     private final DirectBuffer buffer = new UnsafeBuffer();
     private final MutableAsciiBuffer stringBuffer = new MutableAsciiBuffer();
     @Getter
