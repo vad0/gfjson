@@ -420,21 +420,17 @@ public class JsonDecoder
             sign = 1;
             mantissa = getDigit(first);
         }
-        int exponent = 0;
         // before dot
         while (offset < end)
         {
             final char next = (char)buffer.getByte(offset++);
             if (isDigit(next))
             {
-                if (mantissa <= MAX_MANTISSA)
+                if (mantissa > MAX_MANTISSA)
                 {
-                    mantissa = mantissa * 10 + getDigit(next);
+                    throw new ArithmeticException(view.toString());
                 }
-                else
-                {
-                    exponent--;
-                }
+                mantissa = mantissa * 10 + getDigit(next);
                 continue;
             }
             if (next == '.')
@@ -444,6 +440,7 @@ public class JsonDecoder
             throw new RuntimeException();
         }
         // after dot
+        int exponent = 0;
         for (int i = offset; i < end; i++)
         {
             final char next = (char)buffer.getByte(i);
