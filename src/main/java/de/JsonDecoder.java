@@ -18,6 +18,7 @@ public class JsonDecoder
     public static final boolean APPLY_CHECKS = !Boolean.getBoolean("omit_checks");
     private static final char[] SKIP = new char[]{' ', '\n', ':', ','};
     private static final BiConsumer<JsonDecoder, ?> SKIP_LAMBDA = (t, u) -> t.skipValue();
+    private static final long MAX_MANTISSA = Long.MAX_VALUE / 10 - 1;
     private final DirectBuffer buffer = new UnsafeBuffer();
     private final MutableAsciiBuffer stringBuffer = new MutableAsciiBuffer();
     @Getter
@@ -368,8 +369,11 @@ public class JsonDecoder
             final char next = nextChar();
             if (isDigit(next))
             {
-                mantissa = mantissa * 10 + getDigit(next);
-                exponent++;
+                if (mantissa <= MAX_MANTISSA)
+                {
+                    mantissa = mantissa * 10 + getDigit(next);
+                    exponent++;
+                }
                 continue;
             }
             if (shouldSkip(next))
@@ -422,6 +426,10 @@ public class JsonDecoder
             final char next = (char)buffer.getByte(offset++);
             if (isDigit(next))
             {
+                if (mantissa > MAX_MANTISSA)
+                {
+                    throw new ArithmeticException(view.toString());
+                }
                 mantissa = mantissa * 10 + getDigit(next);
                 continue;
             }
@@ -438,8 +446,11 @@ public class JsonDecoder
             final char next = (char)buffer.getByte(i);
             if (isDigit(next))
             {
-                mantissa = mantissa * 10 + getDigit(next);
-                exponent++;
+                if (mantissa <= MAX_MANTISSA)
+                {
+                    mantissa = mantissa * 10 + getDigit(next);
+                    exponent++;
+                }
             }
             else
             {

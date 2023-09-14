@@ -379,6 +379,26 @@ class JsonDecoderTest
     }
 
     @Test
+    public void testParseNumberString3()
+    {
+        final String string = "\"91884.8502560037982063\"";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        final var parsed = decoder.nextDoubleFromString();
+        final var expected = 91884.8502560037982063;
+        assertEquals(expected, parsed);
+    }
+
+    @Test
+    public void testParseNumberString4()
+    {
+        final String string = "\"918848502560037982063654987321654987\"";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        assertThrows(ArithmeticException.class, decoder::nextDoubleFromString);
+    }
+
+    @Test
     public void testParseLongString()
     {
         final String string = "\"12\"";
