@@ -43,6 +43,16 @@ public class Array<T>
     }
 
     /**
+     * Revert last claim.
+     * Useful when we claim an object, fill it with data during parsing, but in the end, decide to ignore it.
+     */
+    public void cancelClaim()
+    {
+        assert size > 0 : size;
+        size--;
+    }
+
+    /**
      * This method is called when we already parsed a message.
      */
     public T get(final int index)
