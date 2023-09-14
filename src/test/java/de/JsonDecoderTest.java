@@ -8,6 +8,7 @@ import uk.co.real_logic.artio.fields.DecimalFloat;
 import utils.TestUtils;
 
 import java.nio.ByteBuffer;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -407,6 +408,15 @@ class JsonDecoderTest
         final var parsed = decoder.nextDoubleFromString();
         final var expected = 45078.37907562268517;
         assertEquals(expected, parsed);
+    }
+
+    @Test
+    public void testParseNumberString6()
+    {
+        final String string = "\"\"";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        assertThrows(ParseException.class, decoder::nextDoubleFromString);
     }
 
     @Test

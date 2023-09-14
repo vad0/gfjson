@@ -1,6 +1,7 @@
 package de;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.agrona.AsciiSequenceView;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
@@ -10,6 +11,7 @@ import uk.co.real_logic.artio.fields.ReadOnlyDecimalFloat;
 import uk.co.real_logic.artio.util.MutableAsciiBuffer;
 
 import java.nio.ByteBuffer;
+import java.text.ParseException;
 import java.util.function.BiConsumer;
 
 public class JsonDecoder
@@ -399,13 +401,19 @@ public class JsonDecoder
         return ch == ']' || ch == '}';
     }
 
+    @SneakyThrows
     private static void parseNumber(final AsciiSequenceView view, final DecimalFloat number)
     {
         // universal and simple way of doing it is calling 'decimalFloat.fromString(string)', but we want to do it
         // faster
+        final int length = view.length();
+        if (length == 0)
+        {
+            throw new ParseException("Empty string", 0);
+        }
         final var buffer = view.buffer();
         int offset = view.offset();
-        final int end = offset + view.length();
+        final int end = offset + length;
         final char first = (char)buffer.getByte(offset++);
 
         final int sign;
