@@ -399,6 +399,17 @@ class JsonDecoderTest
     }
 
     @Test
+    public void testParseNumberString5()
+    {
+        final String string = "\"45078.37907562268517\"";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        final var parsed = decoder.nextDoubleFromString();
+        final var expected = 45078.37907562268517;
+        assertEquals(expected, parsed);
+    }
+
+    @Test
     public void testParseLongString()
     {
         final String string = "\"12\"";
