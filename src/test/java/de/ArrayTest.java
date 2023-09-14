@@ -29,6 +29,17 @@ class ArrayTest
     }
 
     @Test
+    public void cancelClaim()
+    {
+        final var array = new Array<>(MutableInteger::new);
+        array.claimNext();
+        array.claimNext();
+        assertEquals(2, array.size());
+        array.cancelClaim();
+        assertEquals(1, array.size());
+    }
+
+    @Test
     public void testHashCode()
     {
         final var array = new Array<>(MutableInteger::new);

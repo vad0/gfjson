@@ -357,6 +357,28 @@ class JsonDecoderTest
     }
 
     @Test
+    public void testParseNumberString1()
+    {
+        final String string = "\"\"";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        final var parsed = decoder.nextOptionalDoubleFromString(1);
+        final var expected = 1;
+        assertEquals(expected, parsed);
+    }
+
+    @Test
+    public void testParseNumberString2()
+    {
+        final String string = "\"1.2\"";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        final var parsed = decoder.nextOptionalDoubleFromString(1);
+        final var expected = 1.2;
+        assertEquals(expected, parsed);
+    }
+
+    @Test
     public void testParseLongString()
     {
         final String string = "\"12\"";

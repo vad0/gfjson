@@ -581,4 +581,14 @@ public class JsonDecoder
     {
         checkString(expected, nextString());
     }
+
+    public double nextOptionalDoubleFromString(final double defaultValue)
+    {
+        final var str = nextString();
+        if (str.isEmpty())
+        {
+            return defaultValue;
+        }
+        return doubleFromString();
+    }
 }
