@@ -18,6 +18,7 @@ public class JsonDecoder
     public static final boolean APPLY_CHECKS = !Boolean.getBoolean("omit_checks");
     private static final char[] SKIP = new char[]{' ', '\n', ':', ','};
     private static final BiConsumer<JsonDecoder, ?> SKIP_LAMBDA = (t, u) -> t.skipValue();
+    private static final long MAX_MANTISSA = Long.MAX_VALUE / 10 - 1;
     private final DirectBuffer buffer = new UnsafeBuffer();
     private final MutableAsciiBuffer stringBuffer = new MutableAsciiBuffer();
     @Getter
@@ -368,8 +369,11 @@ public class JsonDecoder
             final char next = nextChar();
             if (isDigit(next))
             {
-                mantissa = mantissa * 10 + getDigit(next);
-                exponent++;
+                if (mantissa <= MAX_MANTISSA)
+                {
+                    mantissa = mantissa * 10 + getDigit(next);
+                    exponent++;
+                }
                 continue;
             }
             if (shouldSkip(next))
@@ -416,13 +420,21 @@ public class JsonDecoder
             sign = 1;
             mantissa = getDigit(first);
         }
+        int exponent = 0;
         // before dot
         while (offset < end)
         {
             final char next = (char)buffer.getByte(offset++);
             if (isDigit(next))
             {
-                mantissa = mantissa * 10 + getDigit(next);
+                if (mantissa <= MAX_MANTISSA)
+                {
+                    mantissa = mantissa * 10 + getDigit(next);
+                }
+                else
+                {
+                    exponent--;
+                }
                 continue;
             }
             if (next == '.')
@@ -432,14 +444,16 @@ public class JsonDecoder
             throw new RuntimeException();
         }
         // after dot
-        int exponent = 0;
         for (int i = offset; i < end; i++)
         {
             final char next = (char)buffer.getByte(i);
             if (isDigit(next))
             {
-                mantissa = mantissa * 10 + getDigit(next);
-                exponent++;
+                if (mantissa <= MAX_MANTISSA)
+                {
+                    mantissa = mantissa * 10 + getDigit(next);
+                    exponent++;
+                }
             }
             else
             {
