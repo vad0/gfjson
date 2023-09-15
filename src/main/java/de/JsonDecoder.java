@@ -611,7 +611,7 @@ public class JsonDecoder
         return doubleFromString();
     }
 
-    public double nextOptionalLongFromString(final long defaultValue)
+    public long nextOptionalLongFromString(final long defaultValue)
     {
         final var str = nextString();
         if (str.isEmpty())
