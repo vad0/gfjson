@@ -610,4 +610,14 @@ public class JsonDecoder
         }
         return doubleFromString();
     }
+
+    public double nextOptionalLongFromString(final long defaultValue)
+    {
+        final var str = nextString();
+        if (str.isEmpty())
+        {
+            return defaultValue;
+        }
+        return longFromString();
+    }
 }

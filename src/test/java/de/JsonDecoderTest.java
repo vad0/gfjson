@@ -420,6 +420,33 @@ class JsonDecoderTest
     }
 
     @Test
+    public void testParseNumberString7()
+    {
+        final String string = "\"\"";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        assertThrows(ParseException.class, decoder::nextLongFromString);
+    }
+
+    @Test
+    public void testOptionalLong1()
+    {
+        final String string = "\"\"";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        assertEquals(1, decoder.nextOptionalLongFromString(1));
+    }
+
+    @Test
+    public void testOptionalLong2()
+    {
+        final String string = "\"-5\"";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        assertEquals(-5, decoder.nextOptionalLongFromString(1));
+    }
+
+    @Test
     public void testParseLongString()
     {
         final String string = "\"12\"";
