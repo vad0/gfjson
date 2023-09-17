@@ -44,4 +44,14 @@ public class KeyMap<T>
     {
         return map.getOrDefault(string, ignore);
     }
+
+    public T put(final AsciiSequenceView string, final T value)
+    {
+        return map.put(string, value);
+    }
+
+    public static AsciiSequenceView deepCopy(final AsciiSequenceView str)
+    {
+        return string2view(str.toString());
+    }
 }
