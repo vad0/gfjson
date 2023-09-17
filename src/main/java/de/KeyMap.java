@@ -19,7 +19,7 @@ import java.util.Map;
 public class KeyMap<T>
 {
     private final Map<AsciiSequenceView, T> map = new AsciiTrie<>();
-    private T emptyValue;
+    private final T emptyValue;
 
     public KeyMap()
     {
@@ -60,9 +60,15 @@ public class KeyMap<T>
         return map.getOrDefault(string, emptyValue);
     }
 
-    public T put(final AsciiSequenceView string, final T value)
+    /**
+     * One can put any key only once. If you want to rewrite values for a particular key, then use mutable value like
+     * {@link org.agrona.collections.MutableInteger}.
+     */
+    public void put(final AsciiSequenceView string, final T value)
     {
-        return map.put(string, value);
+        final var v = map.get(string);
+        assert v == emptyValue;
+        map.put(deepCopy(string), value);
     }
 
     public Collection<T> values()
