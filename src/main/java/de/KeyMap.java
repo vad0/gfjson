@@ -44,4 +44,9 @@ public class KeyMap<T>
     {
         return map.getOrDefault(string, ignore);
     }
+
+    public T put(final AsciiSequenceView string, final T value)
+    {
+        return map.put(string, value);
+    }
 }
