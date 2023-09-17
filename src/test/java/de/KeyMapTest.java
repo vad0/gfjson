@@ -1,13 +1,26 @@
 package de;
 
+import org.agrona.collections.MutableInteger;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class KeyMapTest
 {
+    @Test
+    public void testPut()
+    {
+        final var map = new KeyMap<MutableInteger>(Map.of(), null);
+        final var v1 = new MutableInteger(5);
+        final var old1 = map.put(KeyMap.string2view("key"), v1);
+        assertNull(old1);
+        final var old2 = map.put(KeyMap.string2view("key"), new MutableInteger(3));
+        assertEquals(v1, old2);
+    }
+
     @Test
     public void forEnum()
     {
