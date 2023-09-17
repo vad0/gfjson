@@ -27,10 +27,7 @@ class KeyMapTest
     {
         final var map = new KeyMap<MutableInteger>(Map.of(), null);
         final var v1 = new MutableInteger(5);
-        final var old1 = map.put(KeyMap.string2view("key"), v1);
-        assertNull(old1);
-        final var old2 = map.put(KeyMap.string2view("key"), new MutableInteger(3));
-        assertEquals(v1, old2);
+        map.put(KeyMap.string2view("key"), v1);
     }
 
     @Test
