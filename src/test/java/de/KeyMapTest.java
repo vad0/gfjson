@@ -34,6 +34,17 @@ class KeyMapTest
     }
 
     @Test
+    public void testGetters()
+    {
+        final var map = new KeyMap<MutableInteger>();
+        map.put(KeyMap.string2view("123"), new MutableInteger(1));
+        assertEquals(1, map.size());
+        assertEquals(1, map.values().size());
+        assertEquals(1, map.map().values().size());
+        assertNull(map.emptyValue());
+    }
+
+    @Test
     public void forEnum()
     {
         final var actual = KeyMap.forEnum(ExampleEnum.class);
