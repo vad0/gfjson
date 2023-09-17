@@ -49,4 +49,9 @@ public class KeyMap<T>
     {
         return map.put(string, value);
     }
+
+    public static AsciiSequenceView deepCopy(final AsciiSequenceView str)
+    {
+        return string2view(str.toString());
+    }
 }

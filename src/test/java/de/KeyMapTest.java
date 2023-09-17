@@ -1,15 +1,27 @@
 package de;
 
 import org.agrona.collections.MutableInteger;
+import org.apache.commons.collections4.trie.AsciiKeyAnalyser;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class KeyMapTest
 {
+    @Test
+    public void deepCopy()
+    {
+        final var a = KeyMap.string2view("asdf");
+        final var b = KeyMap.deepCopy(a);
+        assertTrue(AsciiKeyAnalyser.stringEquals(a, b));
+        assertNotSame(a, b);
+        final var c = KeyMap.string2view("sdfg");
+        assertFalse(AsciiKeyAnalyser.stringEquals(a, c));
+        assertFalse(AsciiKeyAnalyser.stringEquals(b, c));
+    }
+
     @Test
     public void testPut()
     {
