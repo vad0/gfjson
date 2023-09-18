@@ -84,7 +84,7 @@ public class B64Encoder
         final MutableAsciiBuffer dst)
     {
         var result = destIdxParam;
-        final int n = src.get(srcIdx) << 16;
+        final int n = (src.get(srcIdx) & MASK_UNSIGNED_BYTE) << 16;
 
         final var n1 = (n >> 18) & MASK_FIRST_6_BITS;
         final var n2 = (n >> 12) & MASK_FIRST_6_BITS;
@@ -106,8 +106,8 @@ public class B64Encoder
         final MutableAsciiBuffer dst)
     {
         var result = destIdx;
-        int n = src.get(srcIdx) << 16;
-        n += src.get(srcIdx + 1) << 8;
+        int n = (src.get(srcIdx) & MASK_UNSIGNED_BYTE) << 16;
+        n += (src.get(srcIdx + 1) & MASK_UNSIGNED_BYTE) << 8;
 
         final var n1 = (n >> 18) & MASK_FIRST_6_BITS;
         final var n2 = (n >> 12) & MASK_FIRST_6_BITS;
