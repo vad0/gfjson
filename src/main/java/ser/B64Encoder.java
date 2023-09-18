@@ -13,7 +13,7 @@ public class B64Encoder
     private static final ByteBuffer BASE64_CHARS_BUFFER = ByteBuffer.wrap(BASE64_CHARS.getBytes());
     private static final byte PAD_BYTE = '=';
     private static final int MASK_FIRST_6_BITS = 63;
-    private static final int MASK_UNSIGNED_BYTE = 0xff;
+    private static final int MASK_UNSIGNED_BYTE = 0xFF;
 
     /**
      * Encode given buffer with base64 value of source buffer
@@ -107,7 +107,7 @@ public class B64Encoder
     {
         var result = destIdx;
         int n = (src.get(srcIdx) & MASK_UNSIGNED_BYTE) << 16;
-        n += (src.get(srcIdx + 1) & MASK_UNSIGNED_BYTE) << 8;
+        n |= (src.get(srcIdx + 1) & MASK_UNSIGNED_BYTE) << 8;
 
         final var n1 = (n >> 18) & MASK_FIRST_6_BITS;
         final var n2 = (n >> 12) & MASK_FIRST_6_BITS;

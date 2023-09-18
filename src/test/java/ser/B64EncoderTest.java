@@ -26,6 +26,11 @@ class B64EncoderTest
         "/wEObjMsDE2MbMdFab8BDmNzLExNjG0HSPn/AQ5tcywMTYxuB1WsvwEOYzMsTE2MbkdaNn8BDm0zLAxNjK0Hiqt/AQ5jYwxNjK4HmjG" +
         "/AQ5jMyxMTY1tSFdt/wEObPMsDE2NrIiOYD8BDmOzLExNjazIkPQ/AQ5towxNje2I1vz/AQ5tcywMTY4tSRHmfwEOY/8BDmFrfwCeP+VAAAA";
 
+    private static String getExpectedEncoding(final byte[] src)
+    {
+        return Base64.getEncoder().encodeToString(src);
+    }
+
     @Test
     public void testBase64Encode()
     {
@@ -74,7 +79,6 @@ class B64EncoderTest
         assertEquals("bWUJCnRl", outStr);
     }
 
-
     @Test
     public void testBase64EncoderBug1()
     {
@@ -85,5 +89,17 @@ class B64EncoderTest
         final var ourEncodedStr = dest.getAscii(0, ourEncodedLen);
 
         assertEquals(BUFFER_WITH_SIGN_EXTEND, ourEncodedStr);
+    }
+
+    @Test
+    public void testBase64EncoderBug2()
+    {
+        final var source = ByteBuffer.wrap(new byte[]{0, (byte)0xff});
+        final var dest = new MutableAsciiBuffer(new byte[30]);
+
+        final var len = B64Encoder.encode(0, source.limit(), 0, source, dest);
+        final var outStr = dest.getAscii(0, len);
+
+        assertEquals(getExpectedEncoding(source.array()), outStr);
     }
 }
