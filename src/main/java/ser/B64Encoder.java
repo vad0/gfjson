@@ -20,7 +20,8 @@ public class B64Encoder
      * <a href="https://en.wikibooks.org/wiki/Algorithm_Implementation/Miscellaneous/Base64"/>
      * This implementation is a mix of Java and C++ implementations
      */
-    public static int encode(final int srcStartPos,
+    public static int encode(
+        final int srcStartPos,
         final int srcLen,
         final int dstStartPos,
         final ByteBuffer source,
@@ -78,7 +79,8 @@ public class B64Encoder
         return destIdx - dstStartPos;
     }
 
-    private static int writeLastOneChar(final int srcIdx,
+    private static int writeLastOneChar(
+        final int srcIdx,
         final int destIdxParam,
         final ByteBuffer src,
         final MutableAsciiBuffer dst)
@@ -100,7 +102,8 @@ public class B64Encoder
         return result;
     }
 
-    private static int writeLastTwoChars(final int srcIdx,
+    private static int writeLastTwoChars(
+        final int srcIdx,
         final int destIdx,
         final ByteBuffer src,
         final MutableAsciiBuffer dst)
