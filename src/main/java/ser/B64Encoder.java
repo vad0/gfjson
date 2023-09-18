@@ -12,14 +12,15 @@ public class B64Encoder
     private static final String BASE64_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     private static final ByteBuffer BASE64_CHARS_BUFFER = ByteBuffer.wrap(BASE64_CHARS.getBytes());
     private static final byte PAD_BYTE = '=';
+    private static final int MASK_FIRST_6_BITS = 63;
+    private static final int MASK_UNSIGNED_BYTE = 0xff;
 
     /**
      * Encode given buffer with base64 value of source buffer
      * <a href="https://en.wikibooks.org/wiki/Algorithm_Implementation/Miscellaneous/Base64"/>
      * This implementation is a mix of Java and C++ implementations
      */
-    public static int encode(
-        final int srcStartPos,
+    public static int encode(final int srcStartPos,
         final int srcLen,
         final int dstStartPos,
         final ByteBuffer source,
@@ -37,14 +38,14 @@ public class B64Encoder
                 break;
             }
 
-            int n = source.get(srcIdx) << 16;
-            n += source.get(srcIdx + 1) << 8;
-            n += source.get(srcIdx + 2);
+            int n = (source.get(srcIdx) & MASK_UNSIGNED_BYTE) << 16;
+            n |= (source.get(srcIdx + 1) & MASK_UNSIGNED_BYTE) << 8;
+            n |= (source.get(srcIdx + 2) & MASK_UNSIGNED_BYTE);
 
-            final int n1 = (n >> 18) & 63;
-            final int n2 = (n >> 12) & 63;
-            final int n3 = (n >> 6) & 63;
-            final int n4 = n & 63;
+            final int n1 = (n >> 18) & MASK_FIRST_6_BITS;
+            final int n2 = (n >> 12) & MASK_FIRST_6_BITS;
+            final int n3 = (n >> 6) & MASK_FIRST_6_BITS;
+            final int n4 = n & MASK_FIRST_6_BITS;
 
             final byte c1 = BASE64_CHARS_BUFFER.get(n1);
             final byte c2 = BASE64_CHARS_BUFFER.get(n2);
@@ -77,8 +78,7 @@ public class B64Encoder
         return destIdx - dstStartPos;
     }
 
-    private static int writeLastOneChar(
-        final int srcIdx,
+    private static int writeLastOneChar(final int srcIdx,
         final int destIdxParam,
         final ByteBuffer src,
         final MutableAsciiBuffer dst)
@@ -86,8 +86,8 @@ public class B64Encoder
         var result = destIdxParam;
         final int n = src.get(srcIdx) << 16;
 
-        final var n1 = (n >> 18) & 63;
-        final var n2 = (n >> 12) & 63;
+        final var n1 = (n >> 18) & MASK_FIRST_6_BITS;
+        final var n2 = (n >> 12) & MASK_FIRST_6_BITS;
 
         final var c1 = BASE64_CHARS_BUFFER.get(n1);
         final var c2 = BASE64_CHARS_BUFFER.get(n2);
@@ -100,8 +100,7 @@ public class B64Encoder
         return result;
     }
 
-    private static int writeLastTwoChars(
-        final int srcIdx,
+    private static int writeLastTwoChars(final int srcIdx,
         final int destIdx,
         final ByteBuffer src,
         final MutableAsciiBuffer dst)
@@ -110,9 +109,9 @@ public class B64Encoder
         int n = src.get(srcIdx) << 16;
         n += src.get(srcIdx + 1) << 8;
 
-        final var n1 = (n >> 18) & 63;
-        final var n2 = (n >> 12) & 63;
-        final var n3 = (n >> 6) & 63;
+        final var n1 = (n >> 18) & MASK_FIRST_6_BITS;
+        final var n2 = (n >> 12) & MASK_FIRST_6_BITS;
+        final var n3 = (n >> 6) & MASK_FIRST_6_BITS;
 
         final var c1 = BASE64_CHARS_BUFFER.get(n1);
         final var c2 = BASE64_CHARS_BUFFER.get(n2);
