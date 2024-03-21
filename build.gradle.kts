@@ -33,7 +33,7 @@ dependencies {
 }
 
 java {
-    val javaVersion = JavaVersion.VERSION_21
+    val javaVersion = JavaVersion.VERSION_17
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
 }

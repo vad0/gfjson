@@ -134,18 +134,10 @@ public class JsonDecoder
             final Token token = next();
             switch (token)
             {
-                case START_ARRAY:
-                    startArrayCount++;
-                    break;
-                case END_ARRAY:
-                    endArrayCount++;
-                    break;
-                case START_OBJECT:
-                    startObjectCount++;
-                    break;
-                case END_OBJECT:
-                    endObjectCount++;
-                    break;
+                case START_ARRAY -> startArrayCount++;
+                case END_ARRAY -> endArrayCount++;
+                case START_OBJECT -> startObjectCount++;
+                case END_OBJECT -> endObjectCount++;
             }
         }
         while (startArrayCount > endArrayCount || startObjectCount > endObjectCount);
