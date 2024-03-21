@@ -9,6 +9,6 @@ public class TimeInForceDecoder
 
     public static TimeInForce parse(final AsciiSequenceView string)
     {
-        return MAP.getKey(string);
+        return MAP.get(string);
     }
 }
