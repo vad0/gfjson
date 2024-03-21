@@ -338,8 +338,9 @@ public class JsonDecoder
             }
             if (shouldSkip(next))
             {
-                // this is not a float, so return long
-                decimalFloat.set(sign * mantissa, 0);
+                // this is not a float, so just return long
+                decimalFloat.value(sign * mantissa);
+                decimalFloat.scale(0);
                 return Token.LONG;
             }
             if (next == '.')
@@ -349,7 +350,8 @@ public class JsonDecoder
             if (isEndOfStructure(next))
             {
                 offset--;
-                decimalFloat.set(sign * mantissa, 0);
+                decimalFloat.value(sign * mantissa);
+                decimalFloat.scale(0);
                 return Token.LONG;
             }
             throw new RuntimeException();
