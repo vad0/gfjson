@@ -5,6 +5,7 @@ import org.apache.commons.collections4.trie.AsciiKeyAnalyser;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,6 +40,8 @@ class KeyMapTest
         assertEquals(1, map.values().size());
         assertEquals(1, map.map().values().size());
         assertNull(map.emptyValue());
+        assertEquals(new MutableInteger(1), map.getNotEmpty(KeyMap.string2view("123")));
+        assertThrows(NoSuchElementException.class, () -> map.getNotEmpty(KeyMap.string2view("23")));
     }
 
     @Test
@@ -56,7 +59,7 @@ class KeyMapTest
     private static void check(final KeyMap<ExampleEnum> actual, final KeyMap<ExampleEnum> expected, final String key)
     {
         final var k = KeyMap.string2view(key);
-        assertEquals(expected.getKey(k), actual.getKey(k));
+        assertEquals(expected.get(k), actual.get(k));
     }
 
     public enum ExampleEnum

@@ -78,7 +78,7 @@ public class JsonDecoder
                 break;
             }
             Token.STRING.checkToken(token);
-            final var key = actions.getKey(getString());
+            final var key = actions.get(getString());
             key.accept(this, structure);
         }
     }
@@ -110,7 +110,7 @@ public class JsonDecoder
                 break;
             }
             Token.STRING.checkToken(token);
-            final var key = actions.getKey(getString());
+            final var key = actions.get(getString());
             key.run();
         }
     }
@@ -346,9 +346,8 @@ public class JsonDecoder
             }
             if (shouldSkip(next))
             {
-                // this is not a float, so just return long
-                decimalFloat.value(sign * mantissa);
-                decimalFloat.scale(0);
+                // this is not a float, so return long
+                decimalFloat.set(sign * mantissa, 0);
                 return Token.LONG;
             }
             if (next == '.')
@@ -358,8 +357,7 @@ public class JsonDecoder
             if (isEndOfStructure(next))
             {
                 offset--;
-                decimalFloat.value(sign * mantissa);
-                decimalFloat.scale(0);
+                decimalFloat.set(sign * mantissa, 0);
                 return Token.LONG;
             }
             throw new RuntimeException();

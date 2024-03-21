@@ -7,9 +7,7 @@ import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
 import org.apache.commons.collections4.trie.AsciiTrie;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This map contains string keys which are useful for struct parsing
@@ -52,12 +50,23 @@ public class KeyMap<T>
 
     public T get(final AsciiSequenceView string)
     {
-        return getKey(string);
+        return map.getOrDefault(string, emptyValue);
     }
 
+    @Deprecated
     public T getKey(final AsciiSequenceView string)
     {
-        return map.getOrDefault(string, emptyValue);
+        return get(string);
+    }
+
+    public T getNotEmpty(final AsciiSequenceView string)
+    {
+        final var result = get(string);
+        if (Objects.equals(result, emptyValue))
+        {
+            throw new NoSuchElementException(string.toString());
+        }
+        return result;
     }
 
     /**
