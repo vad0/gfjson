@@ -8,6 +8,7 @@ import org.agrona.concurrent.UnsafeBuffer;
 import org.apache.commons.collections4.trie.AsciiTrie;
 
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * This map contains string keys which are useful for struct parsing
@@ -78,6 +79,19 @@ public class KeyMap<T>
         final var v = map.get(string);
         assert v == emptyValue;
         map.put(deepCopy(string), value);
+    }
+
+    public T computeIfAbsent(final AsciiSequenceView string, final Function<AsciiSequenceView, T> getValue)
+    {
+        var value = map.get(string);
+        if (!Objects.equals(value, emptyValue))
+        {
+            return value;
+        }
+        value = getValue.apply(string);
+        assert !Objects.equals(value, emptyValue) : value + " " + emptyValue;
+        put(string, value);
+        return value;
     }
 
     public Collection<T> values()

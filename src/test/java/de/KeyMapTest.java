@@ -1,5 +1,6 @@
 package de;
 
+import org.agrona.AsciiSequenceView;
 import org.agrona.collections.MutableInteger;
 import org.apache.commons.collections4.trie.AsciiKeyAnalyser;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,18 @@ class KeyMapTest
         assertNull(map.emptyValue());
         assertEquals(new MutableInteger(1), map.getNotEmpty(KeyMap.string2view("123")));
         assertThrows(NoSuchElementException.class, () -> map.getNotEmpty(KeyMap.string2view("23")));
+    }
+
+    @Test
+    public void computeIfAbsent()
+    {
+        final var map = new KeyMap<String>();
+        final String string = "test";
+        for (int i = 0; i < 2; i++)
+        {
+            final var value = map.computeIfAbsent(KeyMap.string2view(string), AsciiSequenceView::toString);
+            assertEquals(string, value);
+        }
     }
 
     @Test
