@@ -2,7 +2,6 @@ package de;
 
 import org.agrona.AsciiSequenceView;
 import org.agrona.collections.MutableInteger;
-import org.apache.commons.collections4.trie.AsciiKeyAnalyser;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;

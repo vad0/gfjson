@@ -15,13 +15,15 @@ apply(plugin = "maven-publish")
 group = "vad0"
 
 repositories {
+    mavenLocal()
     mavenCentral()
+    maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
     implementation(libs.agrona)
     implementation(libs.artio.codecs)
-    implementation(libs.apache.commons.collections4)
+    implementation(libs.commons.collections)
     testImplementation(libs.jupiter.api)
     testRuntimeOnly(libs.jupiter.engine)
     implementation(libs.jackson.databind)
@@ -29,7 +31,6 @@ dependencies {
     annotationProcessor(libs.lombok)
     testImplementation(libs.lombok)
     testAnnotationProcessor(libs.lombok)
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 java {
@@ -88,21 +89,6 @@ tasks.jacocoTestCoverageVerification {
 tasks.getByName("clean") {
     doLast {
         project.delete(projectDir.toPath().resolve("output"))
-    }
-}
-
-publishing {
-    publications {
-        // This mavenJava can be filled in randomly, it's just a task name
-        // MavenPublication must have, this is the task class to call
-        create<MavenPublication>("maven") {
-            // The header here is the artifacts configuration information, do not fill in the default
-            groupId = "gfjson"
-            artifactId = "library"
-            version = "1.1"
-
-            from(components["java"])
-        }
     }
 }
 

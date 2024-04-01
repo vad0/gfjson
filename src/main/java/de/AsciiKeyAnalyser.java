@@ -1,6 +1,7 @@
-package org.apache.commons.collections4.trie;
+package de;
 
 import org.agrona.AsciiSequenceView;
+import org.apache.commons.collections4.trie.KeyAnalyzer;
 
 public class AsciiKeyAnalyser
     extends KeyAnalyzer<AsciiSequenceView>
