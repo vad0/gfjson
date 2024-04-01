@@ -24,14 +24,13 @@ dependencies {
     implementation(libs.agrona)
     implementation(libs.artio.codecs)
     implementation(libs.commons.collections)
-    testImplementation(libs.jupiter.api)
-    testRuntimeOnly(libs.jupiter.engine)
     implementation(libs.jackson.databind)
     implementation(libs.lombok)
     annotationProcessor(libs.lombok)
+    testImplementation(libs.jupiter.api)
+    testRuntimeOnly(libs.jupiter.engine)
     testImplementation(libs.lombok)
     testAnnotationProcessor(libs.lombok)
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
 }
 
 java {
