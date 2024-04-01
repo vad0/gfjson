@@ -27,8 +27,8 @@ dependencies {
     implementation(libs.jackson.databind)
     implementation(libs.lombok)
     annotationProcessor(libs.lombok)
-    testImplementation(libs.jupiter.api)
-    testRuntimeOnly(libs.jupiter.engine)
+    testImplementation(libs.jupiter)
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation(libs.lombok)
     testAnnotationProcessor(libs.lombok)
 }
