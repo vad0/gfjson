@@ -31,6 +31,7 @@ dependencies {
     annotationProcessor(libs.lombok)
     testImplementation(libs.lombok)
     testAnnotationProcessor(libs.lombok)
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
 }
 
 java {
