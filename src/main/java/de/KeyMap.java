@@ -5,7 +5,6 @@ import lombok.experimental.Accessors;
 import org.agrona.AsciiSequenceView;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
-import org.apache.commons.collections4.trie.AsciiTrie;
 
 import java.util.*;
 import java.util.function.Function;

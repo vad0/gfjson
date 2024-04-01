@@ -3,16 +3,14 @@ rootProject.name = "gfjson"
 dependencyResolutionManagement {
     versionCatalogs {
         libs {
-//            plugin("jmh", "me.champeau.jmh").version("0.6.5")
-//            plugin("release", "net.researchgate.release").version("2.8.1")
+            plugin("jmh", "me.champeau.jmh").version("0.6.5")
             plugin("jengelman", "com.github.johnrengelman.shadow").version("8.1.1")
 
             library("agrona", "org.agrona:agrona:1.21.1")
             library("artio.codecs", "uk.co.real-logic:artio-codecs:0.147")
-            library("apache.commons.collections4", "org.apache.commons:commons-collections4:4.4")
+            library("commons.collections", "com.github.vad0:commons-collections:20240401.1")
             library("jackson-databind", "com.fasterxml.jackson.core:jackson-databind:2.17.0")
-            library("jupiter.engine", "org.junit.jupiter:junit-jupiter-engine:5.10.2")
-            library("jupiter.api", "org.junit.jupiter:junit-jupiter-api:5.10.2")
+            library("jupiter", "org.junit.jupiter:junit-jupiter:5.10.2")
             library("lombok", "org.projectlombok:lombok:1.18.32")
         }
     }

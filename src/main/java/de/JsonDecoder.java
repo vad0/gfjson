@@ -5,7 +5,6 @@ import lombok.SneakyThrows;
 import org.agrona.AsciiSequenceView;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
-import org.apache.commons.collections4.trie.AsciiKeyAnalyser;
 import uk.co.real_logic.artio.fields.DecimalFloat;
 import uk.co.real_logic.artio.fields.ReadOnlyDecimalFloat;
 import uk.co.real_logic.artio.util.MutableAsciiBuffer;
