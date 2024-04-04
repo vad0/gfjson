@@ -16,7 +16,7 @@ public class JacksonKeyMap<T>
         map = baseMap;
     }
 
-    public T getKey(final String string)
+    public T get(final String string)
     {
         return map.getOrDefault(string, ignore);
     }

@@ -150,7 +150,7 @@ public final class StructDecoderGenerator
                 case LONG -> writer.printf("struct.%s(decoder.nextLong());\n", field.name());
                 case QUOTED_DOUBLE -> writer.printf("struct.%s(decoder.nextDoubleFromString());\n", field.name());
                 case STRING -> writer.printf(
-                    "struct.%s(%sMap.getKey(decoder.nextString()));\n",
+                    "struct.%s(%sMap.get(decoder.nextString()));\n",
                     field.name(),
                     field.name());
                 case ENUM ->

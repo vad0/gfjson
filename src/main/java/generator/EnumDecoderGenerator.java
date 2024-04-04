@@ -49,7 +49,7 @@ public final class EnumDecoderGenerator
     {
         writer.printf("public static %s parse(final AsciiSequenceView string)", definition.name());
         writer.startScope();
-        writer.printf("return MAP.getKey(string);\n");
+        writer.printf("return MAP.get(string);\n");
         writer.endScope();
     }
 
