@@ -46,7 +46,7 @@ public class L1UpdateDecoder
         struct.bestBidPrice(decoder.nextDoubleFromString());
 
         decoder.checkKey(SYMBOL);
-        struct.symbol(symbolMap.getKey(decoder.nextString()));
+        struct.symbol(symbolMap.get(decoder.nextString()));
 
         decoder.checkKey(ERROR);
         decoder.skipValue();

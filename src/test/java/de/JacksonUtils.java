@@ -36,7 +36,7 @@ public class JacksonUtils
                 break;
             }
             checkToken(JsonToken.FIELD_NAME, token);
-            final var key = actions.getKey(parser.getValueAsString());
+            final var key = actions.get(parser.getValueAsString());
             key.accept(parser, structure);
         }
     }

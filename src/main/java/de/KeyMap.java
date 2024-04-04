@@ -53,12 +53,6 @@ public class KeyMap<T>
         return map.getOrDefault(string, emptyValue);
     }
 
-    @Deprecated
-    public T getKey(final AsciiSequenceView string)
-    {
-        return get(string);
-    }
-
     public T getNotEmpty(final AsciiSequenceView string)
     {
         final var result = get(string);
