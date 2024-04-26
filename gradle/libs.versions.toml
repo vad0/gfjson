@@ -1,6 +1,3 @@
-[versions]
-artioCodecsVersion = "0.149"
-
 [libraries]
 agrona = "org.agrona:agrona:1.21.1"
 artio-codecs = "uk.co.real-logic:artio-codecs:0.149"
