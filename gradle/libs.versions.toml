@@ -1,0 +1,14 @@
+[versions]
+artioCodecsVersion = "0.147"
+
+[libraries]
+agrona = "org.agrona:agrona:1.21.1"
+artio-codecs = { group = "uk.co.real-logic", name = "artio-codecs", version.ref = "artioCodecsVersion" }
+commons-collections = "com.github.vad0:commons-collections:20240401.1"
+jackson-databind = "com.fasterxml.jackson.core:jackson-databind:2.17.0"
+jupiter = "org.junit.jupiter:junit-jupiter:5.10.2"
+lombok = "org.projectlombok:lombok:1.18.32"
+
+[plugins]
+jmh = "me.champeau.jmh:0.6.5"
+jengelman = "com.github.johnrengelman.shadow:8.1.1"
