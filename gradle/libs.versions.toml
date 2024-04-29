@@ -7,5 +7,5 @@ jupiter = "org.junit.jupiter:junit-jupiter:5.10.2"
 lombok = "org.projectlombok:lombok:1.18.32"
 
 [plugins]
-jmh = "me.champeau.jmh:0.6.5"
+jmh = "me.champeau.jmh:0.7.2"
 jengelman = "com.github.johnrengelman.shadow:8.1.1"
