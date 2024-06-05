@@ -1,5 +1,5 @@
 [libraries]
-agrona = "org.agrona:agrona:1.21.1"
+agrona = "org.agrona:agrona:1.21.2"
 artio-codecs = "uk.co.real-logic:artio-codecs:0.149"
 commons-collections = "com.github.vad0:commons-collections:20240401.1"
 jackson-databind = "com.fasterxml.jackson.core:jackson-databind:2.17.0"
