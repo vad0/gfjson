@@ -4,7 +4,7 @@ artio-codecs = "uk.co.real-logic:artio-codecs:0.153"
 commons-collections = "com.github.vad0:commons-collections:20240401.1"
 jackson-databind = "com.fasterxml.jackson.core:jackson-databind:2.17.1"
 jupiter = "org.junit.jupiter:junit-jupiter:5.10.2"
-lombok = "org.projectlombok:lombok:1.18.32"
+lombok = "org.projectlombok:lombok:1.18.34"
 
 [plugins]
 jmh = "me.champeau.jmh:0.7.2"
