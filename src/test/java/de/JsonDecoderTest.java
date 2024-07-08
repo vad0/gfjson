@@ -8,7 +8,6 @@ import uk.co.real_logic.artio.fields.DecimalFloat;
 import utils.TestUtils;
 
 import java.nio.ByteBuffer;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -136,7 +135,9 @@ class JsonDecoderTest
         final JsonDecoder decoder = new JsonDecoder();
         decoder.wrap(string);
         decoder.nextStartObject();
-        assertThrows(RuntimeException.class, decoder::next);
+        final double value = decoder.nextFloat().toDouble();
+        assertEquals(1.2, value);
+        assertThrows(AssertionError.class, decoder::nextEndObject);
     }
 
     @Test
@@ -157,6 +158,50 @@ class JsonDecoderTest
         decoder.wrap(string);
         decoder.nextStartArray();
         checkLong(decoder, -5);
+        decoder.nextEndArray();
+    }
+
+    @Test
+    public void testParseLongLong()
+    {
+        final String string = "[2100000000078453888]";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        decoder.nextStartArray();
+        checkLong(decoder, 2100000000078453888L);
+        decoder.nextEndArray();
+    }
+
+    @Test
+    public void testParseNegativeLongLong()
+    {
+        final String string = "[-2100000000078453888]";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        decoder.nextStartArray();
+        checkLong(decoder, -2100000000078453888L);
+        decoder.nextEndArray();
+    }
+
+    @Test
+    public void testParseLongLongFromString()
+    {
+        final String string = "[\"2100000000078453888\"]";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        decoder.nextStartArray();
+        assertEquals(2100000000078453888L, decoder.nextLongFromString());
+        decoder.nextEndArray();
+    }
+
+    @Test
+    public void testParseNegativeLongLongFromString()
+    {
+        final String string = "[\"-2100000000078453888\"]";
+        final JsonDecoder decoder = new JsonDecoder();
+        decoder.wrap(string);
+        decoder.nextStartArray();
+        assertEquals(-2100000000078453888L, decoder.nextLongFromString());
         decoder.nextEndArray();
     }
 
@@ -416,7 +461,7 @@ class JsonDecoderTest
         final String string = "\"\"";
         final JsonDecoder decoder = new JsonDecoder();
         decoder.wrap(string);
-        assertThrows(ParseException.class, decoder::nextDoubleFromString);
+        assertThrows(RuntimeException.class, decoder::nextDoubleFromString);
     }
 
     @Test
@@ -425,7 +470,7 @@ class JsonDecoderTest
         final String string = "\"\"";
         final JsonDecoder decoder = new JsonDecoder();
         decoder.wrap(string);
-        assertThrows(ParseException.class, decoder::nextLongFromString);
+        assertThrows(RuntimeException.class, decoder::nextLongFromString);
     }
 
     @Test
