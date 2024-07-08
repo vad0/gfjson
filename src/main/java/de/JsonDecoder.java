@@ -1,7 +1,6 @@
 package de;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
 import org.agrona.AsciiSequenceView;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
@@ -10,7 +9,6 @@ import uk.co.real_logic.artio.fields.ReadOnlyDecimalFloat;
 import uk.co.real_logic.artio.util.MutableAsciiBuffer;
 
 import java.nio.ByteBuffer;
-import java.text.ParseException;
 import java.util.function.BiConsumer;
 
 public class JsonDecoder
@@ -179,7 +177,7 @@ public class JsonDecoder
             }
             if (next == '-' || isDigit(next))
             {
-                return parseNumber(next);
+                return parseNumber(next, buffer);
             }
             switch (next)
             {
@@ -274,7 +272,12 @@ public class JsonDecoder
 
     private char nextChar()
     {
-        return (char)buffer.getByte(offset++);
+        return nextChar(buffer);
+    }
+
+    private char nextChar(final DirectBuffer buf)
+    {
+        return (char)buf.getByte(offset++);
     }
 
     private void parseString()
@@ -312,7 +315,7 @@ public class JsonDecoder
         throw new RuntimeException();
     }
 
-    private Token parseNumber(final char first)
+    private Token parseNumber(final char first, final DirectBuffer buf)
     {
         final int sign;
         long mantissa;
@@ -329,18 +332,20 @@ public class JsonDecoder
         // before dot
         while (offset < length)
         {
-            final char next = nextChar();
+            final char next = nextChar(buf);
             if (isDigit(next))
             {
                 mantissa = mantissa * 10 + getDigit(next);
+                if (mantissa < 0)
+                {
+                    throw new ArithmeticException();
+                }
                 continue;
             }
             if (shouldSkip(next))
             {
                 // this is not a float, so just return long
-                decimalFloat.value(sign * mantissa);
-                decimalFloat.scale(0);
-                return Token.LONG;
+                return initLong(sign, mantissa);
             }
             if (next == '.')
             {
@@ -349,17 +354,20 @@ public class JsonDecoder
             if (isEndOfStructure(next))
             {
                 offset--;
-                decimalFloat.value(sign * mantissa);
-                decimalFloat.scale(0);
-                return Token.LONG;
+                return initLong(sign, mantissa);
             }
             throw new RuntimeException();
+        }
+        if (offset == length)
+        {
+            offset--;
+            return initLong(sign, mantissa);
         }
         // after dot
         int exponent = 0;
         while (offset < length)
         {
-            final char next = nextChar();
+            final char next = nextChar(buf);
             if (isDigit(next))
             {
                 if (mantissa <= MAX_MANTISSA)
@@ -384,79 +392,26 @@ public class JsonDecoder
             }
             break;
         }
+        if (offset == length)
+        {
+            offset--;
+            mantissa *= sign;
+            decimalFloat.set(mantissa, exponent);
+            return Token.FLOAT;
+        }
         throw new RuntimeException();
+    }
+
+    private Token initLong(final int sign, final long mantissa)
+    {
+        decimalFloat.value(sign * mantissa);
+        decimalFloat.scale(0);
+        return Token.LONG;
     }
 
     private static boolean isEndOfStructure(final char ch)
     {
         return ch == ']' || ch == '}';
-    }
-
-    @SneakyThrows
-    private static void parseNumber(final AsciiSequenceView view, final DecimalFloat number)
-    {
-        // universal and simple way of doing it is calling 'decimalFloat.fromString(string)', but we want to do it
-        // faster
-        final int length = view.length();
-        if (length == 0)
-        {
-            throw new ParseException("Empty string", 0);
-        }
-        final var buffer = view.buffer();
-        int offset = view.offset();
-        final int end = offset + length;
-        final char first = (char)buffer.getByte(offset++);
-
-        final int sign;
-        long mantissa;
-        if (first == '-')
-        {
-            sign = -1;
-            mantissa = 0;
-        }
-        else
-        {
-            sign = 1;
-            mantissa = getDigit(first);
-        }
-        // before dot
-        while (offset < end)
-        {
-            final char next = (char)buffer.getByte(offset++);
-            if (isDigit(next))
-            {
-                if (mantissa > MAX_MANTISSA)
-                {
-                    throw new ArithmeticException(view.toString());
-                }
-                mantissa = mantissa * 10 + getDigit(next);
-                continue;
-            }
-            if (next == '.')
-            {
-                break;
-            }
-            throw new RuntimeException();
-        }
-        // after dot
-        int exponent = 0;
-        for (int i = offset; i < end; i++)
-        {
-            final char next = (char)buffer.getByte(i);
-            if (isDigit(next))
-            {
-                if (mantissa <= MAX_MANTISSA)
-                {
-                    mantissa = mantissa * 10 + getDigit(next);
-                    exponent++;
-                }
-            }
-            else
-            {
-                throw new RuntimeException();
-            }
-        }
-        number.set(sign * mantissa, exponent);
     }
 
     private static boolean shouldSkip(final char next)
@@ -548,7 +503,14 @@ public class JsonDecoder
 
     public DecimalFloat decimalFloatFromString()
     {
-        parseNumber(string, decimalFloat);
+        final int savedOffset = offset;
+        final int savedLength = length;
+        offset = string.offset();
+        length = string.length();
+        final var buf = string.buffer();
+        parseNumber(nextChar(buf), buf);
+        offset = savedOffset;
+        length = savedLength;
         return decimalFloat;
     }
 
